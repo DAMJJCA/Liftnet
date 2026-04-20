@@ -3,6 +3,8 @@ package com.liftnet.liftnet_backend.auth.service;
 import com.liftnet.liftnet_backend.auth.dto.AuthRequest;
 import com.liftnet.liftnet_backend.auth.dto.AuthResponse;
 import com.liftnet.liftnet_backend.auth.dto.RegisterRequest;
+import com.liftnet.liftnet_backend.common.exception.EmailAlreadyExistsException;
+import com.liftnet.liftnet_backend.common.exception.InvalidCredentialsException;
 import com.liftnet.liftnet_backend.config.security.JwtService;
 import com.liftnet.liftnet_backend.user.entity.Role;
 import com.liftnet.liftnet_backend.user.entity.User;
@@ -27,10 +29,15 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
 
+        // VALIDACIÓN DE NEGOCIO
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new EmailAlreadyExistsException("Email already registered");
+        }
+
         User user = new User();
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.POSTULANTE); // por defecto
+        user.setRole(Role.POSTULANTE);
 
         userRepository.save(user);
 
@@ -45,10 +52,11 @@ public class AuthService {
     public AuthResponse login(AuthRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() ->
+                        new InvalidCredentialsException("Invalid credentials"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid credentials");
         }
 
         String token = jwtService.generateToken(
