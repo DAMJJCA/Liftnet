@@ -17,5 +17,6 @@ spring:
     locations: classpath:db/migration
 
 jwt:
-  secret: ${JWT_SECRET:dev-secret-super-inseguro}
+
+  secret: ${JWT_SECRET:liftnet_jwt_secret_key_256_bits_min_2026!!}
   expiration: ${JWT_EXPIRATION:3600000}

@@ -1,12 +1,24 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  template: '<p>Probar conexión backend (revisar consola)</p>',
 })
-export class AppComponent {
-    protected readonly title = signal('liftnet-frontend');
+export class AppComponent implements OnInit {
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.authService.login({
+      email: 'empresa1@liftnet.com',
+      password: '123456'
+    }).subscribe({
+      next: (res) => console.log('✅ Backend respondió:', res),
+      error: (err) => console.error('❌ Error:', err)
+    });
+  }
 }
