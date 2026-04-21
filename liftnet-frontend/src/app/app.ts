@@ -17,8 +17,8 @@ export class AppComponent implements OnInit {
       email: 'empresa1@liftnet.com',
       password: '123456'
     }).subscribe({
-      next: (res) => console.log('✅ Backend respondió:', res),
-      error: (err) => console.error('❌ Error:', err)
+      next: (res) => console.log(' Backend respondió:', res),
+      error: (err) => console.error(' Error:', err)
     });
   }
 }
