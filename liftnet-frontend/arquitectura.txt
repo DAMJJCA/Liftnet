@@ -1,0 +1,48 @@
+src/app/
+├── core/                   # Infraestructura global
+│   ├── interceptors/
+│   │   ├── auth.interceptor.ts
+│   │   └── error.interceptor.ts
+│   ├── services/
+│   │   └── auth.service.ts
+│   ├── guards/
+│   │   ├── auth.guard.ts
+│   │   └── role.guard.ts
+│   └── models/
+│       └── api-response.model.ts
+│
+├── shared/                 # Componentes reutilizables
+│   ├── components/
+│   ├── pipes/
+│   └── directives/
+│
+├── auth/                   # Dominio AUTH
+│   ├── login/
+│   ├── register/
+│   ├── auth-routing.module.ts
+│   └── auth.module.ts
+│
+├── ofertas/                # Dominio OFERTAS
+│   ├── list/
+│   ├── create/
+│   ├── my-offers/
+│   ├── ofertas-routing.module.ts
+│   └── ofertas.module.ts
+│
+├── postulaciones/          # Dominio POSTULACIONES
+│   ├── my-applications/
+│   ├── manage/
+│   ├── postulaciones-routing.module.ts
+│   └── postulaciones.module.ts
+│
+├── admin/                  # Dominio ADMIN
+│   ├── users/
+│   ├── admin-routing.module.ts
+│   └── admin.module.ts
+│
+├── layout/                 # Layouts principales
+│   ├── public-layout/
+│   └── private-layout/
+│
+├── app-routing.module.ts
+└── app.module.ts

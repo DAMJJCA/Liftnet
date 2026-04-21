@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/empresa/profile")
+@RequestMapping("/api/v1/empresa/profile")
 public class EmpresaController {
 
     private final EmpresaService service;

@@ -1,85 +1,112 @@
 package com.liftnet.liftnet_backend.common.exception;
 
-import com.liftnet.liftnet_backend.common.response.ApiError;
+import com.liftnet.liftnet_backend.common.response.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log =
+            LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     // EMAIL DUPLICADO
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ApiError> handleEmailAlreadyExists(
+    public ResponseEntity<ApiResponse<Void>> handleEmailAlreadyExists(
             EmailAlreadyExistsException ex) {
 
-        ApiError error = new ApiError(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage()
-        );
+        log.warn("Email duplicado: {}", ex.getMessage());
 
-        return ResponseEntity.badRequest().body(error);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     // CREDENCIALES INVÁLIDAS
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ApiError> handleInvalidCredentials(
+    public ResponseEntity<ApiResponse<Void>> handleInvalidCredentials(
             InvalidCredentialsException ex) {
 
-        ApiError error = new ApiError(
-                HttpStatus.UNAUTHORIZED.value(),
-                ex.getMessage()
-        );
+        log.warn("Credenciales inválidas");
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     // RECURSO NO ENCONTRADO
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleResourceNotFound(
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(
             ResourceNotFoundException ex) {
 
-        ApiError error = new ApiError(
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage()
-        );
+        log.warn("Recurso no encontrado: {}", ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     // ERRORES DE VALIDACIÓN (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleValidationErrors(
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(
             MethodArgumentNotValidException ex) {
 
-        String message = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error ->
-                        error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+        Map<String, String> errors = new HashMap<>();
 
-        ApiError apiError = new ApiError(
-                HttpStatus.BAD_REQUEST.value(),
-                message
-        );
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
 
-        return ResponseEntity.badRequest().body(apiError);
+        log.warn("Error de validación: {}", errors);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Error de validación"));
     }
 
-    // CATCH ALL
+    // SEGURIDAD / ACCESO NO PERMITIDO
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<ApiResponse<Void>> handleSecurity(SecurityException ex) {
+
+        log.warn("Acceso no permitido");
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error("Acceso no permitido"));
+    }
+
+    // REGLAS DE NEGOCIO
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalState(
+            IllegalStateException ex) {
+
+        log.warn("Regla de negocio violada: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    // ERROR INTERNO NO CONTROLADO
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGenericException(Exception ex) {
+    public ResponseEntity<ApiResponse<Void>> handleGenericException(
+            Exception ex) {
 
-        ApiError error = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Unexpected server error"
-        );
+        log.error("Error interno no controlado", ex);
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(
+                        "Error interno del servidor. Contacte soporte."
+                ));
     }
 }

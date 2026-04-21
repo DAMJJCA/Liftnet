@@ -4,12 +4,12 @@ import com.liftnet.liftnet_backend.auth.dto.AuthRequest;
 import com.liftnet.liftnet_backend.auth.dto.AuthResponse;
 import com.liftnet.liftnet_backend.auth.dto.RegisterRequest;
 import com.liftnet.liftnet_backend.auth.service.AuthService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.liftnet.liftnet_backend.common.response.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -18,13 +18,29 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+    // LOGIN
+    @PostMapping("/login")
+    public ApiResponse<AuthResponse> login(
+            @Valid @RequestBody AuthRequest request) {
+
+        AuthResponse response = authService.login(request);
+
+        return ApiResponse.ok(
+                "Login realizado con éxito",
+                response
+        );
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    // REGISTER
+    @PostMapping("/register")
+    public ApiResponse<AuthResponse> register(
+            @Valid @RequestBody RegisterRequest request) {
+
+        AuthResponse response = authService.register(request);
+
+        return ApiResponse.ok(
+                "Usuario registrado correctamente",
+                response
+        );
     }
 }

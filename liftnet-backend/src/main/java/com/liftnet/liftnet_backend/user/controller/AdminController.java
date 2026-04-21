@@ -1,17 +1,19 @@
 package com.liftnet.liftnet_backend.user.controller;
 
+import com.liftnet.liftnet_backend.common.mapper.UserMapper;
+import com.liftnet.liftnet_backend.common.response.ApiResponse;
 import com.liftnet.liftnet_backend.user.dto.UserResponse;
 import com.liftnet.liftnet_backend.user.entity.Role;
-import com.liftnet.liftnet_backend.user.entity.User;
 import com.liftnet.liftnet_backend.user.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/v1/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -20,43 +22,41 @@ public class AdminController {
         this.userService = userService;
     }
 
-    // ADMIN VE TODOS LOS USUARIOS
+    // ADMIN VE TODOS LOS USUARIOS (PAGINADO)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/usuarios")
-    public List<UserResponse> getAllUsers() {
-        return userService.getAllUsers()
-                .stream()
-                .map(this::map)
-                .toList();
+    public ApiResponse<Page<UserResponse>> getAllUsers(Pageable pageable) {
+
+        Page<UserResponse> page = userService.getAllUsers(pageable)
+                .map(UserMapper::toResponse);
+
+        return ApiResponse.ok(page);
     }
 
-    // ADMIN CAMBIA ROL
+    // ADMIN CAMBIA ROL DE USUARIO
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/usuarios/{id}/rol")
-    public void changeRole(
+    public ApiResponse<Void> changeRole(
             @PathVariable UUID id,
             @RequestParam Role role) {
 
         userService.changeRole(id, role);
+        return ApiResponse.ok("Rol actualizado correctamente", null);
     }
 
     // ADMIN BLOQUEA / DESBLOQUEA USUARIO
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/usuarios/{id}/enabled")
-    public void setEnabled(
+    public ApiResponse<Void> setEnabled(
             @PathVariable UUID id,
             @RequestParam boolean enabled) {
 
         userService.setEnabled(id, enabled);
-    }
 
-    private UserResponse map(User user) {
-        return new UserResponse(
-                user.getId(),
-                user.getEmail(),
-                user.getRole(),
-                user.isEnabled(),
-                user.getCreatedAt()
-        );
+        String message = enabled
+                ? "Usuario habilitado correctamente"
+                : "Usuario deshabilitado correctamente";
+
+        return ApiResponse.ok(message, null);
     }
 }

@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: liftnet-backend
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+  tomcat:
+    connection-timeout: 5000
+    accept-count: 100
+    max-connections: 200
+    threads:
+      max: 200
+      min-spare: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  liftnet-backend:
+    build: .
+    container_name: liftnet-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    restart: unless-stopped

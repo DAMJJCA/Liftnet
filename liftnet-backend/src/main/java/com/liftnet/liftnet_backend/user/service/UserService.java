@@ -4,9 +4,10 @@ import com.liftnet.liftnet_backend.common.exception.ResourceNotFoundException;
 import com.liftnet.liftnet_backend.user.entity.Role;
 import com.liftnet.liftnet_backend.user.entity.User;
 import com.liftnet.liftnet_backend.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,10 +19,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    // ADMIN VE TODOS LOS USUARIOS (PAGINADO)
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
+    // ADMIN CAMBIA ROL
     public void changeRole(UUID userId, Role newRole) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
@@ -31,6 +34,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // ADMIN BLOQUEA / DESBLOQUEA USUARIO
     public void setEnabled(UUID userId, boolean enabled) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
