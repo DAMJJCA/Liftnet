@@ -5,8 +5,6 @@ import com.liftnet.liftnet_backend.empresa.dto.EmpresaProfileResponse;
 import com.liftnet.liftnet_backend.empresa.entity.EmpresaProfile;
 import com.liftnet.liftnet_backend.empresa.service.EmpresaService;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,11 +17,48 @@ public class EmpresaController {
         this.service = service;
     }
 
+    /**
+     * ==========================
+     * ✅ MODO DESARROLLO (ACTIVO)
+     * ==========================
+     * Se pasa el email por request param
+     */
+
+    @GetMapping
+    public EmpresaProfileResponse getMyProfile(
+            @RequestParam String email) {
+
+        EmpresaProfile profile = service.getMyProfile(email);
+        return map(profile);
+    }
+
+    @PostMapping
+    public EmpresaProfileResponse createProfile(
+            @RequestParam String email,
+            @Valid @RequestBody EmpresaProfileRequest request) {
+
+        EmpresaProfile profile = service.createProfile(email, request);
+        return map(profile);
+    }
+
+    @PutMapping
+    public EmpresaProfileResponse updateProfile(
+            @RequestParam String email,
+            @Valid @RequestBody EmpresaProfileRequest request) {
+
+        EmpresaProfile profile = service.updateProfile(email, request);
+        return map(profile);
+    }
+
+    /*
+    ======================================================
+    🔐 MODO PRODUCCIÓN (DESCOMENTAR)
+    ======================================================
+
     @PreAuthorize("hasRole('EMPRESA')")
     @GetMapping
     public EmpresaProfileResponse getMyProfile(Authentication auth) {
-        EmpresaProfile profile = service.getMyProfile(auth.getName());
-        return map(profile);
+        return map(service.getMyProfile(auth.getName()));
     }
 
     @PreAuthorize("hasRole('EMPRESA')")
@@ -32,8 +67,7 @@ public class EmpresaController {
             Authentication auth,
             @Valid @RequestBody EmpresaProfileRequest request) {
 
-        EmpresaProfile profile = service.createProfile(auth.getName(), request);
-        return map(profile);
+        return map(service.createProfile(auth.getName(), request));
     }
 
     @PreAuthorize("hasRole('EMPRESA')")
@@ -42,9 +76,9 @@ public class EmpresaController {
             Authentication auth,
             @Valid @RequestBody EmpresaProfileRequest request) {
 
-        EmpresaProfile profile = service.updateProfile(auth.getName(), request);
-        return map(profile);
+        return map(service.updateProfile(auth.getName(), request));
     }
+    */
 
     private EmpresaProfileResponse map(EmpresaProfile profile) {
         return new EmpresaProfileResponse(

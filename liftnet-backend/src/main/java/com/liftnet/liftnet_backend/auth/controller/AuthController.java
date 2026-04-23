@@ -18,6 +18,15 @@ public class AuthController {
         this.authService = authService;
     }
 
+    /**
+     * ==========================
+     * ✅ MODO DESARROLLO (ACTIVO)
+     * ==========================
+     * - Endpoints públicos
+     * - No requieren JWT
+     * - Funcionan tanto en DEV como en PROD
+     */
+
     // LOGIN
     @PostMapping("/login")
     public ApiResponse<AuthResponse> login(
@@ -36,6 +45,8 @@ public class AuthController {
     public ApiResponse<AuthResponse> register(
             @Valid @RequestBody RegisterRequest request) {
 
+        System.out.println(">>> ENTRÓ A AuthController.register <<<");
+
         AuthResponse response = authService.register(request);
 
         return ApiResponse.ok(
@@ -43,4 +54,21 @@ public class AuthController {
                 response
         );
     }
+
+    /*
+    ======================================================
+    🔐 NOTA SOBRE PRODUCCIÓN
+    ======================================================
+
+    - Estos endpoints DEBEN ser públicos también en producción
+    - En SecurityConfig PROD ya tienes:
+        .requestMatchers("/api/v1/auth/**").permitAll()
+
+    👉 No se añade @PreAuthorize aquí a propósito.
+    👉 Si en el futuro quieres:
+        - Registro solo ADMIN
+        - Login externo (OAuth, Supabase Auth, etc.)
+
+    Este será el sitio correcto para cambiarlo.
+    */
 }

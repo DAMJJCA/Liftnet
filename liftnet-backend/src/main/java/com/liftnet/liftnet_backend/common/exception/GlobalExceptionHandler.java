@@ -3,6 +3,7 @@ package com.liftnet.liftnet_backend.common.exception;
 import com.liftnet.liftnet_backend.common.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,7 +20,11 @@ public class GlobalExceptionHandler {
     private static final Logger log =
             LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // EMAIL DUPLICADO
+    // ==========================
+    // ERRORES DE AUTH / USUARIO
+    // ==========================
+
+    // EMAIL DUPLICADO (NEGOCIO)
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ApiResponse<Void>> handleEmailAlreadyExists(
             EmailAlreadyExistsException ex) {
@@ -43,6 +48,10 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
+    // ==========================
+    // ERRORES DE NEGOCIO
+    // ==========================
+
     // RECURSO NO ENCONTRADO
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(
@@ -54,6 +63,22 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(ex.getMessage()));
     }
+
+    // REGLAS DE NEGOCIO
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalState(
+            IllegalStateException ex) {
+
+        log.warn("Regla de negocio violada: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    // ==========================
+    // VALIDACIONES
+    // ==========================
 
     // ERRORES DE VALIDACIÓN (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -73,7 +98,29 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Error de validación"));
     }
 
-    // SEGURIDAD / ACCESO NO PERMITIDO
+    // ==========================
+    // BASE DE DATOS
+    // ==========================
+
+    // VIOLACIÓN DE INTEGRIDAD (EMAIL DUPLICADO, CONSTRAINTS, ETC.)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex) {
+
+        log.warn("Violación de integridad de datos", ex);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        "El email ya existe o los datos no son válidos"
+                ));
+    }
+
+    // ==========================
+    // SEGURIDAD
+    // ==========================
+
+    // ACCESO NO PERMITIDO
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<ApiResponse<Void>> handleSecurity(SecurityException ex) {
 
@@ -84,17 +131,9 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Acceso no permitido"));
     }
 
-    // REGLAS DE NEGOCIO
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalState(
-            IllegalStateException ex) {
-
-        log.warn("Regla de negocio violada: {}", ex.getMessage());
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(ex.getMessage()));
-    }
+    // ==========================
+    // GENÉRICO (SIEMPRE EL ÚLTIMO)
+    // ==========================
 
     // ERROR INTERNO NO CONTROLADO
     @ExceptionHandler(Exception.class)
