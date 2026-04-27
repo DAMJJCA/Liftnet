@@ -1,0 +1,23 @@
+.postulaciones-container {
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.postulacion {
+  border: 1px solid #ccc;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 5px;
+}
+
+.pendiente {
+  color: #ff9800;
+}
+
+.aceptada {
+  color: #2e7d32;
+}
+
+.rechazada {
+  color: #c62828;
+}

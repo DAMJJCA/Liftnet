@@ -1,0 +1,46 @@
+<div class="admin-container" *ngIf="!loading">
+
+  <h2>Panel de administración</h2>
+
+  <table *ngIf="users.length > 0">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.email }}</td>
+
+        <td>
+          <select
+            [value]="user.role"
+            (change)="changeRole(user, $any($event.target).value)"
+          >
+            <option value="POSTULANTE">POSTULANTE</option>
+            <option value="EMPRESA">EMPRESA</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </td>
+
+        <td>
+          {{ user.enabled ? 'Activo' : 'Bloqueado' }}
+        </td>
+
+        <td>
+          <button (click)="toggleEnabled(user)">
+            {{ user.enabled ? 'Bloquear' : 'Desbloquear' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </p>
+</div>

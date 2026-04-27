@@ -22,8 +22,7 @@ public class AdminController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
+     * MODO DESARROLLO (ACTIVO)
      * ==========================
      * - Sin JWT
      * - Sin roles
@@ -66,9 +65,8 @@ public class AdminController {
     }
 
     /*
-    ======================================================
-    🔐 MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-    ======================================================
+    // MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
+    // ======================================================
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/usuarios")

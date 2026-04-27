@@ -20,7 +20,9 @@ public class PostulanteService {
         this.userRepository = userRepository;
     }
 
+    // ==========================
     // OBTENER MI PERFIL
+    // ==========================
     public PostulanteProfile getMyProfile(String email) {
         User user = findUserByEmail(email);
 
@@ -29,7 +31,9 @@ public class PostulanteService {
                         new ResourceNotFoundException("Postulante profile not found"));
     }
 
-    // CREAR PERFIL 
+    // ==========================
+    // CREAR PERFIL (MANUAL)
+    // ==========================
     public PostulanteProfile createProfile(String email, PostulanteProfileRequest request) {
         User user = findUserByEmail(email);
 
@@ -49,7 +53,9 @@ public class PostulanteService {
         return postulanteRepository.save(profile);
     }
 
+    // ==========================
     // ACTUALIZAR PERFIL
+    // ==========================
     public PostulanteProfile updateProfile(String email, PostulanteProfileRequest request) {
         User user = findUserByEmail(email);
 
@@ -66,7 +72,9 @@ public class PostulanteService {
         return postulanteRepository.save(profile);
     }
 
-    // MARCAR DISPONIBILIDAD
+    // ==========================
+    // DISPONIBILIDAD
+    // ==========================
     public void updateDisponibilidad(String email, boolean disponible) {
         User user = findUserByEmail(email);
 
@@ -78,7 +86,26 @@ public class PostulanteService {
         postulanteRepository.save(profile);
     }
 
-    // MÉTODO PRIVADO DE APOYO
+    // ==========================
+    // CREAR PERFIL VACÍO (REGISTRO)
+    // ==========================
+    public void createEmptyProfile(User user) {
+
+        // Evitar duplicados
+        if (postulanteRepository.findByUser(user).isPresent()) {
+            return;
+        }
+
+        PostulanteProfile profile = new PostulanteProfile();
+        profile.setUser(user);
+        profile.setDisponible(true);
+
+        postulanteRepository.save(profile);
+    }
+
+    // ==========================
+    // MÉTODO PRIVADO
+    // ==========================
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->

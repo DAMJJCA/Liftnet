@@ -23,9 +23,7 @@ public class OfertaController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
-     * ==========================
+     *  MODO DESARROLLO 
      * - Sin JWT
      * - Sin roles
      * - email por request param solo cuando es necesario
@@ -80,9 +78,7 @@ public class OfertaController {
     }
 
     /*
-    ======================================================
-    🔐 MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-    ======================================================
+    // MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
 
     // POSTULANTE VE OFERTAS
     @PreAuthorize("hasRole('POSTULANTE')")

@@ -1,0 +1,36 @@
+<div class="postulaciones-container">
+
+  <h2>Postulaciones a la oferta</h2>
+
+  <p *ngIf="mensaje" class="info">
+    {{ mensaje }}
+  </p>
+
+  <div *ngFor="let p of postulaciones" class="postulacion">
+
+    <h3>{{ p.nombrePostulante }} {{ p.apellidosPostulante }}</h3>
+
+    <p>
+      Estado:
+      <strong [ngClass]="p.estado.toLowerCase()">
+        {{ p.estado }}
+      </strong>
+    </p>
+
+    <small>{{ p.createdAt | date:'short' }}</small>
+
+    <div class="acciones" *ngIf="p.estado === 'PENDIENTE'">
+      <button class="aceptar"
+              (click)="cambiarEstado(p.postulacionId, 'ACEPTADA')">
+        Aceptar
+      </button>
+
+      <button class="rechazar"
+              (click)="cambiarEstado(p.postulacionId, 'RECHAZADA')">
+        Rechazar
+      </button>
+    </div>
+
+  </div>
+
+</div>

@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
+     * MODO DESARROLLO (ACTIVO)
      * ==========================
      * Endpoint de prueba para comprobar que:
      * - La API responde
@@ -24,9 +23,8 @@ public class UserController {
     }
 
     /*
-    ======================================================
-    🔐 MODO PRODUCCIÓN (OPCIONAL)
-    ======================================================
+   	// MODO PRODUCCIÓN
+    // ======================================================
 
     Si en producción quieres que este endpoint:
     - Requiera autenticación

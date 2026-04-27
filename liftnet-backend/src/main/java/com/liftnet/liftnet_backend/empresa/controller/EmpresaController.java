@@ -18,9 +18,7 @@ public class EmpresaController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
-     * ==========================
+     *  MODO DESARROLLO 
      * Se pasa el email por request param
      */
 
@@ -51,9 +49,7 @@ public class EmpresaController {
     }
 
     /*
-    ======================================================
-    🔐 MODO PRODUCCIÓN (DESCOMENTAR)
-    ======================================================
+    // MODO PRODUCCIÓN (DESCOMENTAR)
 
     @PreAuthorize("hasRole('EMPRESA')")
     @GetMapping

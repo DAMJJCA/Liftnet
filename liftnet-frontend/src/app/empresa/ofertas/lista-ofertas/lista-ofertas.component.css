@@ -1,0 +1,25 @@
+.ofertas-container {
+  max-width: 700px;
+  margin: 40px auto;
+}
+
+.oferta {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+button {
+  margin-top: 10px;
+}
+
+.success {
+  text-align: center;
+  color: #2e7d32;
+}
+
+.error {
+  text-align: center;
+  color: #c62828;
+}

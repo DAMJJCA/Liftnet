@@ -1,24 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AuthService } from './core/services/auth.service';
+import { NavbarComponent } from './shared/navbar/navbar';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  template: '<p>Probar conexión backend (revisar consola)</p>',
+  imports: [RouterOutlet, NavbarComponent],
+  template: `
+    <app-navbar></app-navbar>
+    <router-outlet></router-outlet>
+  `
 })
-export class AppComponent implements OnInit {
-
-  constructor(private authService: AuthService) {}
-
-  ngOnInit(): void {
-    this.authService.login({
-      email: 'empresa1@liftnet.com',
-      password: '123456'
-    }).subscribe({
-      next: (res) => console.log(' Backend respondió:', res),
-      error: (err) => console.error(' Error:', err)
-    });
-  }
-}
+export class AppComponent {}

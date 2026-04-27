@@ -22,9 +22,7 @@ public class CertificacionController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
-     * ==========================
+     *  MODO DESARROLLO 
      * Se pasa el email por request param
      */
 
@@ -68,9 +66,7 @@ public class CertificacionController {
     }
 
     /*
-    ======================================================
-    🔐 MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-    ======================================================
+    //MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
 
     @PreAuthorize("hasRole('POSTULANTE')")
     @GetMapping("/mis-certificaciones")

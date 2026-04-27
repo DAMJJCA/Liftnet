@@ -20,13 +20,20 @@ public class EmpresaService {
         this.userRepository = userRepository;
     }
 
+    // ==========================
+    // OBTENER MI PERFIL
+    // ==========================
     public EmpresaProfile getMyProfile(String email) {
         User user = findUser(email);
+
         return empresaRepository.findByUser(user)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Empresa profile not found"));
     }
 
+    // ==========================
+    // CREAR PERFIL (MANUAL)
+    // ==========================
     public EmpresaProfile createProfile(String email, EmpresaProfileRequest request) {
         User user = findUser(email);
 
@@ -44,6 +51,9 @@ public class EmpresaService {
         return empresaRepository.save(profile);
     }
 
+    // ==========================
+    // ACTUALIZAR PERFIL
+    // ==========================
     public EmpresaProfile updateProfile(String email, EmpresaProfileRequest request) {
         User user = findUser(email);
 
@@ -59,6 +69,25 @@ public class EmpresaService {
         return empresaRepository.save(profile);
     }
 
+    // ==========================
+    // CREAR PERFIL VACÍO (REGISTRO)
+    // ==========================
+    public void createEmptyProfile(User user) {
+
+        // ✅ Evitar duplicados
+        if (empresaRepository.findByUser(user).isPresent()) {
+            return;
+        }
+
+        EmpresaProfile profile = new EmpresaProfile();
+        profile.setUser(user);
+
+        empresaRepository.save(profile);
+    }
+
+    // ==========================
+    // MÉTODO PRIVADO
+    // ==========================
     private User findUser(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->

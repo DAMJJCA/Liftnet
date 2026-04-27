@@ -4,10 +4,12 @@ public class AuthResponse {
 
     private String accessToken;
     private String role;
+    private boolean profileCompleted;
 
-    public AuthResponse(String accessToken, String role) {
+    public AuthResponse(String accessToken, String role,boolean profileCompleted) {
         this.accessToken = accessToken;
         this.role = role;
+        this.profileCompleted = profileCompleted;
     }
 
     public String getAccessToken() {
@@ -16,5 +18,9 @@ public class AuthResponse {
 
     public String getRole() {
         return role;
+    }
+
+    public boolean isProfileCompleted() {
+        return profileCompleted;
     }
 }

@@ -1,0 +1,31 @@
+.admin-container {
+  max-width: 900px;
+  margin: 40px auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+th {
+  text-align: left;
+}
+
+select {
+  padding: 4px;
+}
+
+button {
+  padding: 6px 10px;
+}
+
+.error {
+  margin-top: 20px;
+  color: #c62828;
+}

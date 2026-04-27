@@ -22,9 +22,7 @@ public class ExperienciaController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
-     * ==========================
+     *  MODO DESARROLLO 
      * Se pasa el email por request param
      */
 
@@ -78,9 +76,7 @@ public class ExperienciaController {
     }
 
     /*
-    ======================================================
-    🔐 MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-    ======================================================
+    // MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
 
     @PreAuthorize("hasRole('POSTULANTE')")
     @GetMapping("/mis-experiencias")

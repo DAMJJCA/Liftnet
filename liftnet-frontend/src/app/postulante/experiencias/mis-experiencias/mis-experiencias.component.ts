@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ExperienciasService } from '../../core/services/experiencias.service';
+import { ExperienciasService } from '../../../core/services/experiencias.service';
 
 @Component({
   selector: 'app-mis-experiencias',

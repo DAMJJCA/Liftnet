@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { CertificacionesService } from '../../core/services/certificaciones.service';
+import { CertificacionesService } from '../../../core/services/certificaciones.service';
 
 @Component({
   selector: 'app-mis-certificaciones',

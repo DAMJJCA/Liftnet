@@ -1,0 +1,118 @@
+<div class="ofertas-container">
+  <h2>Mis ofertas</h2>
+
+  <!-- CREAR OFERTA -->
+  <form (ngSubmit)="crear()" class="form">
+    <input
+      type="text"
+      name="titulo"
+      placeholder="Título"
+      [(ngModel)]="nuevaOferta.titulo"
+      required
+    />
+
+    <input
+      type="text"
+      name="ubicacion"
+      placeholder="Ubicación"
+      [(ngModel)]="nuevaOferta.ubicacion"
+    />
+
+    <textarea
+      name="descripcion"
+      placeholder="Descripción"
+      [(ngModel)]="nuevaOferta.descripcion"
+      rows="4"
+    ></textarea>
+
+    <button type="submit">
+      Crear oferta
+    </button>
+  </form>
+
+  <hr />
+
+  <!-- LISTADO DE OFERTAS -->
+  <div *ngFor="let o of ofertas" class="oferta">
+
+    <!-- ========================= -->
+    <!-- MODO EDICIÓN -->
+    <!-- ========================= -->
+    <div *ngIf="ofertaEditando && ofertaEditando.id === o.id; else vistaNormal">
+
+      <input
+        [(ngModel)]="ofertaEditando.titulo"
+        name="editTitulo"
+      />
+
+      <input
+        [(ngModel)]="ofertaEditando.ubicacion"
+        name="editUbicacion"
+      />
+
+      <textarea
+        [(ngModel)]="ofertaEditando.descripcion"
+        name="editDescripcion"
+      ></textarea>
+
+      <div class="acciones">
+        <button (click)="guardarEdicion()">
+          Guardar
+        </button>
+
+        <button
+          type="button"
+          class="secondary"
+          (click)="cancelarEdicion()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- MODO VISUAL -->
+    <!-- ========================= -->
+    <ng-template #vistaNormal>
+      <h3>{{ o.titulo }}</h3>
+      <p>{{ o.descripcion }}</p>
+      <small>{{ o.ubicacion }}</small>
+
+      <div class="acciones">
+
+        <!-- EDITAR -->
+        <button (click)="editar(o)">
+          Editar
+        </button>
+
+        <!-- VER POSTULACIONES -->
+        <a
+          class="link"
+          [routerLink]="[
+            '/empresa/ofertas',
+            o.id,
+            'postulaciones'
+          ]"
+        >
+          Ver postulaciones
+        </a>
+
+        <!-- CERRAR OFERTA -->
+        <button
+          *ngIf="o.activa"
+          class="danger"
+          (click)="cerrar(o.id)"
+        >
+          Cerrar oferta
+        </button>
+
+        <!-- ESTADO CERRADA -->
+        <span *ngIf="!o.activa" class="cerrada">
+          Oferta cerrada
+        </span>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+``

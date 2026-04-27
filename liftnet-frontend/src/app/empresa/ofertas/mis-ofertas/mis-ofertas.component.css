@@ -1,0 +1,56 @@
+.ofertas-container {
+  max-width: 760px;
+  margin: 40px auto;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #e0e0e0;
+}
+
+button.danger {
+  background: #e53935;
+  color: #fff;
+  border: none;
+}
+
+.oferta {
+  border: 1px solid #ddd;
+  padding: 14px;
+  margin-top: 16px;
+  border-radius: 6px;
+}
+
+.acciones {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cerrada {
+  color: #777;
+  font-style: italic;
+}

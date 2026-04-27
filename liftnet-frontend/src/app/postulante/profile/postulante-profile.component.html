@@ -1,0 +1,64 @@
+<div class="profile-container" *ngIf="!loading(); else loadingTpl">
+
+  <h1>Tu perfil profesional</h1>
+
+  <!-- MENSAJE DE BLOQUEO -->
+  <div class="alert warning" *ngIf="mandatoryMessage">
+    {{ mandatoryMessage }}
+  </div>
+
+  <!-- PROGRESO -->
+  <div class="progress-box">
+    <div class="progress-header">
+      <span>Perfil completado</span>
+      <strong>{{ progress() }}%</strong>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progress()"></div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST (CORE LINKEDIN) -->
+  <div class="checklist">
+    <div class="check-item" [class.done]="sections().basicInfo">
+      ✔ Datos básicos
+    </div>
+    <div class="check-item" [class.done]="sections().experiences">
+      ✔ Experiencias
+    </div>
+    <div class="check-item" [class.done]="sections().certifications">
+      ✔ Certificaciones (obligatorio para postular)
+    </div>
+  </div>
+
+  <!-- BLOQUEO REALISTA -->
+  <div class="alert info" *ngIf="!canApply()">
+    Para poder postularte a ofertas necesitas añadir al menos una certificación.
+  </div>
+
+  <!-- FORMULARIO (EL TUYO EXISTENTE) -->
+  <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+
+    <!-- AQUÍ VA TU FORMULARIO REAL -->
+    <!-- No lo toco para no romper nada -->
+
+    <button type="submit" class="btn primary">
+      Guardar perfil
+    </button>
+  </form>
+
+  <!-- MENSAJES -->
+  <div class="alert error" *ngIf="errorMessage()">
+    {{ errorMessage() }}
+  </div>
+
+  <div class="alert success" *ngIf="successMessage()">
+    {{ successMessage() }}
+  </div>
+
+</div>
+
+<ng-template #loadingTpl>
+  <p>Cargando perfil…</p>
+</ng-template>
+``

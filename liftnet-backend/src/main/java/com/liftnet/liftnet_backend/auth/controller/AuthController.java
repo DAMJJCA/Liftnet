@@ -19,9 +19,7 @@ public class AuthController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
-     * ==========================
+     *  MODO DESARROLLO 
      * - Endpoints públicos
      * - No requieren JWT
      * - Funcionan tanto en DEV como en PROD
@@ -56,16 +54,14 @@ public class AuthController {
     }
 
     /*
-    ======================================================
-    🔐 NOTA SOBRE PRODUCCIÓN
-    ======================================================
+    // NOTA SOBRE PRODUCCIÓN
 
     - Estos endpoints DEBEN ser públicos también en producción
     - En SecurityConfig PROD ya tienes:
         .requestMatchers("/api/v1/auth/**").permitAll()
 
-    👉 No se añade @PreAuthorize aquí a propósito.
-    👉 Si en el futuro quieres:
+    No se añade @PreAuthorize aquí a propósito.
+    Si en el futuro quieres:
         - Registro solo ADMIN
         - Login externo (OAuth, Supabase Auth, etc.)
 

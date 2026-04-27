@@ -1,75 +1,62 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 
-import { AuthService, LoginRequest } from '../../core/services/auth.service';
+import {
+  AuthService,
+  RegisterRequest
+} from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <h2>Registro</h2>
-
-    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
-      <div>
-        <label>Email</label><br />
-        <input
-          type="email"
-          name="email"
-          [(ngModel)]="credentials.email"
-          required
-        />
-      </div>
-
-      <div>
-        <label>Password</label><br />
-        <input
-          type="password"
-          name="password"
-          [(ngModel)]="credentials.password"
-          required
-        />
-      </div>
-
-      <button type="submit" [disabled]="registerForm.invalid || loading">
-        Registrar
-      </button>
-    </form>
-
-    <p *ngIf="errorMessage" style="color: red;">
-      {{ errorMessage }}
-    </p>
-  `
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
 
-  credentials: LoginRequest = {
+  /**
+   * Formulario único de registro.
+   * Contiene credenciales + datos de perfil
+   * El backend decide qué perfil crear según el role.
+   */
+  form: RegisterRequest = {
     email: '',
-    password: ''
+    password: '',
+    role: 'POSTULANTE',
+
+    // Campos POSTULANTE
+    nombre: '',
+    apellidos: '',
+    bio: '',
+
+    // Campos EMPRESA
+    nombreEmpresa: '',
+    descripcion: '',
+
+    // Campos COMUNES
+    ubicacion: '',
+    telefono: ''
   };
 
   loading = false;
   errorMessage: string | null = null;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService) {}
 
+  /**
+   * Envío del registro.
+   * ✅ Una sola llamada
+   * ✅ El backend crea User + Perfil correcto
+   */
   onRegister(): void {
     this.loading = true;
     this.errorMessage = null;
 
-    this.authService.register(this.credentials).subscribe({
-      next: (response) => {
-        if (response.success) {
-          // Registro correcto → el backend devuelve token
-          this.router.navigate(['/certificaciones']);
-        } else {
-          this.errorMessage = response.message ?? 'Error en registro';
-        }
+    this.authService.register(this.form).subscribe({
+      next: () => {
+        // La redirección se gestiona en AuthService.handleAuthSuccess
         this.loading = false;
       },
       error: () => {

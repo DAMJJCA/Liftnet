@@ -18,9 +18,7 @@ public class PostulanteController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
-     * ==========================
+     * MODO DESARROLLO
      * - Sin JWT
      * - Sin roles
      * - email por request param
@@ -67,9 +65,8 @@ public class PostulanteController {
     }
 
     /*
-    ======================================================
-    🔐 MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-    ======================================================
+    
+    //MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
 
     @PreAuthorize("hasRole('POSTULANTE')")
     @GetMapping
@@ -111,9 +108,7 @@ public class PostulanteController {
     }
     */
 
-    // ==========================
     // MAPPER
-    // ==========================
 
     private PostulanteProfileResponse mapToResponse(PostulanteProfile profile) {
         return new PostulanteProfileResponse(

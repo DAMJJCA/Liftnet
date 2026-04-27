@@ -23,9 +23,7 @@ public class PostulacionController {
     }
 
     /**
-     * ==========================
-     * ✅ MODO DESARROLLO (ACTIVO)
-     * ==========================
+     * ✅ MODO DESARROLLO
      * - Sin JWT
      * - Sin roles
      * - email por request param
@@ -79,9 +77,7 @@ public class PostulacionController {
         return ApiResponse.ok("Estado de postulación actualizado", null);
     }
 
-    // ==========================
     // MAPPERS PRIVADOS
-    // ==========================
 
     private PostulacionResponse mapPostulante(Postulacion p) {
         return new PostulacionResponse(
@@ -104,9 +100,7 @@ public class PostulacionController {
     }
 
     /*
-    ======================================================
     🔐 MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-    ======================================================
 
     @PreAuthorize("hasRole('POSTULANTE')")
     @PostMapping("/oferta/{ofertaId}")

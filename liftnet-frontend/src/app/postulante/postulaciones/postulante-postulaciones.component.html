@@ -1,0 +1,16 @@
+<div class="postulaciones-container">
+
+  <h2>Mis postulaciones</h2>
+
+  <div *ngFor="let p of postulaciones" class="postulacion">
+    <h3>{{ p.tituloOferta }}</h3>
+    <p>
+      Estado:
+      <strong [ngClass]="p.estado.toLowerCase()">
+        {{ p.estado }}
+      </strong>
+    </p>
+    <small>{{ p.createdAt | date:'short' }}</small>
+  </div>
+
+</div>

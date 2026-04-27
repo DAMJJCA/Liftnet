@@ -1,0 +1,52 @@
+<!--
+     Navbar SOLO se muestra si:
+  - El usuario está logueado
+  - El perfil está COMPLETADO
+-->
+<nav
+  class="navbar"
+  *ngIf="
+    tokenStorage.isLoggedIn() &&
+    tokenStorage.isProfileCompleted()
+  "
+>
+  <!-- LOGO -->
+  <div class="navbar-left">
+    <a routerLink="/" class="logo">Liftnet</a>
+  </div>
+
+  <!-- LINKS SEGÚN ROL -->
+  <ul class="navbar-center">
+
+    <!-- POSTULANTE -->
+    <li *ngIf="tokenStorage.getRole() === 'POSTULANTE'">
+      <a routerLink="/ofertas">Ofertas</a>
+    </li>
+
+    <li *ngIf="tokenStorage.getRole() === 'POSTULANTE'">
+      <a routerLink="/postulante/perfil">Mi perfil</a>
+    </li>
+
+    <!-- EMPRESA -->
+    <li *ngIf="tokenStorage.getRole() === 'EMPRESA'">
+      <a routerLink="/ofertas/mis-ofertas">Mis ofertas</a>
+    </li>
+
+    <li *ngIf="tokenStorage.getRole() === 'EMPRESA'">
+      <a routerLink="/empresa/perfil">Perfil empresa</a>
+    </li>
+
+    <!-- ADMIN -->
+    <li *ngIf="tokenStorage.getRole() === 'ADMIN'">
+      <a routerLink="/admin">Admin</a>
+    </li>
+
+  </ul>
+
+  <!-- LOGOUT -->
+  <div class="navbar-right">
+    <button class="logout-btn" (click)="logout()">
+      Cerrar sesión
+    </button>
+  </div>
+</nav>
