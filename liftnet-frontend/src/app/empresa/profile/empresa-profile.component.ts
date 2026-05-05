@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -18,64 +18,91 @@ export class EmpresaProfileComponent implements OnInit {
 
   private empresaService = inject(EmpresaService);
   private tokenStorage = inject(TokenStorageService);
-  private router = inject(Router);
   private uiState = inject(UiStateService);
+  private router = inject(Router);
 
-  profile: EmpresaProfile = {
-    nombreEmpresa: '',
-    ubicacion: '',
-    telefono: '',
-    descripcion: ''
-  };
-
-  loading = true;
-  errorMessage: string | null = null;
-  successMessage: string | null = null;
+  // State
+  profile = signal<EmpresaProfile>({ nombreEmpresa: '', ubicacion: '', telefono: '', descripcion: '' });
+  mode = signal<'view' | 'edit'>('view');
+  loading = signal(false);
+  errorMessage = signal<string | null>(null);
+  successMessage = signal<string | null>(null);
   mandatoryMessage: string | null = null;
+
+  // Calculamos el progreso de la empresa (cada campo vale 25%)
+  progress = computed(() => {
+    const p = this.profile();
+    let score = 0;
+    if (p.nombreEmpresa && p.nombreEmpresa.trim() !== '') score += 25;
+    if (p.ubicacion && p.ubicacion.trim() !== '') score += 25;
+    if (p.telefono && p.telefono.trim() !== '') score += 25;
+    if (p.descripcion && p.descripcion.trim() !== '') score += 25;
+    return score;
+  });
 
   ngOnInit(): void {
     this.mandatoryMessage = this.uiState.getProfileMessage();
     this.uiState.clearProfileMessage();
-    this.loadProfile();
+    this.cargarPerfil();
   }
 
-  loadProfile(): void {
+  cargarPerfil(): void {
+    this.loading.set(true);
     this.empresaService.getProfile().subscribe({
-      next: res => {
-        if (res.data) this.profile = res.data;
-        this.loading = false;
+      next: (res) => {
+        if (res.data) {
+          this.profile.set(res.data);
+          this.mode.set('view');
+        } else {
+          this.mode.set('edit');
+        }
+        this.loading.set(false);
       },
       error: () => {
-        // Perfil aún no existe, dejamos el form vacío
-        this.loading = false;
+        this.mode.set('edit');
+        this.loading.set(false);
       }
     });
   }
 
-  save(): void {
-    this.successMessage = null;
-    this.errorMessage = null;
+  activarEdicion(): void {
+    this.mode.set('edit');
+  }
+
+  cancelarEdicion(): void {
+    this.mode.set('view');
+  }
+
+  saveProfile(): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     const isNew = !this.tokenStorage.isProfileCompleted();
-
     const request$ = isNew
-      ? this.empresaService.createProfile(this.profile)
-      : this.empresaService.updateProfile(this.profile);
+      ? this.empresaService.createProfile(this.profile())
+      : this.empresaService.updateProfile(this.profile());
 
     request$.subscribe({
-      next: () => {
-        // ✅ Marcar perfil como completo
+      next: (res) => {
+        if (res.data) {
+          this.profile.set(res.data);
+        }
+        this.mode.set('view');
         this.tokenStorage.saveProfileCompleted(true);
+        this.successMessage.set('Perfil de empresa actualizado con éxito.');
+
+        setTimeout(() => this.successMessage.set(null), 3000);
 
         if (isNew) {
-          // Primera vez → ir al dashboard
-          this.router.navigate(['/ofertas/mis-ofertas']);
+          this.router.navigate(['/empresa/ofertas']);
         } else {
-          this.successMessage = 'Perfil actualizado correctamente';
+          this.loading.set(false);
         }
       },
       error: () => {
-        this.errorMessage = 'No se pudo guardar el perfil';
+        this.errorMessage.set('Error al guardar el perfil de la empresa.');
+        this.loading.set(false);
       }
     });
   }

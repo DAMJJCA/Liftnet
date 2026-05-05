@@ -1,49 +1,125 @@
 .profile-container {
-  max-width: 520px;
+  max-width: 800px;
   margin: 40px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
+  padding: 0 20px;
 }
 
-h2 {
-  text-align: center;
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  color: #1976d2;
 }
 
+/* Progreso */
+.progress-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border: 1px solid #e0e0e0;
+}
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.progress-bar {
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #2e7d32;
+  transition: width 0.4s ease;
+}
+
+/* Tarjetas (Cards) */
+.card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.card-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  border-radius: 8px 8px 0 0;
+}
+.card-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+.card-body {
+  padding: 20px;
+}
+.card-body p {
+  margin: 8px 0;
+  color: #444;
+}
+
+.empty-state {
+  color: #888;
+  font-style: italic;
+}
+
+/* Formulario */
 .form-group {
-  margin-bottom: 14px;
+  margin-bottom: 15px;
 }
-
-label {
+.form-group label {
   display: block;
-  font-weight: 600;
-  margin-bottom: 6px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
 }
-
-input,
-textarea {
+.form-control {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   box-sizing: border-box;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 16px;
+/* Botones */
+.btn {
+  padding: 10px 15px;
+  border-radius: 4px;
   cursor: pointer;
-}
-
-.success {
-  margin-top: 12px;
-  color: #2e7d32;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
   text-align: center;
 }
-
-.error {
-  margin-top: 12px;
-  color: #c62828;
-  text-align: center;
+.btn.primary {
+  background: #1976d2;
+  color: #fff;
+  border: none;
 }
+.btn.primary:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+.btn.outline {
+  background: transparent;
+  color: #1976d2;
+  border: 1px solid #1976d2;
+}
+.btn.outline:hover {
+  background: #e3f2fd;
+}
+
+/* Alertas */
+.alert { padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; }
+.alert.success { background: #d1e7dd; color: #0f5132; }
+.alert.error { background: #f8d7da; color: #842029; }
+.alert.warning { background: #fff3cd; color: #856404; }

@@ -1,0 +1,66 @@
+<div class="cert-container">
+  <h2 class="page-title">Mis Certificaciones y Títulos</h2>
+  <p class="description">
+    Añade tus certificaciones oficiales. Son obligatorias para poder postularte a las ofertas de empleo.
+  </p>
+
+  <!-- ALERTAS -->
+  <div *ngIf="mensajeExito()" class="alert success">
+    {{ mensajeExito() }}
+  </div>
+  <div *ngIf="mensajeError()" class="alert error">
+    {{ mensajeError() }}
+  </div>
+
+  <!-- FORMULARIO PARA AÑADIR -->
+  <form (ngSubmit)="asignar()" #f="ngForm" class="cert-form">
+
+    <div class="form-group">
+      <label class="form-label">Selecciona el Título</label>
+      <select name="certificacionId" [(ngModel)]="nuevaCert.certificacionId" required class="form-control">
+        <option value="" disabled selected>Elige una certificación...</option>
+        <option value="c4b12658-2943-42e7-9d78-b118749a56c0">Socorrismo Acuático (Cruz Roja)</option>
+        <option value="9fa89487-b089-4fa2-bf42-8703a55eb1a4">Soporte Vital Básico y DESA</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label class="form-label">Fecha Obtención</label>
+        <input type="date" name="fechaObtencion" [(ngModel)]="nuevaCert.fechaObtencion" required class="form-control" />
+      </div>
+      <div class="form-col">
+        <label class="form-label">Fecha Expiración / Reciclaje</label>
+        <input type="date" name="fechaExpiracion" [(ngModel)]="nuevaCert.fechaExpiracion" class="form-control" />
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="f.invalid || enviando()" class="btn-submit">
+      {{ enviando() ? 'Guardando...' : '+ Añadir Certificación' }}
+    </button>
+  </form>
+
+  <!-- ESTADO DE CARGA -->
+  <p *ngIf="loading()" class="loading-text">Cargando tus títulos...</p>
+
+  <!-- LISTA VACÍA -->
+  <div *ngIf="!loading() && certificaciones().length === 0" class="empty-state">
+    No tienes certificaciones registradas.
+  </div>
+
+  <!-- LISTA LLENA -->
+  <div *ngFor="let cert of certificaciones()" class="cert-card">
+    <div>
+      <strong class="cert-title">{{ cert.nombre }}</strong>
+      <span *ngIf="cert.entidad" class="cert-entity"> ({{ cert.entidad }})</span>
+      <div class="cert-dates">
+        <span *ngIf="cert.fechaObtencion">Emitido: {{ cert.fechaObtencion }}</span>
+        <span *ngIf="cert.fechaExpiracion" class="date-spacing">Caduca: {{ cert.fechaExpiracion }}</span>
+      </div>
+    </div>
+
+    <button (click)="eliminar(cert.id)" class="btn-delete">
+      Eliminar
+    </button>
+  </div>
+</div>

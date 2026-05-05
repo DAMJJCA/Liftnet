@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { PostulacionService } from '../../core/services/postulacion.service';
 
 @Component({
+  selector: 'app-empresa-postulaciones',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './empresa-postulaciones.component.html',
@@ -12,9 +13,11 @@ import { PostulacionService } from '../../core/services/postulacion.service';
 })
 export class EmpresaPostulacionesComponent implements OnInit {
 
-  ofertaId!: string;
-  postulaciones: any[] = [];
-  mensaje: string | null = null;
+  // Signals para reactividad instantánea
+  ofertaId = signal<string>('');
+  postulaciones = signal<any[]>([]);
+  mensaje = signal<string | null>(null);
+  loading = signal<boolean>(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -22,23 +25,32 @@ export class EmpresaPostulacionesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ofertaId = this.route.snapshot.paramMap.get('ofertaId')!;
+    const id = this.route.snapshot.paramMap.get('ofertaId')!;
+    this.ofertaId.set(id);
     this.cargar();
   }
 
   cargar(): void {
-    this.postulacionService
-      .getPostulacionesOferta(this.ofertaId)
-      .subscribe(res => {
-        this.postulaciones = res.data.content;
-      });
+    this.loading.set(true);
+    this.postulacionService.getPostulacionesOferta(this.ofertaId()).subscribe({
+      next: (res) => {
+        // Extraemos el array y lo metemos en la Signal
+        const arrayData = res.data?.content || res.content || res.data || [];
+        this.postulaciones.set(arrayData);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando postulaciones:', err);
+        this.loading.set(false);
+      }
+    });
   }
 
   cambiarEstado(id: string, estado: 'ACEPTADA' | 'RECHAZADA'): void {
     this.postulacionService.actualizarEstado(id, estado).subscribe(() => {
-      this.mensaje = `Postulación ${estado.toLowerCase()}`;
+      this.mensaje.set(`¡Candidato ${estado.toLowerCase()} correctamente!`);
       this.cargar();
+      setTimeout(() => this.mensaje.set(null), 4000);
     });
   }
 }
-``

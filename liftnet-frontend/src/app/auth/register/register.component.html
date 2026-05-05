@@ -3,136 +3,42 @@
 
   <form (ngSubmit)="onRegister()" #f="ngForm">
 
-    <!-- EMAIL -->
     <div class="form-group">
       <label>Email</label>
-      <input
-        type="email"
-        name="email"
-        [(ngModel)]="form.email"
-        required
-      />
+      <input type="email" name="email"
+             [(ngModel)]="form.email"
+             required />
     </div>
 
-    <!-- PASSWORD -->
     <div class="form-group">
       <label>Password</label>
-      <input
-        type="password"
-        name="password"
-        [(ngModel)]="form.password"
-        required
-      />
+      <input type="password" name="password"
+             [(ngModel)]="form.password"
+             required />
     </div>
 
-    <!-- TIPO DE CUENTA -->
+    <div class="form-group">
+      <label>Confirmar password</label>
+      <input type="password" name="confirmPassword"
+             [(ngModel)]="form.confirmPassword"
+             required />
+    </div>
+
     <div class="form-group">
       <label>Tipo de cuenta</label>
-      <select
-        name="role"
-        [(ngModel)]="form.role"
-        required
-      >
-        <option value="POSTULANTE">
-          Socorrista / Buscador de empleo
-        </option>
-        <option value="EMPRESA">
-          Empresa
-        </option>
+      <select name="role" [(ngModel)]="form.role" required>
+        <option [ngValue]="undefined">Selecciona una opción</option>
+        <option value="POSTULANTE">Postulante</option>
+        <option value="EMPRESA">Empresa</option>
       </select>
     </div>
 
-    <!-- ========================= -->
-    <!-- FORMULARIO POSTULANTE -->
-    <!-- ========================= -->
-    <div *ngIf="form.role === 'POSTULANTE'" class="role-section">
-
-      <h3>Datos del socorrista</h3>
-
-      <div class="form-group">
-        <label>Nombre</label>
-        <input
-          type="text"
-          name="nombre"
-          [(ngModel)]="form.nombre"
-        />
-      </div>
-
-      <div class="form-group">
-        <label>Apellidos</label>
-        <input
-          type="text"
-          name="apellidos"
-          [(ngModel)]="form.apellidos"
-        />
-      </div>
-
-      <div class="form-group">
-        <label>Bio</label>
-        <textarea
-          name="bio"
-          [(ngModel)]="form.bio"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- ========================= -->
-    <!-- FORMULARIO EMPRESA -->
-    <!-- ========================= -->
-    <div *ngIf="form.role === 'EMPRESA'" class="role-section">
-
-      <h3>Datos de la empresa</h3>
-
-      <div class="form-group">
-        <label>Nombre de la empresa</label>
-        <input
-          type="text"
-          name="nombreEmpresa"
-          [(ngModel)]="form.nombreEmpresa"
-        />
-      </div>
-
-      <div class="form-group">
-        <label>Descripción</label>
-        <textarea
-          name="descripcion"
-          [(ngModel)]="form.descripcion"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- ========================= -->
-    <!-- CAMPOS COMUNES -->
-    <!-- ========================= -->
-    <div class="form-group">
-      <label>Ubicación</label>
-      <input
-        type="text"
-        name="ubicacion"
-        [(ngModel)]="form.ubicacion"
-      />
-    </div>
-
-    <div class="form-group">
-      <label>Teléfono</label>
-      <input
-        type="text"
-        name="telefono"
-        [(ngModel)]="form.telefono"
-      />
-    </div>
-
-    <!-- SUBMIT -->
-    <button
-      type="submit"
-      [disabled]="f.invalid || loading"
-    >
-      {{ loading ? 'Registrando…' : 'Registrarse' }}
+    <button type="submit"
+            [disabled]="f.invalid || loading">
+      {{ loading ? 'Creando cuenta…' : 'Continuar' }}
     </button>
-
   </form>
 
-  <!-- ERROR -->
   <p *ngIf="errorMessage" class="error">
     {{ errorMessage }}
   </p>

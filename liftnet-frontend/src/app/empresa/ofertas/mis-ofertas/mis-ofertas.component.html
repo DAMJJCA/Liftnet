@@ -1,12 +1,17 @@
 <div class="ofertas-container">
   <h2>Mis ofertas</h2>
 
+  <!-- ALERTAS -->
+  <p *ngIf="successMessage()" style="color: green; text-align: center;">{{ successMessage() }}</p>
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+  <p *ngIf="loading()" style="text-align: center; color: #555;">Cargando...</p>
+
   <!-- CREAR OFERTA -->
-  <form (ngSubmit)="crear()" class="form">
+  <form (ngSubmit)="crear()" class="form" #f="ngForm">
     <input
       type="text"
       name="titulo"
-      placeholder="Título"
+      placeholder="Título del puesto"
       [(ngModel)]="nuevaOferta.titulo"
       required
     />
@@ -14,105 +19,65 @@
     <input
       type="text"
       name="ubicacion"
-      placeholder="Ubicación"
+      placeholder="Ubicación (Ej. Madrid, Piscina Municipal)"
       [(ngModel)]="nuevaOferta.ubicacion"
     />
 
     <textarea
       name="descripcion"
-      placeholder="Descripción"
+      placeholder="Descripción de la oferta (Requisitos, horario, sueldo...)"
       [(ngModel)]="nuevaOferta.descripcion"
       rows="4"
     ></textarea>
 
-    <button type="submit">
-      Crear oferta
+    <button type="submit" [disabled]="f.invalid || loading()">
+      Publicar oferta
     </button>
   </form>
 
   <hr />
 
-  <!-- LISTADO DE OFERTAS -->
-  <div *ngFor="let o of ofertas" class="oferta">
+  <!-- LISTADO DE OFERTAS (Notar el () en ofertas()) -->
+  <div *ngFor="let o of ofertas()" class="oferta">
 
-    <!-- ========================= -->
     <!-- MODO EDICIÓN -->
-    <!-- ========================= -->
     <div *ngIf="ofertaEditando && ofertaEditando.id === o.id; else vistaNormal">
-
-      <input
-        [(ngModel)]="ofertaEditando.titulo"
-        name="editTitulo"
-      />
-
-      <input
-        [(ngModel)]="ofertaEditando.ubicacion"
-        name="editUbicacion"
-      />
-
-      <textarea
-        [(ngModel)]="ofertaEditando.descripcion"
-        name="editDescripcion"
-      ></textarea>
+      <input [(ngModel)]="ofertaEditando.titulo" name="editTitulo" />
+      <input [(ngModel)]="ofertaEditando.ubicacion" name="editUbicacion" />
+      <textarea [(ngModel)]="ofertaEditando.descripcion" name="editDescripcion"></textarea>
 
       <div class="acciones">
-        <button (click)="guardarEdicion()">
-          Guardar
-        </button>
-
-        <button
-          type="button"
-          class="secondary"
-          (click)="cancelarEdicion()"
-        >
-          Cancelar
-        </button>
+        <button (click)="guardarEdicion()" [disabled]="loading()">Guardar</button>
+        <button type="button" class="secondary" (click)="cancelarEdicion()">Cancelar</button>
       </div>
     </div>
 
-    <!-- ========================= -->
     <!-- MODO VISUAL -->
-    <!-- ========================= -->
     <ng-template #vistaNormal>
       <h3>{{ o.titulo }}</h3>
       <p>{{ o.descripcion }}</p>
-      <small>{{ o.ubicacion }}</small>
+      <small><strong>Ubicación:</strong> {{ o.ubicacion }}</small>
 
       <div class="acciones">
-
         <!-- EDITAR -->
-        <button (click)="editar(o)">
-          Editar
-        </button>
+        <button (click)="editar(o)" *ngIf="o.activa">Editar</button>
 
         <!-- VER POSTULACIONES -->
-        <a
-          class="link"
-          [routerLink]="[
-            '/empresa/ofertas',
-            o.id,
-            'postulaciones'
-          ]"
-        >
-          Ver postulaciones
+        <a class="link" [routerLink]="['/empresa/ofertas', o.id, 'postulaciones']">
+          <button class="secondary">Ver postulaciones</button>
         </a>
 
         <!-- CERRAR OFERTA -->
-        <button
-          *ngIf="o.activa"
-          class="danger"
-          (click)="cerrar(o.id)"
-        >
-          Cerrar oferta
-        </button>
+        <button *ngIf="o.activa" class="danger" (click)="cerrar(o.id)">Cerrar oferta</button>
 
         <!-- ESTADO CERRADA -->
-        <span *ngIf="!o.activa" class="cerrada">
-          Oferta cerrada
-        </span>
+        <span *ngIf="!o.activa" class="cerrada"> Oferta cerrada</span>
       </div>
     </ng-template>
 
   </div>
+
+  <div *ngIf="!loading() && ofertas().length === 0" style="text-align: center; margin-top: 20px;">
+    <p>Aún no has publicado ninguna oferta de empleo.</p>
+  </div>
 </div>
-``

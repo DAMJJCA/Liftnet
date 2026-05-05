@@ -1,23 +1,96 @@
 .postulaciones-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 40px auto;
+  padding: 0 20px;
 }
 
-.postulacion {
-  border: 1px solid #ccc;
-  padding: 14px;
-  margin-bottom: 12px;
-  border-radius: 5px;
+.loading-text { text-align: center; color: #666; }
+.empty-state { text-align: center; padding: 30px; border: 1px dashed #ccc; border-radius: 8px; color: #666; }
+
+.postulacion-card {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.pendiente {
-  color: #ff9800;
+.card-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
 }
 
-.aceptada {
-  color: #2e7d32;
+.titulo-oferta {
+  margin: 0 0 5px 0;
+  color: #1976d2;
+  font-size: 1.3em;
 }
 
-.rechazada {
-  color: #c62828;
+.nombre-empresa {
+  color: #555;
+  font-weight: bold;
+  font-size: 0.95em;
+}
+
+.info-oferta p {
+  margin: 5px 0;
+  color: #444;
+}
+
+.descripcion {
+  color: #666;
+  font-style: italic;
+  font-size: 0.9em;
+  margin-top: 8px !important;
+}
+
+.estado-seccion {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge-estado {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  margin-left: 5px;
+}
+
+.fecha {
+  color: #888;
+}
+
+/* CAJA MÁGICA DE CONTACTO */
+.contacto-empresa {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f0fdf4;
+  border: 2px dashed #4ade80;
+  border-radius: 8px;
+}
+
+.contacto-empresa h4 {
+  margin: 0 0 10px 0;
+  color: #166534;
+}
+
+.contacto-empresa p {
+  margin: 0 0 10px 0;
+  color: #15803d;
+  font-size: 0.95em;
+}
+
+.contacto-empresa ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contacto-empresa li {
+  color: #333;
+  margin-bottom: 5px;
 }

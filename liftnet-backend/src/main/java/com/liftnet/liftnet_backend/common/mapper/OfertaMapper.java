@@ -10,6 +10,7 @@ public class OfertaMapper {
 
     public static OfertaResponse toResponse(OfertaTrabajo oferta) {
         return new OfertaResponse(
+                oferta.getId(), 
                 oferta.getTitulo(),
                 oferta.getDescripcion(),
                 oferta.getUbicacion(),

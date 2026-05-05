@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -14,10 +14,13 @@ import { TokenStorageService } from '../../core/services/token-storage.service';
 })
 export class NavbarComponent {
 
-  constructor(
-    public authService: AuthService,
-    public tokenStorage: TokenStorageService
-  ) {}
+  private authService = inject(AuthService);
+  private tokenStorage = inject(TokenStorageService);
+
+  // Conectamos los signals directamente a la vista
+  isLoggedIn = this.tokenStorage.isLoggedIn;
+  isProfileCompleted = this.tokenStorage.isProfileCompleted;
+  role = this.tokenStorage.currentRole;
 
   logout(): void {
     this.authService.logout();

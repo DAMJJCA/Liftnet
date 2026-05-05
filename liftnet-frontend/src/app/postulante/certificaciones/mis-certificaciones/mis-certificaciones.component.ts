@@ -1,104 +1,83 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
-import { CertificacionesService } from '../../../core/services/certificaciones.service';
+import { CertificacionesService, CertificacionPostulante } from '../../../core/services/certificaciones.service';
 
 @Component({
   selector: 'app-mis-certificaciones',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <h2>Mis certificaciones</h2>
-
-    <div *ngIf="loading">Cargando certificaciones...</div>
-
-    <div *ngIf="!loading && certificaciones.length === 0">
-      No tienes certificaciones registradas.
-    </div>
-
-    <ul *ngIf="!loading">
-      <li *ngFor="let cert of certificaciones">
-        <strong>{{ cert.nombre }}</strong>
-        <span *ngIf="cert.entidad">({{ cert.entidad }})</span>
-        <br />
-        <small>
-          Obtención: {{ cert.fechaObtencion || '—' }} |
-          Expiración: {{ cert.fechaExpiracion || '—' }}
-        </small>
-        <br />
-        <button (click)="eliminar(cert.id)">
-          Eliminar
-        </button>
-      </li>
-    </ul>
-
-    <div *ngIf="totalPages > 1">
-      <button
-        (click)="cambiarPagina(page - 1)"
-        [disabled]="page === 0"
-      >
-        Anterior
-      </button>
-
-      <span>Página {{ page + 1 }} de {{ totalPages }}</span>
-
-      <button
-        (click)="cambiarPagina(page + 1)"
-        [disabled]="page + 1 >= totalPages"
-      >
-        Siguiente
-      </button>
-    </div>
-  `
+  imports: [CommonModule, FormsModule],
+  templateUrl: './mis-certificaciones.component.html',
+  styleUrls: ['./mis-certificaciones.component.css']
 })
 export class MisCertificacionesComponent implements OnInit {
 
-  certificaciones: any[] = [];
-  loading = false;
+  // Signals
+  certificaciones = signal<CertificacionPostulante[]>([]);
+  loading = signal<boolean>(false);
+  enviando = signal<boolean>(false);
+  mensajeExito = signal<string | null>(null);
+  mensajeError = signal<string | null>(null);
 
-  page = 0;
-  size = 5;
-  totalPages = 0;
+  // Formulario temporal
+  nuevaCert = {
+    certificacionId: '',
+    fechaObtencion: '',
+    fechaExpiracion: ''
+  };
 
-  constructor(
-    private certificacionesService: CertificacionesService
-  ) {}
+  constructor(private certificacionesService: CertificacionesService) {}
 
   ngOnInit(): void {
-    this.cargarCertificaciones();
+    this.cargar();
   }
 
-  cargarCertificaciones(): void {
-    this.loading = true;
+  cargar(): void {
+    this.loading.set(true);
+    this.certificacionesService.getMisCertificaciones(0, 50).subscribe({
+      next: (res) => {
+        const data = res.data?.content || [];
+        this.certificaciones.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      }
+    });
+  }
 
-    this.certificacionesService
-      .getMisCertificaciones(this.page, this.size)
-      .subscribe({
-        next: (response) => {
-          this.certificaciones = response.data.content;
-          this.totalPages = response.data.totalPages;
-          this.loading = false;
-        },
-        error: () => {
-          this.loading = false;
+  asignar(): void {
+    this.enviando.set(true);
+    this.mensajeError.set(null);
+    this.mensajeExito.set(null);
+
+    this.certificacionesService.asignarCertificacion(this.nuevaCert).subscribe({
+      next: () => {
+        this.mensajeExito.set('Certificación añadida a tu perfil.');
+        this.enviando.set(false);
+        this.nuevaCert = { certificacionId: '', fechaObtencion: '', fechaExpiracion: '' }; // Limpiar
+        this.cargar();
+        setTimeout(() => this.mensajeExito.set(null), 3000);
+      },
+      error: (err) => {
+        this.enviando.set(false);
+        if (err.error?.message?.includes('posee')) {
+          this.mensajeError.set('Ya tienes esta certificación registrada.');
+        } else {
+          this.mensajeError.set('Error al añadir la certificación.');
         }
-      });
-  }
-
-  cambiarPagina(nuevaPagina: number): void {
-    this.page = nuevaPagina;
-    this.cargarCertificaciones();
+        setTimeout(() => this.mensajeError.set(null), 4000);
+      }
+    });
   }
 
   eliminar(id: string): void {
-    const confirmado = confirm('¿Eliminar esta certificación?');
-    if (!confirmado) {
-      return;
-    }
+    if (!confirm('¿Seguro que deseas eliminar este título de tu perfil?')) return;
 
     this.certificacionesService.eliminarCertificacion(id).subscribe({
       next: () => {
-        this.cargarCertificaciones();
+        this.cargar();
       }
     });
   }

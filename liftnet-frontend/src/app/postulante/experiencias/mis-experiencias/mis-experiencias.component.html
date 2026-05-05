@@ -1,0 +1,64 @@
+<div class="exp-container">
+  <h2 class="page-title">Mi Experiencia Laboral</h2>
+  <p class="description">
+    Añade tus trabajos anteriores para que las empresas conozcan tu trayectoria profesional.
+  </p>
+
+  <!-- ALERTAS -->
+  <div *ngIf="mensajeExito()" class="alert success">{{ mensajeExito() }}</div>
+  <div *ngIf="mensajeError()" class="alert error">{{ mensajeError() }}</div>
+
+  <!-- FORMULARIO PARA AÑADIR EXPERIENCIA -->
+  <form (ngSubmit)="guardar()" #f="ngForm" class="exp-form">
+
+    <div class="form-group">
+      <label class="form-label">Lugar de trabajo / Empresa</label>
+      <input type="text" name="lugar" [(ngModel)]="nuevaExp.lugar" required class="form-control" placeholder="Ej: Piscina Municipal de Madrid" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Descripción de tus tareas</label>
+      <textarea name="descripcion" [(ngModel)]="nuevaExp.descripcion" class="form-control" rows="3" placeholder="Ej: Vigilancia de bañistas, mantenimiento, primeros auxilios..."></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label class="form-label">Fecha de Inicio</label>
+        <input type="date" name="fechaInicio" [(ngModel)]="nuevaExp.fechaInicio" required class="form-control" />
+      </div>
+      <div class="form-col">
+        <label class="form-label">Fecha de Fin (Opcional)</label>
+        <input type="date" name="fechaFin" [(ngModel)]="nuevaExp.fechaFin" class="form-control" />
+        <small style="color: #666; font-size: 0.8em; margin-top: 5px; display: block;">Déjalo vacío si es tu trabajo actual</small>
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="f.invalid || enviando()" class="btn-submit">
+      {{ enviando() ? 'Guardando...' : '+ Añadir Experiencia' }}
+    </button>
+  </form>
+
+  <!-- ESTADO DE CARGA -->
+  <p *ngIf="loading()" class="loading-text">Cargando experiencias...</p>
+
+  <!-- LISTA VACÍA -->
+  <div *ngIf="!loading() && experiencias().length === 0" class="empty-state">
+    Aún no has registrado ninguna experiencia laboral.
+  </div>
+
+  <!-- LISTA LLENA -->
+  <div *ngFor="let exp of experiencias()" class="exp-card">
+    <div class="exp-content">
+      <strong class="exp-title">{{ exp.lugar }}</strong>
+      <p class="exp-desc">{{ exp.descripcion }}</p>
+
+      <div class="exp-dates">
+        <span *ngIf="exp.fechaInicio">Desde: {{ exp.fechaInicio }}</span>
+        <span *ngIf="exp.fechaFin" class="date-spacing">Hasta: {{ exp.fechaFin }}</span>
+        <span *ngIf="exp.fechaInicio && !exp.fechaFin" class="date-spacing current-job">Actualidad</span>
+      </div>
+    </div>
+
+    <button (click)="eliminar(exp.id)" class="btn-delete">Eliminar</button>
+  </div>
+</div>

@@ -29,7 +29,7 @@ export class LoginComponent {
 
     this.authService.login(this.credentials).subscribe({
       next: () => {
-        // ✅ La navegación la hace AuthService
+        // La navegación la hace AuthService
         this.loading = false;
       },
       error: () => {

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OfertaService, Oferta } from '../../../core/services/oferta.service';
 import { RouterModule } from '@angular/router';
+
+import { Oferta } from '../../../core/services/oferta.service';
+import { EmpresaOfertasStore } from '../../../core/stores/empresa-ofertas.store';
 
 @Component({
   selector: 'app-mis-ofertas',
@@ -13,33 +15,27 @@ import { RouterModule } from '@angular/router';
 })
 export class MisOfertasComponent implements OnInit {
 
-  ofertas: Oferta[] = [];
+  // Conectamos con el Store
+  private store = inject(EmpresaOfertasStore);
 
-  nuevaOferta = {
-    titulo: '',
-    descripcion: '',
-    ubicacion: ''
-  };
+  // Signals expuestos a la vista
+  ofertas = this.store.ofertas;
+  loading = this.store.loading;
+  error = this.store.error;
+  successMessage = this.store.successMessage;
 
+  // Estado local para los formularios
+  nuevaOferta = { titulo: '', descripcion: '', ubicacion: '' };
   ofertaEditando: Oferta | null = null;
 
-  constructor(private ofertaService: OfertaService) {}
-
   ngOnInit(): void {
-    this.cargar();
-  }
-
-  cargar(): void {
-    this.ofertaService.getMisOfertas().subscribe(res => {
-      this.ofertas = res.content;
-    });
+    this.store.cargarOfertas();
   }
 
   crear(): void {
-    this.ofertaService.crearOferta(this.nuevaOferta).subscribe(() => {
-      this.nuevaOferta = { titulo: '', descripcion: '', ubicacion: '' };
-      this.cargar();
-    });
+    this.store.crearOferta(this.nuevaOferta);
+    // Limpiamos el formulario local
+    this.nuevaOferta = { titulo: '', descripcion: '', ubicacion: '' };
   }
 
   editar(oferta: Oferta): void {
@@ -53,21 +49,15 @@ export class MisOfertasComponent implements OnInit {
   guardarEdicion(): void {
     if (!this.ofertaEditando) return;
 
-    this.ofertaService
-      .editarOferta(this.ofertaEditando.id, {
-        titulo: this.ofertaEditando.titulo,
-        descripcion: this.ofertaEditando.descripcion,
-        ubicacion: this.ofertaEditando.ubicacion
-      })
-      .subscribe(() => {
-        this.ofertaEditando = null;
-        this.cargar();
-      });
+    this.store.editarOferta(this.ofertaEditando.id, {
+      titulo: this.ofertaEditando.titulo,
+      descripcion: this.ofertaEditando.descripcion,
+      ubicacion: this.ofertaEditando.ubicacion
+    });
+    this.ofertaEditando = null;
   }
 
   cerrar(ofertaId: string): void {
-    this.ofertaService.cerrarOferta(ofertaId).subscribe(() => {
-      this.cargar();
-    });
+    this.store.cerrarOferta(ofertaId);
   }
 }

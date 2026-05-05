@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
-import {
-  AuthService,
-  RegisterRequest
-} from '../../core/services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -16,48 +14,47 @@ import {
 })
 export class RegisterComponent {
 
-  /**
-   * Formulario único de registro.
-   * Contiene credenciales + datos de perfil
-   * El backend decide qué perfil crear según el role.
-   */
-  form: RegisterRequest = {
+  form = {
     email: '',
     password: '',
-    role: 'POSTULANTE',
-
-    // Campos POSTULANTE
-    nombre: '',
-    apellidos: '',
-    bio: '',
-
-    // Campos EMPRESA
-    nombreEmpresa: '',
-    descripcion: '',
-
-    // Campos COMUNES
-    ubicacion: '',
-    telefono: ''
+    confirmPassword: '',
+    role: undefined as 'POSTULANTE' | 'EMPRESA' | undefined
   };
 
   loading = false;
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  /**
-   * Envío del registro.
-   * ✅ Una sola llamada
-   * ✅ El backend crea User + Perfil correcto
-   */
   onRegister(): void {
-    this.loading = true;
     this.errorMessage = null;
 
-    this.authService.register(this.form).subscribe({
+    if (this.form.password !== this.form.confirmPassword) {
+      this.errorMessage = 'Las contraseñas no coinciden';
+      return;
+    }
+
+    if (!this.form.role) {
+      this.errorMessage = 'Selecciona el tipo de cuenta';
+      return;
+    }
+
+    this.loading = true;
+
+    this.authService.register({
+      email: this.form.email,
+      password: this.form.password,
+      role: this.form.role
+    }).subscribe({
       next: () => {
-        // La redirección se gestiona en AuthService.handleAuthSuccess
-        this.loading = false;
+        if (this.form.role === 'POSTULANTE') {
+          this.router.navigate(['/postulante/perfil']);
+        } else {
+          this.router.navigate(['/empresa/perfil']);
+        }
       },
       error: () => {
         this.errorMessage = 'No se pudo completar el registro';

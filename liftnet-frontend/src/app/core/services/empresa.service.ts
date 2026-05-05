@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
-import { TokenStorageService } from './token-storage.service';
 
 export interface EmpresaProfile {
   nombreEmpresa: string;
@@ -20,44 +19,18 @@ export class EmpresaService {
 
   private readonly apiUrl = `${environment.apiUrl}/empresa/profile`;
 
-  constructor(
-    private http: HttpClient,
-    private tokenStorage: TokenStorageService
-  ) {}
+  // ¡Mira qué limpio! Ya no inyectamos TokenStorageService
+  constructor(private http: HttpClient) {}
 
-  // ==========================
-  // READ – VER PERFIL
-  // ==========================
   getProfile(): Observable<ApiResponse<EmpresaProfile>> {
-    const email = this.tokenStorage.getEmail();
-    return this.http.get<ApiResponse<EmpresaProfile>>(
-      `${this.apiUrl}?email=${email}`
-    );
+    return this.http.get<ApiResponse<EmpresaProfile>>(this.apiUrl);
   }
 
-  // ==========================
-  // CREATE – CREAR PERFIL (solo DEV/manual)
-  // ==========================
-  createProfile(
-    data: EmpresaProfile
-  ): Observable<ApiResponse<EmpresaProfile>> {
-    const email = this.tokenStorage.getEmail();
-    return this.http.post<ApiResponse<EmpresaProfile>>(
-      `${this.apiUrl}?email=${email}`,
-      data
-    );
+  createProfile(data: EmpresaProfile): Observable<ApiResponse<EmpresaProfile>> {
+    return this.http.post<ApiResponse<EmpresaProfile>>(this.apiUrl, data);
   }
 
-  // ==========================
-  // UPDATE – EDITAR PERFIL
-  // ==========================
-  updateProfile(
-    data: EmpresaProfile
-  ): Observable<ApiResponse<EmpresaProfile>> {
-    const email = this.tokenStorage.getEmail();
-    return this.http.put<ApiResponse<EmpresaProfile>>(
-      `${this.apiUrl}?email=${email}`,
-      data
-    );
+  updateProfile(data: EmpresaProfile): Observable<ApiResponse<EmpresaProfile>> {
+    return this.http.put<ApiResponse<EmpresaProfile>>(this.apiUrl, data);
   }
 }

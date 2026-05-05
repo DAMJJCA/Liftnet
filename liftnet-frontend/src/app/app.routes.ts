@@ -5,10 +5,13 @@ import { profileGuard } from './core/guards/profile.guard';
 
 export const routes: Routes = [
 
-  // =========================
-  // PÚBLICAS
-  // =========================
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // PÚBLICO
+  {
+    path: '',
+    loadComponent: () =>
+      import('./home/home.component')
+        .then(m => m.HomeComponent)
+  },
 
   {
     path: 'login',
@@ -23,24 +26,19 @@ export const routes: Routes = [
         .then(m => m.RegisterComponent),
   },
 
-  // =========================
   // POSTULANTE
-  // =========================
   {
     path: 'postulante',
     canActivate: [authGuard, roleGuard],
     data: { roles: ['POSTULANTE'] },
     children: [
 
-      // PERFIL (sin profileGuard)
       {
         path: 'perfil',
         loadComponent: () =>
           import('./postulante/profile/postulante-profile.component')
             .then(m => m.PostulanteProfileComponent),
       },
-
-      // POSTULACIONES
       {
         path: 'postulaciones',
         canActivate: [profileGuard],
@@ -48,8 +46,6 @@ export const routes: Routes = [
           import('./postulante/postulaciones/postulante-postulaciones.component')
             .then(m => m.PostulacionesComponent),
       },
-
-      // EXPERIENCIAS
       {
         path: 'experiencias',
         canActivate: [profileGuard],
@@ -57,8 +53,6 @@ export const routes: Routes = [
           import('./postulante/experiencias/mis-experiencias/mis-experiencias.component')
             .then(m => m.MisExperienciasComponent),
       },
-
-      // CERTIFICACIONES
       {
         path: 'certificaciones',
         canActivate: [profileGuard],
@@ -69,24 +63,19 @@ export const routes: Routes = [
     ],
   },
 
-  // =========================
   // EMPRESA
-  // =========================
   {
     path: 'empresa',
     canActivate: [authGuard, roleGuard],
     data: { roles: ['EMPRESA'] },
     children: [
 
-      // PERFIL (sin profileGuard)
       {
         path: 'perfil',
         loadComponent: () =>
           import('./empresa/profile/empresa-profile.component')
             .then(m => m.EmpresaProfileComponent),
       },
-
-      // OFERTAS
       {
         path: 'ofertas',
         canActivate: [profileGuard],
@@ -114,9 +103,7 @@ export const routes: Routes = [
     ],
   },
 
-  // =========================
   // ADMIN
-  // =========================
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
@@ -126,8 +113,6 @@ export const routes: Routes = [
         .then(m => m.AdminComponent),
   },
 
-  // =========================
   // FALLBACK
-  // =========================
   { path: '**', redirectTo: 'login' },
 ];

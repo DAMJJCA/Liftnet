@@ -2,15 +2,52 @@
 
   <h2>Mis postulaciones</h2>
 
-  <div *ngFor="let p of postulaciones" class="postulacion">
-    <h3>{{ p.tituloOferta }}</h3>
-    <p>
-      Estado:
-      <strong [ngClass]="p.estado.toLowerCase()">
-        {{ p.estado }}
-      </strong>
-    </p>
-    <small>{{ p.createdAt | date:'short' }}</small>
+  <!-- LOADING STATE -->
+  <p *ngIf="loading()" class="loading-text">Cargando tus postulaciones...</p>
+
+  <!-- EMPTY STATE -->
+  <div *ngIf="!loading() && postulaciones().length === 0" class="empty-state">
+    Aún no te has postulado a ninguna oferta. ¡Ve a la página principal para buscar trabajo!
+  </div>
+
+  <!-- LIST OF APPLICATIONS -->
+  <div *ngFor="let p of postulaciones()" class="postulacion-card">
+
+    <!-- Cabecera: Título y Empresa -->
+    <div class="card-header">
+      <h3 class="titulo-oferta">{{ p.tituloOferta }}</h3>
+      <span class="nombre-empresa" *ngIf="p.nombreEmpresa">{{ p.nombreEmpresa }}</span>
+    </div>
+
+    <!-- Información de la Oferta -->
+    <div class="info-oferta">
+      <p *ngIf="p.ubicacionOferta"><strong>Ubicación:</strong> {{ p.ubicacionOferta }}</p>
+      <p *ngIf="p.descripcionOferta" class="descripcion">{{ p.descripcionOferta }}</p>
+    </div>
+
+    <!-- Estado y Fecha -->
+    <div class="estado-seccion">
+      <p>
+        Estado:
+        <strong [ngClass]="p.estado ? p.estado.toLowerCase() : ''" class="badge-estado"
+          [style.background]="p.estado === 'PENDIENTE' ? '#fff3cd' : (p.estado === 'ACEPTADA' ? '#d1e7dd' : '#f8d7da')"
+          [style.color]="p.estado === 'PENDIENTE' ? '#856404' : (p.estado === 'ACEPTADA' ? '#0f5132' : '#842029')">
+          {{ p.estado }}
+        </strong>
+      </p>
+      <small class="fecha">Te postulaste el: {{ p.createdAt | date:'short' }}</small>
+    </div>
+
+    <!-- SECCIÓN DE CONTACTO (¡SOLO VISIBLE SI FUE ACEPTADA!) -->
+    <div *ngIf="p.estado === 'ACEPTADA'" class="contacto-empresa">
+      <h4> ¡Felicidades! La empresa ha aceptado tu perfil.</h4>
+      <p>Ponte en contacto con ellos para continuar con el proceso:</p>
+      <ul>
+        <li><strong>Teléfono:</strong> {{ p.telefonoEmpresa || 'No especificado' }}</li>
+        <li><strong>Email:</strong> {{ p.emailEmpresa || 'No especificado' }}</li>
+      </ul>
+    </div>
+
   </div>
 
 </div>

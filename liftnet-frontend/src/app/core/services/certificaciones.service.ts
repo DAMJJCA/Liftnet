@@ -5,8 +5,6 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 
-//   MODELOS
-
 export interface CertificacionPostulante {
   id: string;
   certificacionId: string;
@@ -16,7 +14,6 @@ export interface CertificacionPostulante {
   fechaExpiracion: string | null;
 }
 
-// Respuesta paginada de Spring Data REST
 export interface PageResponse<T> {
   content: T[];
   totalPages: number;
@@ -25,51 +22,34 @@ export interface PageResponse<T> {
   number: number;
 }
 
-//   SERVICIO de certificaciones
 @Injectable({
   providedIn: 'root'
 })
 export class CertificacionesService {
 
-  private readonly apiUrl =
-    `${environment.apiUrl}/certificaciones`;
+  private readonly apiUrl = `${environment.apiUrl}/certificaciones`;
 
   constructor(private http: HttpClient) {}
 
-  //  Mis certificaciones ya esta paginada, no hace falta un endpoint aparte para eso
-  getMisCertificaciones(
-    page: number,
-    size: number
-  ): Observable<ApiResponse<PageResponse<CertificacionPostulante>>> {
-
-    const params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
-
+  getMisCertificaciones(page = 0, size = 10): Observable<ApiResponse<PageResponse<CertificacionPostulante>>> {
+    const params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<ApiResponse<PageResponse<CertificacionPostulante>>>(
       `${this.apiUrl}/mis-certificaciones`,
       { params }
     );
   }
 
-  //  Asignar certificación a postulante
+  // ⚠️ CORRECCIÓN AQUÍ: Para pruebas vamos a enviar un UUID fijo (simulando que eligió de un catálogo)
+  // En la vida real, sacarías la lista de certificaciones de otro endpoint GET /certificaciones
   asignarCertificacion(body: {
-    certificacionId: string;
+    certificacionId: string; // <-- OBLIGATORIO UUID
     fechaObtencion?: string;
     fechaExpiracion?: string;
   }): Observable<ApiResponse<void>> {
-
-    return this.http.post<ApiResponse<void>>(
-      `${this.apiUrl}/asignar`,
-      body
-    );
+    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/asignar`, body);
   }
 
-  //  Eliminar certificación a postulante
   eliminarCertificacion(id: string): Observable<ApiResponse<void>> {
-
-    return this.http.delete<ApiResponse<void>>(
-      `${this.apiUrl}/${id}`
-    );
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
   }
 }

@@ -3,6 +3,8 @@ package com.liftnet.liftnet_backend.postulacion.entity;
 import com.liftnet.liftnet_backend.oferta.entity.OfertaTrabajo;
 import com.liftnet.liftnet_backend.postulante.entity.PostulanteProfile;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -30,9 +32,12 @@ public class Postulacion {
     private PostulanteProfile postulante;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition = "estado_postulacion")
     private EstadoPostulacion estado = EstadoPostulacion.PENDIENTE;
 
     private Instant createdAt = Instant.now();
+
 
     public UUID getId() {
         return id;

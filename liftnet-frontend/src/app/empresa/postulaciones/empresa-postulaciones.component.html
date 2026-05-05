@@ -2,31 +2,41 @@
 
   <h2>Postulaciones a la oferta</h2>
 
-  <p *ngIf="mensaje" class="info">
-    {{ mensaje }}
+  <!-- MENSAJES DE ESTADO -->
+  <p *ngIf="mensaje()" style="background: #d1e7dd; color: #0f5132; padding: 10px; border-radius: 4px; text-align: center;">
+    {{ mensaje() }}
   </p>
 
-  <div *ngFor="let p of postulaciones" class="postulacion">
+  <p *ngIf="loading()" style="text-align: center; color: #666;">Cargando candidatos...</p>
 
-    <h3>{{ p.nombrePostulante }} {{ p.apellidosPostulante }}</h3>
+  <!-- SI NO HAY POSTULACIONES -->
+  <div *ngIf="!loading() && postulaciones().length === 0" style="text-align: center; padding: 30px; border: 1px dashed #ccc; border-radius: 8px; color: #666;">
+    Aún no hay candidatos para esta oferta.
+  </div>
+
+  <!-- LISTA DE POSTULACIONES -->
+  <div *ngFor="let p of postulaciones()" class="postulacion" style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+
+    <h3 style="margin-top: 0; color: #1976d2;">{{ p.nombrePostulante }} {{ p.apellidosPostulante }}</h3>
 
     <p>
       Estado:
-      <strong [ngClass]="p.estado.toLowerCase()">
+      <strong [ngClass]="p.estado?.toLowerCase()" style="padding: 3px 8px; border-radius: 3px;"
+        [style.background]="p.estado === 'PENDIENTE' ? '#fff3cd' : (p.estado === 'ACEPTADA' ? '#d1e7dd' : '#f8d7da')"
+        [style.color]="p.estado === 'PENDIENTE' ? '#856404' : (p.estado === 'ACEPTADA' ? '#0f5132' : '#842029')">
         {{ p.estado }}
       </strong>
     </p>
 
-    <small>{{ p.createdAt | date:'short' }}</small>
+    <small style="color: #888;">Aplicó el: {{ p.createdAt | date:'short' }}</small>
 
-    <div class="acciones" *ngIf="p.estado === 'PENDIENTE'">
-      <button class="aceptar"
-              (click)="cambiarEstado(p.postulacionId, 'ACEPTADA')">
-        Aceptar
+    <!-- BOTONES DE ACCIÓN (Solo se ven si está PENDIENTE) -->
+    <div class="acciones" *ngIf="p.estado === 'PENDIENTE'" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+      <button class="aceptar" (click)="cambiarEstado(p.postulacionId, 'ACEPTADA')" style="background: #2e7d32; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+        Aceptar candidato
       </button>
 
-      <button class="rechazar"
-              (click)="cambiarEstado(p.postulacionId, 'RECHAZADA')">
+      <button class="rechazar" (click)="cambiarEstado(p.postulacionId, 'RECHAZADA')" style="background: #c62828; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
         Rechazar
       </button>
     </div>

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment.development';
-import { TokenStorageService } from './token-storage.service';
 
 export interface Oferta {
   id: string;
@@ -21,73 +20,38 @@ export class OfertaService {
 
   private readonly apiUrl = `${environment.apiUrl}/ofertas`;
 
-  constructor(
-    private http: HttpClient,
-    private tokenStorage: TokenStorageService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   // ==========================
   // EMPRESA
   // ==========================
 
   getMisOfertas(page = 0, size = 10): Observable<any> {
-    const email = this.tokenStorage.getEmail();
-    return this.http.get(
-      `${this.apiUrl}/mis-ofertas?email=${email}&page=${page}&size=${size}`
-    );
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get(`${this.apiUrl}/mis-ofertas`, { params });
   }
 
-  crearOferta(oferta: {
-    titulo: string;
-    descripcion: string;
-    ubicacion: string;
-  }): Observable<any> {
-    const email = this.tokenStorage.getEmail();
-    return this.http.post(
-      `${this.apiUrl}?email=${email}`,
-      oferta
-    );
+  crearOferta(oferta: { titulo: string; descripcion: string; ubicacion: string; }): Observable<any> {
+    return this.http.post(this.apiUrl, oferta);
   }
 
-  editarOferta(
-    ofertaId: string,
-    oferta: {
-      titulo: string;
-      descripcion: string;
-      ubicacion: string;
-    }
-  ): Observable<any> {
-    const email = this.tokenStorage.getEmail();
-    return this.http.put(
-      `${this.apiUrl}/${ofertaId}?email=${email}`,
-      oferta
-    );
+  editarOferta(ofertaId: string, oferta: { titulo: string; descripcion: string; ubicacion: string; }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${ofertaId}`, oferta);
   }
 
   cerrarOferta(ofertaId: string): Observable<any> {
-    const email = this.tokenStorage.getEmail();
-    return this.http.put(
-      `${this.apiUrl}/${ofertaId}/cerrar?email=${email}`,
-      {}
-    );
+    return this.http.put(`${this.apiUrl}/${ofertaId}/cerrar`, {});
   }
 
   // ==========================
   // POSTULANTE
   // ==========================
 
-  getOfertasActivas(
-    ubicacion?: string,
-    page = 0,
-    size = 10
-  ): Observable<any> {
-    const params = new URLSearchParams();
-    if (ubicacion) params.append('ubicacion', ubicacion);
-    params.append('page', page.toString());
-    params.append('size', size.toString());
-
-    return this.http.get(
-      `${this.apiUrl}?${params.toString()}`
-    );
+  getOfertasActivas(ubicacion?: string, page = 0, size = 10): Observable<any> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (ubicacion) {
+      params = params.set('ubicacion', ubicacion);
+    }
+    return this.http.get(this.apiUrl, { params });
   }
 }

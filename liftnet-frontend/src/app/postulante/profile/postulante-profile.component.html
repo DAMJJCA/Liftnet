@@ -1,64 +1,135 @@
-<div class="profile-container" *ngIf="!loading(); else loadingTpl">
+<div class="profile-container" *ngIf="!store.loading(); else loadingTpl">
 
-  <h1>Tu perfil profesional</h1>
-
-  <!-- MENSAJE DE BLOQUEO -->
-  <div class="alert warning" *ngIf="mandatoryMessage">
-    {{ mandatoryMessage }}
+  <div class="profile-header">
+    <h1>Tu currículum profesional</h1>
+    <!-- El botón de editar solo aparece cuando estás viendo el perfil -->
+    <button *ngIf="store.mode() === 'view'" (click)="activarEdicion()" class="btn outline">Editar datos básicos</button>
   </div>
 
-  <!-- PROGRESO -->
+  <div class="alert success" *ngIf="store.successMessage()">{{ store.successMessage() }}</div>
+  <div class="alert error" *ngIf="store.errorMessage()">{{ store.errorMessage() }}</div>
+
+  <!-- BARRA DE PROGRESO GLOBAL -->
   <div class="progress-box">
     <div class="progress-header">
       <span>Perfil completado</span>
-      <strong>{{ progress() }}%</strong>
+      <strong>{{ store.progress() }}%</strong>
     </div>
     <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="progress()"></div>
+      <div class="progress-fill" [style.width.%]="store.progress()"></div>
     </div>
+    <small *ngIf="store.progress() < 100" style="color: #666; display: block; margin-top: 5px;">
+      Completa todas las secciones para tener un perfil atractivo. Las certificaciones son obligatorias para postular.
+    </small>
   </div>
 
-  <!-- CHECKLIST (CORE LINKEDIN) -->
-  <div class="checklist">
-    <div class="check-item" [class.done]="sections().basicInfo">
-      ✔ Datos básicos
+  <!-- ============================================== -->
+  <!-- MODO 1: VISUALIZAR PERFIL CLÁSICO (Por Defecto) -->
+  <!-- ============================================== -->
+  <div *ngIf="store.mode() === 'view'">
+
+    <!-- TARJETA: DATOS BÁSICOS -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Datos Personales</h2>
+      </div>
+      <div class="card-body">
+        <div *ngIf="!store.profile().nombre" class="empty-state">
+          Aún no has completado tus datos personales. Haz clic en "Editar datos básicos" arriba.
+        </div>
+        <div *ngIf="store.profile().nombre">
+          <p><strong>Nombre completo:</strong> {{ store.profile().nombre }} {{ store.profile().apellidos }}</p>
+          <p><strong>Ubicación:</strong> {{ store.profile().ubicacion }}</p>
+          <p><strong>Teléfono:</strong> {{ store.profile().telefono }}</p>
+          <p><strong>Sobre mí:</strong> {{ store.profile().bio || 'No has añadido una descripción.' }}</p>
+        </div>
+      </div>
     </div>
-    <div class="check-item" [class.done]="sections().experiences">
-      ✔ Experiencias
+
+    <!-- TARJETA: EXPERIENCIAS -->
+    <div class="card">
+      <div class="card-header">
+        <h2> Experiencia Laboral</h2>
+        <a routerLink="/postulante/experiencias" class="btn small outline">Gestionar experiencias</a>
+      </div>
+      <div class="card-body">
+        <div *ngIf="store.profile().experiencias.length === 0" class="empty-state">No has añadido experiencia.</div>
+        <ul class="item-list">
+          <li *ngFor="let exp of store.profile().experiencias">
+            <strong>{{ exp.lugar }}</strong>
+            <p style="margin: 3px 0; color: #555;">{{ exp.descripcion }}</p>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="check-item" [class.done]="sections().certifications">
-      ✔ Certificaciones (obligatorio para postular)
+
+    <!-- TARJETA: CERTIFICACIONES -->
+    <div class="card">
+      <div class="card-header">
+        <h2> Certificaciones y Títulos</h2>
+        <a routerLink="/postulante/certificaciones" class="btn small outline">Gestionar títulos</a>
+      </div>
+      <div class="card-body">
+        <div *ngIf="store.profile().certificaciones.length === 0" class="empty-state" style="color: #c62828;">
+           Obligatorio: Debes añadir al menos un título para poder postular a ofertas.
+        </div>
+        <ul class="item-list">
+          <li *ngFor="let cert of store.profile().certificaciones">
+            <strong>{{ cert.nombre }}</strong> <span *ngIf="cert.entidad">({{ cert.entidad }})</span>
+          </li>
+        </ul>
+      </div>
     </div>
+
   </div>
 
-  <!-- BLOQUEO REALISTA -->
-  <div class="alert info" *ngIf="!canApply()">
-    Para poder postularte a ofertas necesitas añadir al menos una certificación.
-  </div>
+  <!-- MODO 2: EDITAR DATOS BÁSICOS (Solo al hacer clic) -->
+  <div *ngIf="store.mode() === 'edit'" class="card">
+    <div class="card-header" style="background: #e3f2fd;">
+      <h2>Modificar Datos Básicos</h2>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
 
-  <!-- FORMULARIO (EL TUYO EXISTENTE) -->
-  <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" name="nombre" [(ngModel)]="store.profile().nombre" required class="form-control" />
+        </div>
 
-    <!-- AQUÍ VA TU FORMULARIO REAL -->
-    <!-- No lo toco para no romper nada -->
+        <div class="form-group">
+          <label>Apellidos</label>
+          <input type="text" name="apellidos" [(ngModel)]="store.profile().apellidos" required class="form-control" />
+        </div>
 
-    <button type="submit" class="btn primary">
-      Guardar perfil
-    </button>
-  </form>
+        <div class="form-group">
+          <label>Ubicación</label>
+          <input type="text" name="ubicacion" [(ngModel)]="store.profile().ubicacion" required class="form-control" placeholder="Ej: Madrid" />
+        </div>
 
-  <!-- MENSAJES -->
-  <div class="alert error" *ngIf="errorMessage()">
-    {{ errorMessage() }}
-  </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" name="telefono" [(ngModel)]="store.profile().telefono" required class="form-control" />
+        </div>
 
-  <div class="alert success" *ngIf="successMessage()">
-    {{ successMessage() }}
+        <div class="form-group">
+          <label>Biografía / Sobre mí</label>
+          <textarea name="bio" [(ngModel)]="store.profile().bio" rows="4" class="form-control" placeholder="Escribe un breve resumen profesional..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="submit" class="btn primary" [disabled]="profileForm.invalid || store.loading()" style="flex: 1;">
+            {{ store.loading() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+          <button type="button" class="btn outline" (click)="cancelarEdicion()" style="flex: 1;">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
 </div>
 
 <ng-template #loadingTpl>
-  <p>Cargando perfil…</p>
+  <p style="text-align: center; margin-top: 50px; color: #666;">Cargando tu currículum...</p>
 </ng-template>
-``

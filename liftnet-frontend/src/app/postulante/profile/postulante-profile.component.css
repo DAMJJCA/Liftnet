@@ -1,76 +1,142 @@
 .profile-container {
-  max-width: 700px;
-  margin: auto;
-  padding: 1.5rem;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
-h1 {
-  margin-bottom: 1rem;
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #1976d2;
 }
 
+/* Progreso */
 .progress-box {
-  margin-bottom: 1rem;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border: 1px solid #e0e0e0;
 }
-
 .progress-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.3rem;
+  margin-bottom: 8px;
 }
-
 .progress-bar {
-  height: 8px;
-  background: #eee;
-  border-radius: 4px;
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
 }
-
 .progress-fill {
   height: 100%;
-  background: #0a66c2;
-  border-radius: 4px;
+  background: #2e7d32;
+  transition: width 0.4s ease;
 }
 
-.checklist {
-  margin: 1rem 0;
+/* Tarjetas (Cards) */
+.card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.card-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  border-radius: 8px 8px 0 0;
+}
+.card-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+.card-body {
+  padding: 20px;
+}
+.card-body p {
+  margin: 8px 0;
+  color: #444;
 }
 
-.check-item {
+/* Listas */
+.item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.item-list li {
+  padding: 10px 0;
+  border-bottom: 1px dashed #eee;
+}
+.item-list li:last-child {
+  border-bottom: none;
+}
+.empty-state {
   color: #888;
-  margin-bottom: 0.3rem;
+  font-style: italic;
 }
 
-.check-item.done {
-  color: #0a8f3d;
-  font-weight: 600;
+/* Formulario */
+.form-group {
+  margin-bottom: 15px;
 }
-
-.alert {
-  padding: 0.6rem;
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 1rem;
+  box-sizing: border-box;
 }
 
-.alert.warning {
-  background: #fff3cd;
-}
-
-.alert.info {
-  background: #e7f3ff;
-}
-
-.alert.error {
-  background: #f8d7da;
-}
-
-.alert.success {
-  background: #d1e7dd;
-}
-
-.btn.primary {
-  background: #0a66c2;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  border: none;
+/* Botones */
+.btn {
+  padding: 10px 15px;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
+.btn.small {
+  padding: 6px 12px;
+  font-size: 0.9em;
+}
+.btn.primary {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+}
+.btn.primary:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+.btn.outline {
+  background: transparent;
+  color: #1976d2;
+  border: 1px solid #1976d2;
+}
+.btn.outline:hover {
+  background: #e3f2fd;
+}
+
+/* Alertas */
+.alert { padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; }
+.alert.success { background: #d1e7dd; color: #0f5132; }
+.alert.error { background: #f8d7da; color: #842029; }
+.alert.warning { background: #fff3cd; color: #856404; }

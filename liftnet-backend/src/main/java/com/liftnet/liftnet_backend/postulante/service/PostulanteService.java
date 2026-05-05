@@ -8,6 +8,10 @@ import com.liftnet.liftnet_backend.user.entity.User;
 import com.liftnet.liftnet_backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+
 @Service
 public class PostulanteService {
 
@@ -23,6 +27,7 @@ public class PostulanteService {
     // ==========================
     // OBTENER MI PERFIL
     // ==========================
+
     public PostulanteProfile getMyProfile(String email) {
         User user = findUserByEmail(email);
 
@@ -30,6 +35,7 @@ public class PostulanteService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Postulante profile not found"));
     }
+
 
     // ==========================
     // CREAR PERFIL (MANUAL)

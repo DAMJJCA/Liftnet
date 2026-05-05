@@ -1,112 +1,84 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { ExperienciasService } from '../../../core/services/experiencias.service';
+import { Experiencia } from '../../../core/services/postulante.service';
 
 @Component({
   selector: 'app-mis-experiencias',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <h2>Mis experiencias</h2>
-
-    <div *ngIf="loading">Cargando experiencias...</div>
-
-    <div *ngIf="!loading && experiencias.length === 0">
-      No has registrado experiencias todavía.
-    </div>
-
-    <ul *ngIf="!loading">
-      <li *ngFor="let exp of experiencias">
-        <strong>{{ exp.lugar }}</strong>
-        <br />
-
-        <small *ngIf="exp.descripcion">
-          {{ exp.descripcion }}
-        </small>
-        <br />
-
-        <small>
-          Inicio: {{ exp.fechaInicio || '—' }} |
-          Fin: {{ exp.fechaFin || '—' }}
-        </small>
-        <br />
-
-        <button (click)="eliminar(exp.id)">
-          Eliminar
-        </button>
-      </li>
-    </ul>
-
-    <div *ngIf="totalPages > 1">
-      <button
-        (click)="cambiarPagina(page - 1)"
-        [disabled]="page === 0"
-      >
-        Anterior
-      </button>
-
-      <span>
-        Página {{ page + 1 }} de {{ totalPages }}
-      </span>
-
-      <button
-        (click)="cambiarPagina(page + 1)"
-        [disabled]="page + 1 >= totalPages"
-      >
-        Siguiente
-      </button>
-    </div>
-  `
+  imports: [CommonModule, FormsModule],
+  templateUrl: './mis-experiencias.component.html',
+  styleUrls: ['./mis-experiencias.component.css']
 })
 export class MisExperienciasComponent implements OnInit {
 
-  experiencias: any[] = [];
-  loading = false;
+  // Signals para reactividad
+  experiencias = signal<Experiencia[]>([]);
+  loading = signal<boolean>(false);
+  enviando = signal<boolean>(false);
+  mensajeExito = signal<string | null>(null);
+  mensajeError = signal<string | null>(null);
 
-  page = 0;
-  size = 5;
-  totalPages = 0;
+  // Formulario temporal
+  nuevaExp: Experiencia = {
+    lugar: '',
+    descripcion: '',
+    fechaInicio: '',
+    fechaFin: ''
+  };
 
-  constructor(
-    private experienciasService: ExperienciasService
-  ) {}
+  constructor(private experienciasSvc: ExperienciasService) {}
 
   ngOnInit(): void {
-    this.cargarExperiencias();
+    this.cargar();
   }
 
-  cargarExperiencias(): void {
-    this.loading = true;
-
-    this.experienciasService
-      .getMisExperiencias(this.page, this.size)
-      .subscribe({
-        next: (response) => {
-          this.experiencias = response.data.content;
-          this.totalPages = response.data.totalPages;
-          this.loading = false;
-        },
-        error: () => {
-          this.loading = false;
-        }
-      });
+  cargar(): void {
+    this.loading.set(true);
+    this.experienciasSvc.getMisExperiencias(0, 50).subscribe({
+      next: (res: any) => {
+        // Extracción segura a prueba de fallos
+        const data = res.data?.content || res.content || res.data || [];
+        this.experiencias.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      }
+    });
   }
 
-  cambiarPagina(nuevaPagina: number): void {
-    this.page = nuevaPagina;
-    this.cargarExperiencias();
-  }
+  guardar(): void {
+    this.enviando.set(true);
+    this.mensajeError.set(null);
+    this.mensajeExito.set(null);
 
-  eliminar(id: string): void {
-    const confirmado = confirm('¿Eliminar esta experiencia?');
-    if (!confirmado) {
-      return;
-    }
-
-    this.experienciasService.eliminarExperiencia(id).subscribe({
+    // NOTA: Asegúrate de que el método en tu servicio se llame addExperiencia o createExperiencia
+    this.experienciasSvc.addExperiencia(this.nuevaExp).subscribe({
       next: () => {
-        this.cargarExperiencias();
+        this.mensajeExito.set('Experiencia añadida correctamente a tu currículum.');
+        this.enviando.set(false);
+        // Limpiamos el formulario
+        this.nuevaExp = { lugar: '', descripcion: '', fechaInicio: '', fechaFin: '' };
+        this.cargar();
+        setTimeout(() => this.mensajeExito.set(null), 3000);
+      },
+      error: () => {
+        this.enviando.set(false);
+        this.mensajeError.set('No se pudo guardar la experiencia.');
+        setTimeout(() => this.mensajeError.set(null), 4000);
+      }
+    });
+  }
+
+  eliminar(id?: any): void {
+    if (!id || !confirm('¿Seguro que deseas eliminar este trabajo de tu perfil?')) return;
+
+    this.experienciasSvc.deleteExperiencia(id).subscribe({
+      next: () => {
+        this.cargar();
       }
     });
   }

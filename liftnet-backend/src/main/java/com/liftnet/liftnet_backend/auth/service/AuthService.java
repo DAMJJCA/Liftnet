@@ -38,57 +38,33 @@ public class AuthService {
     }
 
     // REGISTER
-    public AuthResponse register(RegisterRequest request) {
 
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new EmailAlreadyExistsException("Email already registered");
-        }
+public AuthResponse register(RegisterRequest request) {
 
-        Role role = Role.valueOf(request.getRole());
-
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(role);
-        userRepository.save(user);
-
-        // Crear perfil inicial
-        if (role == Role.POSTULANTE) {
-            PostulanteProfile p = new PostulanteProfile();
-            p.setUser(user);
-            p.setNombre(request.getNombre());
-            p.setApellidos(request.getApellidos());
-            p.setBio(request.getBio());
-            p.setUbicacion(request.getUbicacion());
-            p.setTelefono(request.getTelefono());
-            p.setDisponible(true);
-            postulanteRepository.save(p);
-        }
-
-        if (role == Role.EMPRESA) {
-            EmpresaProfile e = new EmpresaProfile();
-            e.setUser(user);
-            e.setNombreEmpresa(request.getNombreEmpresa());
-            e.setDescripcion(request.getDescripcion());
-            e.setUbicacion(request.getUbicacion());
-            e.setTelefono(request.getTelefono());
-            empresaRepository.save(e);
-        }
-
-        String token = jwtService.generateToken(
-                user.getEmail(),
-                user.getRole().name()
-        );
-
-        boolean profileCompleted = isProfileCompleted(user);
-
-        return new AuthResponse(
-                token,
-                user.getRole().name(),
-                profileCompleted
-        );
+    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        throw new EmailAlreadyExistsException("Email already registered");
     }
 
+    Role role = Role.valueOf(request.getRole());
+
+    User user = new User();
+    user.setEmail(request.getEmail());
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
+    user.setRole(role); 
+    userRepository.save(user);
+
+
+    String token = jwtService.generateToken(
+            user.getEmail(),
+            role.name()
+    );
+
+    return new AuthResponse(
+            token,
+            role.name(),
+            false
+    );
+}
     // LOGIN
     public AuthResponse login(AuthRequest request) {
 
