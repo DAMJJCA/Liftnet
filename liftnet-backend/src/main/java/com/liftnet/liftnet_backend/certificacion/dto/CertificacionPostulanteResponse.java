@@ -11,6 +11,7 @@ public class CertificacionPostulanteResponse {
     private String entidad;
     private LocalDate fechaObtencion;
     private LocalDate fechaExpiracion;
+    private String archivoUrl;
 
     public CertificacionPostulanteResponse(
             UUID id,
@@ -18,7 +19,8 @@ public class CertificacionPostulanteResponse {
             String nombre,
             String entidad,
             LocalDate fechaObtencion,
-            LocalDate fechaExpiracion) {
+            LocalDate fechaExpiracion,
+            String archivoUrl) {
 
         this.id = id;
         this.certificacionId = certificacionId;
@@ -26,29 +28,62 @@ public class CertificacionPostulanteResponse {
         this.entidad = entidad;
         this.fechaObtencion = fechaObtencion;
         this.fechaExpiracion = fechaExpiracion;
+        this.archivoUrl=archivoUrl;
     }
 
-    public UUID getId() {
-        return id;
-    }
+	public UUID getId() {
+		return id;
+	}
 
-    public UUID getCertificacionId() {
-        return certificacionId;
-    }
+	public void setId(UUID id) {
+		this.id = id;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public UUID getCertificacionId() {
+		return certificacionId;
+	}
 
-    public String getEntidad() {
-        return entidad;
-    }
+	public void setCertificacionId(UUID certificacionId) {
+		this.certificacionId = certificacionId;
+	}
 
-    public LocalDate getFechaObtencion() {
-        return fechaObtencion;
-    }
+	public String getNombre() {
+		return nombre;
+	}
 
-    public LocalDate getFechaExpiracion() {
-        return fechaExpiracion;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getEntidad() {
+		return entidad;
+	}
+
+	public void setEntidad(String entidad) {
+		this.entidad = entidad;
+	}
+
+	public LocalDate getFechaObtencion() {
+		return fechaObtencion;
+	}
+
+	public void setFechaObtencion(LocalDate fechaObtencion) {
+		this.fechaObtencion = fechaObtencion;
+	}
+
+	public LocalDate getFechaExpiracion() {
+		return fechaExpiracion;
+	}
+
+	public void setFechaExpiracion(LocalDate fechaExpiracion) {
+		this.fechaExpiracion = fechaExpiracion;
+	}
+
+	public String getArchivoUrl() {
+		return archivoUrl;
+	}
+
+	public void setArchivoUrl(String archivoUrl) {
+		this.archivoUrl = archivoUrl;
+	}
 }

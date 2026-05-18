@@ -1,95 +1,50 @@
-.exp-container {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
+.exp-container { max-width: 750px; margin: 40px auto; padding: 0 20px; }
 .page-title { color: #1976d2; }
 .description { color: #666; margin-bottom: 20px; }
 
-/* Alertas */
 .alert { padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center; }
 .alert.success { background: #d1e7dd; color: #0f5132; }
 .alert.error { background: #f8d7da; color: #842029; }
 
 /* Formulario */
-.exp-form {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  margin-bottom: 30px;
-}
-
+.exp-form { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 30px; }
 .form-group { margin-bottom: 15px; }
 .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
 .form-col { flex: 1; }
+.form-label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+.form-control { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
 
-.form-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #333;
-}
+/* Subida de archivos */
+.upload-group { background: white; padding: 15px; border-radius: 6px; border: 1px dashed #b0bec5; }
+.file-input { padding: 5px; border: none; background: transparent; }
+.hint { color: #718096; font-size: 0.85em; display: block; margin-top: 5px; }
 
-.form-control {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-/* Botones */
-.btn-submit {
-  background: #0a66c2;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  font-weight: bold;
-}
+.btn-submit { background: #0a66c2; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.btn-delete {
-  background: transparent;
-  color: #c62828;
-  border: 1px solid #c62828;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.btn-delete:hover { background: #ffebee; }
-
-/* Lista de Experiencias */
-.loading-text { text-align: center; color: #666; }
-.empty-state {
-  text-align: center;
-  padding: 30px;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  color: #666;
-}
-
-.exp-card {
-  border: 1px solid #e0e0e0;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.exp-content { flex: 1; margin-right: 15px; }
-.exp-title { font-size: 1.1em; color: #333; display: block; margin-bottom: 5px;}
-.exp-desc { color: #555; margin: 0 0 10px 0; line-height: 1.4; }
-
-.exp-dates { color: #888; font-size: 0.85em; }
+/* Tarjetas */
+.exp-card { border: 1px solid #e2e8f0; padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background-color: #fff; }
+.exp-title { font-size: 1.1em; color: #2d3748; }
+.exp-entity { color: #4a5568; font-style: italic; }
+.exp-desc { color: #718096; font-size: 0.9em; margin-top: 8px; white-space: pre-wrap; }
+.exp-dates { color: #a0aec0; font-size: 0.85em; margin-top: 5px; }
 .date-spacing { margin-left: 15px; }
-.current-job { color: #0f5132; font-weight: bold; background: #d1e7dd; padding: 2px 6px; border-radius: 4px;}
+.current-job { color: #28a745; font-weight: bold; }
+
+/* Contenedor de botones alineados */
+.exp-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn-view { color: #2b6cb0; background: #ebf8ff; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: bold; transition: background 0.2s; }
+.btn-view:hover { background: #bee3f8; }
+
+.btn-download { color: #28a745; background: #e8f5e9; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9em; transition: background 0.2s; }
+.btn-download:hover { background: #c8e6c9; }
+
+.btn-delete { background: transparent; color: #e53e3e; border: 1px solid #fc8181; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+.btn-delete:hover { background: #fff5f5; border-color: #e53e3e;}
+
+@media (max-width: 600px) {
+  .form-row { flex-direction: column; }
+  .exp-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .exp-actions { width: 100%; flex-wrap: wrap; justify-content: flex-end; }
+}

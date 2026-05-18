@@ -6,32 +6,53 @@ public class EmpresaProfileResponse {
     private String ubicacion;
     private String telefono;
     private String descripcion;
+    private String fotoUrl;
 
-    public EmpresaProfileResponse(
-            String nombreEmpresa,
-            String ubicacion,
-            String telefono,
-            String descripcion) {
-
+    public EmpresaProfileResponse(String nombreEmpresa, String ubicacion, String telefono, String descripcion, String fotoUrl) {
         this.nombreEmpresa = nombreEmpresa;
         this.ubicacion = ubicacion;
         this.telefono = telefono;
         this.descripcion = descripcion;
+        this.fotoUrl = fotoUrl;
     }
 
-    public String getNombreEmpresa() {
-        return nombreEmpresa;
-    }
+	public String getNombreEmpresa() {
+		return nombreEmpresa;
+	}
 
-    public String getUbicacion() {
-        return ubicacion;
-    }
+	public void setNombreEmpresa(String nombreEmpresa) {
+		this.nombreEmpresa = nombreEmpresa;
+	}
 
-    public String getTelefono() {
-        return telefono;
-    }
+	public String getUbicacion() {
+		return ubicacion;
+	}
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	public void setUbicacion(String ubicacion) {
+		this.ubicacion = ubicacion;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getFotoUrl() {
+		return fotoUrl;
+	}
+
+	public void setFotoUrl(String fotoUrl) {
+		this.fotoUrl = fotoUrl;
+	}
 }

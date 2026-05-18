@@ -20,6 +20,7 @@ public class Certificacion {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
+    
 	public UUID getId() {
 		return id;
 	}

@@ -12,6 +12,7 @@ export interface Experiencia {
   descripcion?: string;
   fechaInicio?: string;
   fechaFin?: string;
+  archivoUrl?: string | null;
 }
 
 export interface Certificacion {
@@ -29,8 +30,10 @@ export interface PostulanteProfile {
   telefono: string;
   bio: string;
   disponible: boolean;
+  fotoUrl?: string;
   experiencias: Experiencia[];
   certificaciones: Certificacion[];
+  cvUrl?: string | null;
 }
 
 @Injectable({

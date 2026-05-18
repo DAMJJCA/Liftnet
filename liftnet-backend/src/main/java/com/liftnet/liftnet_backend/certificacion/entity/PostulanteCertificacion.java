@@ -27,6 +27,8 @@ public class PostulanteCertificacion {
     private LocalDate fechaExpiracion;
 
     private LocalDateTime createdAt;
+    @Column(name = "archivo_url", columnDefinition = "TEXT")
+    private String archivoUrl;
 
 	public UUID getId() {
 		return id;
@@ -74,5 +76,11 @@ public class PostulanteCertificacion {
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+	public String getArchivoUrl() { 
+		return archivoUrl; 
+	}
+	public void setArchivoUrl(String archivoUrl) { 
+		this.archivoUrl = archivoUrl; 
 	}
 }

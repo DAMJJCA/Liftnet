@@ -22,9 +22,7 @@ export class OfertaService {
 
   constructor(private http: HttpClient) {}
 
-  // ==========================
   // EMPRESA
-  // ==========================
 
   getMisOfertas(page = 0, size = 10): Observable<any> {
     const params = new HttpParams().set('page', page).set('size', size);
@@ -43,9 +41,7 @@ export class OfertaService {
     return this.http.put(`${this.apiUrl}/${ofertaId}/cerrar`, {});
   }
 
-  // ==========================
   // POSTULANTE
-  // ==========================
 
   getOfertasActivas(ubicacion?: string, page = 0, size = 10): Observable<any> {
     let params = new HttpParams().set('page', page).set('size', size);

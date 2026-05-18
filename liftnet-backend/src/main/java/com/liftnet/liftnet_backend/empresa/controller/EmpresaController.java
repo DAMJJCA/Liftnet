@@ -5,6 +5,8 @@ import com.liftnet.liftnet_backend.empresa.dto.EmpresaProfileResponse;
 import com.liftnet.liftnet_backend.empresa.entity.EmpresaProfile;
 import com.liftnet.liftnet_backend.empresa.service.EmpresaService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,70 +20,46 @@ public class EmpresaController {
     }
 
     /**
-     *  MODO DESARROLLO 
-     * Se pasa el email por request param
+     * Obtiene el perfil de la empresa autenticada.
+     * La identidad se resuelve internamente en el service mediante el SecurityContext.
      */
-
     @GetMapping
-    public EmpresaProfileResponse getMyProfile(
-            @RequestParam String email) {
-
-        EmpresaProfile profile = service.getMyProfile(email);
-        return map(profile);
+    @PreAuthorize("hasRole('EMPRESA')")
+    public ResponseEntity<EmpresaProfileResponse> getMyProfile() {
+        EmpresaProfile profile = service.getMyProfile();
+        return ResponseEntity.ok(mapToResponse(profile));
     }
 
+    /**
+     * Crea el perfil corporativo para el usuario actual.
+     */
     @PostMapping
-    public EmpresaProfileResponse createProfile(
-            @RequestParam String email,
-            @Valid @RequestBody EmpresaProfileRequest request) {
-
-        EmpresaProfile profile = service.createProfile(email, request);
-        return map(profile);
+    @PreAuthorize("hasRole('EMPRESA')")
+    public ResponseEntity<EmpresaProfileResponse> createProfile(@Valid @RequestBody EmpresaProfileRequest request) {
+        EmpresaProfile profile = service.createProfile(request);
+        return ResponseEntity.ok(mapToResponse(profile));
     }
 
+    /**
+     * Actualiza los datos del perfil corporativo.
+     */
     @PutMapping
-    public EmpresaProfileResponse updateProfile(
-            @RequestParam String email,
-            @Valid @RequestBody EmpresaProfileRequest request) {
-
-        EmpresaProfile profile = service.updateProfile(email, request);
-        return map(profile);
-    }
-
-    /*
-    // MODO PRODUCCIÓN (DESCOMENTAR)
-
     @PreAuthorize("hasRole('EMPRESA')")
-    @GetMapping
-    public EmpresaProfileResponse getMyProfile(Authentication auth) {
-        return map(service.getMyProfile(auth.getName()));
+    public ResponseEntity<EmpresaProfileResponse> updateProfile(@Valid @RequestBody EmpresaProfileRequest request) {
+        EmpresaProfile profile = service.updateProfile(request);
+        return ResponseEntity.ok(mapToResponse(profile));
     }
 
-    @PreAuthorize("hasRole('EMPRESA')")
-    @PostMapping
-    public EmpresaProfileResponse createProfile(
-            Authentication auth,
-            @Valid @RequestBody EmpresaProfileRequest request) {
-
-        return map(service.createProfile(auth.getName(), request));
-    }
-
-    @PreAuthorize("hasRole('EMPRESA')")
-    @PutMapping
-    public EmpresaProfileResponse updateProfile(
-            Authentication auth,
-            @Valid @RequestBody EmpresaProfileRequest request) {
-
-        return map(service.updateProfile(auth.getName(), request));
-    }
-    */
-
-    private EmpresaProfileResponse map(EmpresaProfile profile) {
+    /**
+     * Mapea la entidad al DTO de respuesta.
+     */
+    private EmpresaProfileResponse mapToResponse(EmpresaProfile profile) {
         return new EmpresaProfileResponse(
                 profile.getNombreEmpresa(),
                 profile.getUbicacion(),
                 profile.getTelefono(),
-                profile.getDescripcion()
+                profile.getDescripcion(),
+                profile.getFotoUrl()
         );
     }
 }

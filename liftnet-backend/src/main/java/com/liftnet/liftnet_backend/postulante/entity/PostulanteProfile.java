@@ -1,9 +1,13 @@
 package com.liftnet.liftnet_backend.postulante.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.liftnet.liftnet_backend.certificacion.entity.PostulanteCertificacion;
+import com.liftnet.liftnet_backend.experiencia.entity.Experiencia;
 import com.liftnet.liftnet_backend.user.entity.User;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,6 +18,9 @@ public class PostulanteProfile {
     @GeneratedValue
     @Column(columnDefinition = "uuid")
     private UUID id;
+    
+    @Column(name = "foto_url", columnDefinition = "TEXT")
+    private String fotoUrl; 
 
     @OneToOne(optional = false)
     @JoinColumn(name = "user_id", unique = true)
@@ -32,7 +39,18 @@ public class PostulanteProfile {
 
     @Column(length = 500)
     private String bio;
+    
+    @OneToMany(mappedBy = "postulante")
+    @JsonIgnore
+    private List<Experiencia> experiencias;
+    
+    @OneToMany(mappedBy = "postulante")
+    @JsonIgnore
+    private List<PostulanteCertificacion> certificaciones;
 
+    @Column(name = "cv_url", columnDefinition = "TEXT")
+    private String cvUrl;
+    
     private boolean disponible = true;
 
     private Instant createdAt = Instant.now();
@@ -100,4 +118,33 @@ public class PostulanteProfile {
     public Instant getCreatedAt() {
         return createdAt;
     }
+    public String getFotoUrl() { 
+    	return fotoUrl; 
+    }
+    public void setFotoUrl(String fotoUrl) { 
+    	this.fotoUrl = fotoUrl; 
+    }
+    public List<Experiencia> getExperiencias() {
+        return experiencias;
+    }
+
+    public void setExperiencias(List<Experiencia> experiencias) {
+        this.experiencias = experiencias;
+    }
+
+	public List<PostulanteCertificacion> getCertificaciones() {
+		return certificaciones;
+	}
+
+	public void setCertificaciones(List<PostulanteCertificacion> certificaciones) {
+		this.certificaciones = certificaciones;
+	}
+
+	public String getCvUrl() {
+		return cvUrl;
+	}
+
+	public void setCvUrl(String cvUrl) {
+		this.cvUrl = cvUrl;
+	}
 }

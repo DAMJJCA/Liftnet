@@ -13,6 +13,8 @@ public class ExperienciaRequest {
 
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
+    private String archivoUrl;
+    
 	public String getLugar() {
 		return lugar;
 	}
@@ -36,5 +38,11 @@ public class ExperienciaRequest {
 	}
 	public void setFechaFin(LocalDate fechaFin) {
 		this.fechaFin = fechaFin;
+	}
+	public String getArchivoUrl() {
+		return archivoUrl;
+	}
+	public void setArchivoUrl(String archivoUrl) {
+		this.archivoUrl = archivoUrl;
 	}
 }

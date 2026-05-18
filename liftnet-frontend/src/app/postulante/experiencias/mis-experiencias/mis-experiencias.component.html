@@ -4,11 +4,9 @@
     Añade tus trabajos anteriores para que las empresas conozcan tu trayectoria profesional.
   </p>
 
-  <!-- ALERTAS -->
   <div *ngIf="mensajeExito()" class="alert success">{{ mensajeExito() }}</div>
   <div *ngIf="mensajeError()" class="alert error">{{ mensajeError() }}</div>
 
-  <!-- FORMULARIO PARA AÑADIR EXPERIENCIA -->
   <form (ngSubmit)="guardar()" #f="ngForm" class="exp-form">
 
     <div class="form-group">
@@ -33,20 +31,23 @@
       </div>
     </div>
 
+    <div class="form-group upload-group">
+      <label class="form-label">Documento Adjunto (Opcional, formato PDF)</label>
+      <input type="file" (change)="onFileSelected($event)" accept="application/pdf" class="form-control file-input" />
+      <small class="hint">Sube una carta de recomendación o certificado de la empresa.</small>
+    </div>
+
     <button type="submit" [disabled]="f.invalid || enviando()" class="btn-submit">
       {{ enviando() ? 'Guardando...' : '+ Añadir Experiencia' }}
     </button>
   </form>
 
-  <!-- ESTADO DE CARGA -->
   <p *ngIf="loading()" class="loading-text">Cargando experiencias...</p>
 
-  <!-- LISTA VACÍA -->
   <div *ngIf="!loading() && experiencias().length === 0" class="empty-state">
     Aún no has registrado ninguna experiencia laboral.
   </div>
 
-  <!-- LISTA LLENA -->
   <div *ngFor="let exp of experiencias()" class="exp-card">
     <div class="exp-content">
       <strong class="exp-title">{{ exp.lugar }}</strong>
@@ -59,6 +60,16 @@
       </div>
     </div>
 
-    <button (click)="eliminar(exp.id)" class="btn-delete">Eliminar</button>
+    <div class="exp-actions">
+      <a *ngIf="exp.archivoUrl" [href]="exp.archivoUrl" target="_blank" class="btn-view" title="Ver documento">
+        👁️ Ver
+      </a>
+
+      <a *ngIf="exp.archivoUrl" [href]="exp.archivoUrl + '?download='" class="btn-download" title="Descargar PDF">
+        ⬇️ Descargar
+      </a>
+
+      <button (click)="eliminar(exp)" class="btn-delete">Eliminar</button>
+    </div>
   </div>
 </div>

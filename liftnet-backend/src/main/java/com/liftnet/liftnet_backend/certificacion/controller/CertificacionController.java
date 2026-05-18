@@ -21,10 +21,6 @@ public class CertificacionController {
         this.service = service;
     }
 
-    /**
-     *  MODO DESARROLLO 
-     * Se pasa el email por request param
-     */
 
     // LISTAR CERTIFICACIONES DEL POSTULANTE
     @GetMapping("/mis-certificaciones")
@@ -40,7 +36,9 @@ public class CertificacionController {
                                 pc.getCertificacion().getNombre(),
                                 pc.getCertificacion().getEntidad(),
                                 pc.getFechaObtencion(),
-                                pc.getFechaExpiracion()
+                                pc.getFechaExpiracion(),
+                                pc.getArchivoUrl()
+                                
                         ))
         );
     }
@@ -64,47 +62,4 @@ public class CertificacionController {
         service.eliminarCertificacion(email, id);
         return ApiResponse.ok("Certificación eliminada correctamente", null);
     }
-
-    /*
-    //MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-
-    @PreAuthorize("hasRole('POSTULANTE')")
-    @GetMapping("/mis-certificaciones")
-    public ApiResponse<Page<CertificacionPostulanteResponse>> listar(
-            Authentication auth,
-            Pageable pageable) {
-
-        return ApiResponse.ok(
-                service.listarCertificacionesDePostulante(auth.getName(), pageable)
-                        .map(pc -> new CertificacionPostulanteResponse(
-                                pc.getId(),
-                                pc.getCertificacion().getId(),
-                                pc.getCertificacion().getNombre(),
-                                pc.getCertificacion().getEntidad(),
-                                pc.getFechaObtencion(),
-                                pc.getFechaExpiracion()
-                        ))
-        );
-    }
-
-    @PreAuthorize("hasRole('POSTULANTE')")
-    @PostMapping("/asignar")
-    public ApiResponse<Void> asignar(
-            Authentication auth,
-            @Valid @RequestBody AsignarCertificacionRequest request) {
-
-        service.asignarCertificacion(auth.getName(), request);
-        return ApiResponse.ok("Certificación asignada correctamente", null);
-    }
-
-    @PreAuthorize("hasRole('POSTULANTE')")
-    @DeleteMapping("/{id}")
-    public ApiResponse<Void> eliminar(
-            Authentication auth,
-            @PathVariable UUID id) {
-
-        service.eliminarCertificacion(auth.getName(), id);
-        return ApiResponse.ok("Certificación eliminada correctamente", null);
-    }
-    */
 }

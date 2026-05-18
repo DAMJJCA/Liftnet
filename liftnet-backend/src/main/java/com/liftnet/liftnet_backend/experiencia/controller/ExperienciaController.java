@@ -39,7 +39,8 @@ public class ExperienciaController {
                                 e.getLugar(),
                                 e.getDescripcion(),
                                 e.getFechaInicio(),
-                                e.getFechaFin()
+                                e.getFechaFin(),
+                                e.getArchivoUrl()
                         ))
         );
     }

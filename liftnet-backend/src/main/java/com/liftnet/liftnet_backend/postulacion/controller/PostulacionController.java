@@ -59,9 +59,7 @@ public class PostulacionController {
             @PathVariable UUID ofertaId,
             Pageable pageable) {
 
-        Page<PostulantePostulacionResponse> page = service
-                .getPostulacionesOferta(email, ofertaId, pageable)
-                .map(this::mapEmpresa);
+        Page<PostulantePostulacionResponse> page = service.getPostulacionesOferta(email, ofertaId, pageable);
 
         return ApiResponse.ok(page);
     }
@@ -95,8 +93,12 @@ public class PostulacionController {
                 p.getPostulante().getNombre(),
                 p.getPostulante().getApellidos(),
                 p.getEstado(),
-                p.getCreatedAt()
-        );
+                p.getCreatedAt(),
+                p.getPostulante().getExperiencias(),
+                p.getPostulante().getCertificaciones(),
+                p.getPostulante().getCvUrl()
+                
+      );
     }
 
     /*

@@ -14,6 +14,9 @@ public class EmpresaProfile {
     @GeneratedValue
     @Column(columnDefinition = "uuid")
     private UUID id;
+    
+    @Column(name = "foto_url", columnDefinition = "TEXT")
+    private String fotoUrl; 
 
     @OneToOne(optional = false)
     @JoinColumn(name = "user_id", unique = true)
@@ -80,4 +83,13 @@ public class EmpresaProfile {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+	public String getFotoUrl() {
+		return fotoUrl;
+	}
+
+	public void setFotoUrl(String fotoUrl) {
+		this.fotoUrl = fotoUrl;
+	}
+    
 }

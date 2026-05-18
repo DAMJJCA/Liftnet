@@ -1,6 +1,7 @@
 package com.liftnet.liftnet_backend.empresa.service;
 
 import com.liftnet.liftnet_backend.common.exception.ResourceNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.liftnet.liftnet_backend.empresa.dto.EmpresaProfileRequest;
 import com.liftnet.liftnet_backend.empresa.entity.EmpresaProfile;
 import com.liftnet.liftnet_backend.empresa.repository.EmpresaRepository;
@@ -14,27 +15,28 @@ public class EmpresaService {
     private final EmpresaRepository empresaRepository;
     private final UserRepository userRepository;
 
-    public EmpresaService(EmpresaRepository empresaRepository,
-                          UserRepository userRepository) {
+    public EmpresaService(EmpresaRepository empresaRepository, UserRepository userRepository) {
         this.empresaRepository = empresaRepository;
         this.userRepository = userRepository;
     }
 
-    // ==========================
-    // OBTENER MI PERFIL
-    // ==========================
-    public EmpresaProfile getMyProfile(String email) {
+    // MÉTODO CLAVE: Obtiene el email del token actual
+    private String getAuthenticatedUserEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    // OBTENER MI PERFIL (Ya no pide String email)
+    public EmpresaProfile getMyProfile() {
+        String email = getAuthenticatedUserEmail(); // <--- Seguridad Real
         User user = findUser(email);
 
         return empresaRepository.findByUser(user)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Empresa profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa profile not found"));
     }
 
-    // ==========================
-    // CREAR PERFIL (MANUAL)
-    // ==========================
-    public EmpresaProfile createProfile(String email, EmpresaProfileRequest request) {
+    // CREAR PERFIL (Ya no pide String email)
+    public EmpresaProfile createProfile(EmpresaProfileRequest request) {
+        String email = getAuthenticatedUserEmail();
         User user = findUser(email);
 
         if (empresaRepository.findByUser(user).isPresent()) {
@@ -47,50 +49,37 @@ public class EmpresaService {
         profile.setUbicacion(request.getUbicacion());
         profile.setTelefono(request.getTelefono());
         profile.setDescripcion(request.getDescripcion());
+        profile.setFotoUrl(request.getFotoUrl());
 
         return empresaRepository.save(profile);
     }
 
-    // ==========================
-    // ACTUALIZAR PERFIL
-    // ==========================
-    public EmpresaProfile updateProfile(String email, EmpresaProfileRequest request) {
+    // ACTUALIZAR PERFIL (Ya no pide String email)
+    public EmpresaProfile updateProfile(EmpresaProfileRequest request) {
+        String email = getAuthenticatedUserEmail();
         User user = findUser(email);
 
         EmpresaProfile profile = empresaRepository.findByUser(user)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Empresa profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa profile not found"));
 
         profile.setNombreEmpresa(request.getNombreEmpresa());
         profile.setUbicacion(request.getUbicacion());
         profile.setTelefono(request.getTelefono());
         profile.setDescripcion(request.getDescripcion());
+        profile.setFotoUrl(request.getFotoUrl());
 
         return empresaRepository.save(profile);
     }
 
-    // ==========================
-    // CREAR PERFIL VACÍO (REGISTRO)
-    // ==========================
     public void createEmptyProfile(User user) {
-
-        // ✅ Evitar duplicados
-        if (empresaRepository.findByUser(user).isPresent()) {
-            return;
-        }
-
+        if (empresaRepository.findByUser(user).isPresent()) return;
         EmpresaProfile profile = new EmpresaProfile();
         profile.setUser(user);
-
         empresaRepository.save(profile);
     }
 
-    // ==========================
-    // MÉTODO PRIVADO
-    // ==========================
     private User findUser(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

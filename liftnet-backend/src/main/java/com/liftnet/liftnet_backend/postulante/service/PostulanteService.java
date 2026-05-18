@@ -24,9 +24,7 @@ public class PostulanteService {
         this.userRepository = userRepository;
     }
 
-    // ==========================
     // OBTENER MI PERFIL
-    // ==========================
 
     public PostulanteProfile getMyProfile(String email) {
         User user = findUserByEmail(email);
@@ -37,9 +35,7 @@ public class PostulanteService {
     }
 
 
-    // ==========================
     // CREAR PERFIL (MANUAL)
-    // ==========================
     public PostulanteProfile createProfile(String email, PostulanteProfileRequest request) {
         User user = findUserByEmail(email);
 
@@ -55,13 +51,13 @@ public class PostulanteService {
         profile.setTelefono(request.getTelefono());
         profile.setBio(request.getBio());
         profile.setDisponible(true);
+        profile.setFotoUrl(request.getFotoUrl());
+        profile.setCvUrl(request.getCvUrl());
 
         return postulanteRepository.save(profile);
     }
 
-    // ==========================
     // ACTUALIZAR PERFIL
-    // ==========================
     public PostulanteProfile updateProfile(String email, PostulanteProfileRequest request) {
         User user = findUserByEmail(email);
 
@@ -74,13 +70,13 @@ public class PostulanteService {
         profile.setUbicacion(request.getUbicacion());
         profile.setTelefono(request.getTelefono());
         profile.setBio(request.getBio());
+        profile.setFotoUrl(request.getFotoUrl());
+        profile.setCvUrl(request.getCvUrl());
 
         return postulanteRepository.save(profile);
     }
 
-    // ==========================
     // DISPONIBILIDAD
-    // ==========================
     public void updateDisponibilidad(String email, boolean disponible) {
         User user = findUserByEmail(email);
 
@@ -92,9 +88,7 @@ public class PostulanteService {
         postulanteRepository.save(profile);
     }
 
-    // ==========================
     // CREAR PERFIL VACÍO (REGISTRO)
-    // ==========================
     public void createEmptyProfile(User user) {
 
         // Evitar duplicados
@@ -109,9 +103,7 @@ public class PostulanteService {
         postulanteRepository.save(profile);
     }
 
-    // ==========================
     // MÉTODO PRIVADO
-    // ==========================
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->

@@ -66,6 +66,7 @@ public class CertificacionService {
         pc.setCertificacion(certificacion);
         pc.setFechaObtencion(request.getFechaObtencion());
         pc.setFechaExpiracion(request.getFechaExpiracion());
+        pc.setArchivoUrl(request.getArchivoUrl());
 
         postulanteCertificacionRepository.save(pc);
     }

@@ -10,7 +10,6 @@ public class UserController {
 
     /**
      * MODO DESARROLLO (ACTIVO)
-     * ==========================
      * Endpoint de prueba para comprobar que:
      * - La API responde
      * - El backend está levantado
@@ -24,7 +23,6 @@ public class UserController {
 
     /*
    	// MODO PRODUCCIÓN
-    // ======================================================
 
     Si en producción quieres que este endpoint:
     - Requiera autenticación

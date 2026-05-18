@@ -1,8 +1,30 @@
 <div class="profile-container" *ngIf="!loading(); else loadingTpl">
 
   <div class="profile-header">
-    <h1>Perfil corporativo</h1>
-    <button *ngIf="mode() === 'view'" (click)="activarEdicion()" class="btn outline">✏️ Editar datos básicos</button>
+    <div class="header-main">
+      <div class="avatar-container">
+        <div class="avatar-wrapper">
+          <img [src]="profile().fotoUrl || 'https://ui-avatars.com/api/?name=Empresa&background=0D8ABC&color=fff&size=150'"
+            alt="Logo Empresa"
+            [class.uploading]="isUploading()">
+          <div class="spinner-overlay" *ngIf="isUploading()">
+            <div class="loader"></div>
+          </div>
+
+          <label *ngIf="mode() === 'edit'" class="upload-badge" title="Cambiar logo">
+            📷
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+          </label>
+        </div>
+      </div>
+
+      <div class="header-text">
+        <h1>Perfil corporativo</h1>
+        <p class="company-name-subtitle" *ngIf="mode() === 'view'">{{ profile().nombreEmpresa }}</p>
+        <button *ngIf="mode() === 'view'" (click)="activarEdicion()" class="btn outline">✏️ Editar datos
+          básicos</button>
+      </div>
+    </div>
   </div>
 
   <div class="alert warning" *ngIf="mandatoryMessage">{{ mandatoryMessage }}</div>
@@ -11,79 +33,97 @@
 
   <div class="progress-box">
     <div class="progress-header">
-      <span>Perfil completado</span>
+      <span>Progreso del perfil</span>
       <strong>{{ progress() }}%</strong>
     </div>
     <div class="progress-bar">
       <div class="progress-fill" [style.width.%]="progress()"></div>
     </div>
-    <small *ngIf="progress() < 100" style="color: #666; display: block; margin-top: 5px;">
-      Completa todos los datos (incluyendo la descripción) para generar más confianza a los candidatos.
+    <small *ngIf="progress() < 100" class="progress-hint">
+      Un perfil con logo y descripción completa genera un 80% más de interés en los candidatos.
     </small>
   </div>
 
   <div *ngIf="mode() === 'view'">
-
     <div class="card">
       <div class="card-header">
-        <h2> Datos de la Empresa</h2>
+        <h2>Información de la Empresa</h2>
       </div>
       <div class="card-body">
         <div *ngIf="!profile().nombreEmpresa" class="empty-state">
-          Aún no has completado los datos de tu empresa. Haz clic en "Editar datos básicos" arriba.
+          <p>Aún no has completado los datos de tu empresa.</p>
+          <button (click)="activarEdicion()" class="btn primary">Completar ahora</button>
         </div>
-        <div *ngIf="profile().nombreEmpresa">
-          <p><strong>Nombre completo:</strong> {{ profile().nombreEmpresa }}</p>
-          <p><strong>Ubicación:</strong> {{ profile().ubicacion }}</p>
-          <p><strong>Teléfono:</strong> {{ profile().telefono }}</p>
-          <p><strong>Descripción:</strong> {{ profile().descripcion || 'No has añadido una descripción.' }}</p>
+
+        <div class="info-grid" *ngIf="profile().nombreEmpresa">
+          <div class="info-item">
+            <label>Nombre Empresa</label>
+            <p>{{ profile().nombreEmpresa }}</p>
+          </div>
+          <div class="info-item">
+            <label>Ubicación</label>
+            <p>{{ profile().ubicacion }}</p>
+          </div>
+          <div class="info-item">
+            <label>Teléfono</label>
+            <p>{{ profile().telefono }}</p>
+          </div>
+          <div class="info-item full-width">
+            <label>Descripción</label>
+            <p class="description-text">{{ profile().descripcion || 'Sin descripción añadida.' }}</p>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
 
-  <div *ngIf="mode() === 'edit'" class="card">
-    <div class="card-header" style="background: #e3f2fd;">
-      <h2>Modificar Datos Básicos</h2>
+  <div *ngIf="mode() === 'edit'" class="card edit-card">
+    <div class="card-header">
+      <h2>Modificar Datos Corporativos</h2>
     </div>
     <div class="card-body">
       <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre de la Empresa *</label>
+            <input type="text" name="nombreEmpresa" [(ngModel)]="profile().nombreEmpresa" required class="form-control"
+              placeholder="Ej: Socorrismo S.L." />
+          </div>
 
-        <div class="form-group">
-          <label>Nombre de la Empresa</label>
-          <input type="text" name="nombreEmpresa" [(ngModel)]="profile().nombreEmpresa" required class="form-control" />
+          <div class="form-group">
+            <label>Ubicación *</label>
+            <input type="text" name="ubicacion" [(ngModel)]="profile().ubicacion" required class="form-control"
+              placeholder="Ciudad, Provincia" />
+          </div>
+
+          <div class="form-group">
+            <label>Teléfono de contacto *</label>
+            <input type="text" name="telefono" [(ngModel)]="profile().telefono" required class="form-control" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Ubicación</label>
-          <input type="text" name="ubicacion" [(ngModel)]="profile().ubicacion" required class="form-control" />
+        <div class="form-group" style="margin-top: 15px;">
+          <label>Descripción y valores de la empresa</label>
+          <textarea name="descripcion" [(ngModel)]="profile().descripcion" rows="5" class="form-control"
+            placeholder="Cuéntale a los candidatos por qué deberían trabajar contigo..."></textarea>
         </div>
 
-        <div class="form-group">
-          <label>Teléfono Corporativo</label>
-          <input type="text" name="telefono" [(ngModel)]="profile().telefono" required class="form-control" />
-        </div>
-
-        <div class="form-group">
-          <label>Descripción de la empresa</label>
-          <textarea name="descripcion" [(ngModel)]="profile().descripcion" rows="4" class="form-control"></textarea>
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-          <button type="submit" class="btn primary" [disabled]="profileForm.invalid || loading()" style="flex: 1;">
-            {{ loading() ? 'Guardando...' : 'Guardar perfil' }}
+        <div class="form-actions">
+          <button type="submit" class="btn primary" [disabled]="profileForm.invalid || loading() || isUploading()">
+            {{ loading() ? 'Guardando...' : 'Guardar cambios' }}
           </button>
-          <button *ngIf="profile().nombreEmpresa" type="button" class="btn outline" (click)="cancelarEdicion()" style="flex: 1;">
+          <button *ngIf="profile().nombreEmpresa" type="button" class="btn outline" (click)="cancelarEdicion()">
             Cancelar
           </button>
         </div>
       </form>
     </div>
   </div>
-
 </div>
 
 <ng-template #loadingTpl>
-  <p style="text-align: center; margin-top: 50px; color: #666;">Cargando perfil de la empresa...</p>
+  <div class="loading-screen">
+    <div class="loader-big"></div>
+    <p>Sincronizando datos corporativos...</p>
+  </div>
 </ng-template>

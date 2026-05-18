@@ -31,6 +31,9 @@ public class Experiencia {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
+    @Column(name = "archivo_url", columnDefinition = "TEXT")
+    private String archivoUrl;
+    
 	public UUID getId() {
 		return id;
 	}
@@ -84,5 +87,11 @@ public class Experiencia {
 	}
 	public void setDeletedAt(LocalDateTime deletedAt) {
 		this.deletedAt = deletedAt;
+	}
+	public String getArchivoUrl() { 
+		return archivoUrl; 
+	}
+	public void setArchivoUrl(String archivoUrl) { 
+		this.archivoUrl = archivoUrl; 
 	}
 }

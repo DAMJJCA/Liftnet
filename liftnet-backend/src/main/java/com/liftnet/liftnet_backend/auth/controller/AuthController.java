@@ -52,19 +52,4 @@ public class AuthController {
                 response
         );
     }
-
-    /*
-    // NOTA SOBRE PRODUCCIÓN
-
-    - Estos endpoints DEBEN ser públicos también en producción
-    - En SecurityConfig PROD ya tienes:
-        .requestMatchers("/api/v1/auth/**").permitAll()
-
-    No se añade @PreAuthorize aquí a propósito.
-    Si en el futuro quieres:
-        - Registro solo ADMIN
-        - Login externo (OAuth, Supabase Auth, etc.)
-
-    Este será el sitio correcto para cambiarlo.
-    */
 }

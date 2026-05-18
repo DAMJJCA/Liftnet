@@ -27,23 +27,43 @@ public class PostulacionResponse {
         this.createdAt = createdAt;
     }
 
-    public UUID getId() {
-        return id;
-    }
+	public UUID getId() {
+		return id;
+	}
 
-    public UUID getOfertaId() {
-        return ofertaId;
-    }
+	public void setId(UUID id) {
+		this.id = id;
+	}
 
-    public String getTituloOferta() {
-        return tituloOferta;
-    }
+	public UUID getOfertaId() {
+		return ofertaId;
+	}
 
-    public EstadoPostulacion getEstado() {
-        return estado;
-    }
+	public void setOfertaId(UUID ofertaId) {
+		this.ofertaId = ofertaId;
+	}
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
+	public String getTituloOferta() {
+		return tituloOferta;
+	}
+
+	public void setTituloOferta(String tituloOferta) {
+		this.tituloOferta = tituloOferta;
+	}
+
+	public EstadoPostulacion getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoPostulacion estado) {
+		this.estado = estado;
+	}
+
+	public Instant getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Instant createdAt) {
+		this.createdAt = createdAt;
+	}
 }

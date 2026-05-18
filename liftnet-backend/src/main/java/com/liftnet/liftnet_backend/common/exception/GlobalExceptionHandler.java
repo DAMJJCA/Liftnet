@@ -20,9 +20,7 @@ public class GlobalExceptionHandler {
     private static final Logger log =
             LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // ==========================
     // ERRORES DE AUTH / USUARIO
-    // ==========================
 
     // EMAIL DUPLICADO (NEGOCIO)
     @ExceptionHandler(EmailAlreadyExistsException.class)
@@ -48,9 +46,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
-    // ==========================
     // ERRORES DE NEGOCIO
-    // ==========================
 
     // RECURSO NO ENCONTRADO
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -76,9 +72,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
-    // ==========================
     // VALIDACIONES
-    // ==========================
 
     // ERRORES DE VALIDACIÓN (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -98,9 +92,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Error de validación"));
     }
 
-    // ==========================
     // BASE DE DATOS
-    // ==========================
 
     // VIOLACIÓN DE INTEGRIDAD (EMAIL DUPLICADO, CONSTRAINTS, ETC.)
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -116,9 +108,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // ==========================
     // SEGURIDAD
-    // ==========================
 
     // ACCESO NO PERMITIDO
     @ExceptionHandler(SecurityException.class)
@@ -131,9 +121,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Acceso no permitido"));
     }
 
-    // ==========================
     // GENÉRICO (SIEMPRE EL ÚLTIMO)
-    // ==========================
 
     // ERROR INTERNO NO CONTROLADO
     @ExceptionHandler(Exception.class)

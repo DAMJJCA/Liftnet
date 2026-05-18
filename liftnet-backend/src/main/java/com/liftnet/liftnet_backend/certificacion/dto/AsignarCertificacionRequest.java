@@ -12,6 +12,7 @@ public class AsignarCertificacionRequest {
 
     private LocalDate fechaObtencion;
     private LocalDate fechaExpiracion;
+    private String archivoUrl;
 
     public UUID getCertificacionId() {
         return certificacionId;
@@ -36,4 +37,12 @@ public class AsignarCertificacionRequest {
     public void setFechaExpiracion(LocalDate fechaExpiracion) {
         this.fechaExpiracion = fechaExpiracion;
     }
+    
+	public String getArchivoUrl() { 
+		return archivoUrl; 
+	}
+	
+	public void setArchivoUrl(String archivoUrl) { 
+		this.archivoUrl = archivoUrl;
+	}
 }

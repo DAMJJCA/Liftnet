@@ -12,6 +12,7 @@ export interface CertificacionPostulante {
   entidad: string | null;
   fechaObtencion: string | null;
   fechaExpiracion: string | null;
+  archivoUrl?: string | null;
 }
 
 export interface PageResponse<T> {
@@ -39,12 +40,11 @@ export class CertificacionesService {
     );
   }
 
-  // ⚠️ CORRECCIÓN AQUÍ: Para pruebas vamos a enviar un UUID fijo (simulando que eligió de un catálogo)
-  // En la vida real, sacarías la lista de certificaciones de otro endpoint GET /certificaciones
   asignarCertificacion(body: {
-    certificacionId: string; // <-- OBLIGATORIO UUID
+    certificacionId: string;
     fechaObtencion?: string;
     fechaExpiracion?: string;
+    archivoUrl?: string;
   }): Observable<ApiResponse<void>> {
     return this.http.post<ApiResponse<void>>(`${this.apiUrl}/asignar`, body);
   }

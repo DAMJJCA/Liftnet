@@ -10,19 +10,22 @@ public class ExperienciaResponse {
     private String descripcion;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
+    private String archivoUrl;
 
     public ExperienciaResponse(
             UUID id,
             String lugar,
             String descripcion,
             LocalDate fechaInicio,
-            LocalDate fechaFin) {
+            LocalDate fechaFin,
+            String archivoUrl) {
 
         this.id = id;
         this.lugar = lugar;
         this.descripcion = descripcion;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
+        this.archivoUrl=archivoUrl;
     }
 
 	public UUID getId() {
@@ -64,4 +67,13 @@ public class ExperienciaResponse {
 	public void setFechaFin(LocalDate fechaFin) {
 		this.fechaFin = fechaFin;
 	}
+
+	public String getArchivoUrl() {
+		return archivoUrl;
+	}
+
+	public void setArchivoUrl(String archivoUrl) {
+		this.archivoUrl = archivoUrl;
+	}
+	
 }

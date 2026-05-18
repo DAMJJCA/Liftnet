@@ -117,7 +117,9 @@ public class PostulanteController {
                 profile.getUbicacion(),
                 profile.getTelefono(),
                 profile.getBio(),
-                profile.isDisponible()
+                profile.isDisponible(),
+                profile.getFotoUrl(),
+                profile.getCvUrl()
         );
     }
 }

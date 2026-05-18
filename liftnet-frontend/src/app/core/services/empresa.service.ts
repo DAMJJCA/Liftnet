@@ -10,6 +10,7 @@ export interface EmpresaProfile {
   ubicacion: string;
   telefono: string;
   descripcion: string;
+  fotoUrl?: string;
 }
 
 @Injectable({
@@ -19,7 +20,7 @@ export class EmpresaService {
 
   private readonly apiUrl = `${environment.apiUrl}/empresa/profile`;
 
-  // ¡Mira qué limpio! Ya no inyectamos TokenStorageService
+  // TokenStorageService
   constructor(private http: HttpClient) {}
 
   getProfile(): Observable<ApiResponse<EmpresaProfile>> {

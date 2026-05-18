@@ -49,6 +49,7 @@ public class ExperienciaService {
         exp.setDescripcion(request.getDescripcion());
         exp.setFechaInicio(request.getFechaInicio());
         exp.setFechaFin(request.getFechaFin());
+        exp.setArchivoUrl(request.getArchivoUrl());
 
         repository.save(exp);
     }
@@ -68,6 +69,8 @@ public class ExperienciaService {
         exp.setDescripcion(request.getDescripcion());
         exp.setFechaInicio(request.getFechaInicio());
         exp.setFechaFin(request.getFechaFin());
+        exp.setArchivoUrl(request.getArchivoUrl());
+
     }
 
     public void eliminar(String email, UUID id) {

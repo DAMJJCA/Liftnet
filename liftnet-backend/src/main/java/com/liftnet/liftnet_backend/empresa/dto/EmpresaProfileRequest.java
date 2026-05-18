@@ -17,20 +17,46 @@ public class EmpresaProfileRequest {
 
     @Size(max = 500)
     private String descripcion;
+    
+    private String fotoUrl;
 
-    public String getNombreEmpresa() {
-        return nombreEmpresa;
-    }
+	public String getNombreEmpresa() {
+		return nombreEmpresa;
+	}
 
-    public String getUbicacion() {
-        return ubicacion;
-    }
+	public void setNombreEmpresa(String nombreEmpresa) {
+		this.nombreEmpresa = nombreEmpresa;
+	}
 
-    public String getTelefono() {
-        return telefono;
-    }
+	public String getUbicacion() {
+		return ubicacion;
+	}
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	public void setUbicacion(String ubicacion) {
+		this.ubicacion = ubicacion;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getFotoUrl() {
+		return fotoUrl;
+	}
+
+	public void setFotoUrl(String fotoUrl) {
+		this.fotoUrl = fotoUrl;
+	}
 }

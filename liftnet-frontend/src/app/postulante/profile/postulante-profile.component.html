@@ -1,15 +1,34 @@
 <div class="profile-container" *ngIf="!store.loading(); else loadingTpl">
 
-  <div class="profile-header">
-    <h1>Tu currículum profesional</h1>
-    <!-- El botón de editar solo aparece cuando estás viendo el perfil -->
-    <button *ngIf="store.mode() === 'view'" (click)="activarEdicion()" class="btn outline">Editar datos básicos</button>
+  <div class="profile-header-postulante">
+    <div class="avatar-container-postulante">
+      <img [src]="store.profile().fotoUrl || 'https://ui-avatars.com/api/?name=' + (store.profile().nombre || 'Usuario') + '&background=28a745&color=fff&rounded=true&size=150'"
+           alt="Foto de perfil"
+           class="round-avatar"
+           [class.uploading]="isUploading()">
+
+      <div class="spinner-overlay round" *ngIf="isUploading()">
+        <div class="loader"></div>
+      </div>
+
+      <label *ngIf="store.mode() === 'edit'" class="upload-badge-postulante" title="Subir foto">
+        📷
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+      </label>
+    </div>
+
+    <div class="header-info-postulante">
+      <h1>{{ store.mode() === 'view' ? (store.profile().nombre + ' ' + store.profile().apellidos) : 'Editando Currículum' }}</h1>
+      <p class="subtitle" *ngIf="store.mode() === 'view'">{{ store.profile().ubicacion || 'Ubicación no especificada' }}</p>
+
+      <button *ngIf="store.mode() === 'view'" (click)="activarEdicion()" class="btn outline mt-2">✏️ Editar datos básicos</button>
+    </div>
   </div>
 
+  <div class="alert warning" *ngIf="mandatoryMessage">{{ mandatoryMessage }}</div>
   <div class="alert success" *ngIf="store.successMessage()">{{ store.successMessage() }}</div>
   <div class="alert error" *ngIf="store.errorMessage()">{{ store.errorMessage() }}</div>
 
-  <!-- BARRA DE PROGRESO GLOBAL -->
   <div class="progress-box">
     <div class="progress-header">
       <span>Perfil completado</span>
@@ -18,17 +37,13 @@
     <div class="progress-bar">
       <div class="progress-fill" [style.width.%]="store.progress()"></div>
     </div>
-    <small *ngIf="store.progress() < 100" style="color: #666; display: block; margin-top: 5px;">
-      Completa todas las secciones para tener un perfil atractivo. Las certificaciones son obligatorias para postular.
+    <small *ngIf="store.progress() < 100" class="progress-hint">
+      Completa todas las secciones. Las certificaciones son obligatorias para postular.
     </small>
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODO 1: VISUALIZAR PERFIL CLÁSICO (Por Defecto) -->
-  <!-- ============================================== -->
   <div *ngIf="store.mode() === 'view'">
 
-    <!-- TARJETA: DATOS BÁSICOS -->
     <div class="card">
       <div class="card-header">
         <h2>Datos Personales</h2>
@@ -37,43 +52,76 @@
         <div *ngIf="!store.profile().nombre" class="empty-state">
           Aún no has completado tus datos personales. Haz clic en "Editar datos básicos" arriba.
         </div>
-        <div *ngIf="store.profile().nombre">
-          <p><strong>Nombre completo:</strong> {{ store.profile().nombre }} {{ store.profile().apellidos }}</p>
-          <p><strong>Ubicación:</strong> {{ store.profile().ubicacion }}</p>
-          <p><strong>Teléfono:</strong> {{ store.profile().telefono }}</p>
-          <p><strong>Sobre mí:</strong> {{ store.profile().bio || 'No has añadido una descripción.' }}</p>
+        <div class="info-grid" *ngIf="store.profile().nombre">
+          <div class="info-item">
+            <label>Nombre completo</label>
+            <p>{{ store.profile().nombre }} {{ store.profile().apellidos }}</p>
+          </div>
+          <div class="info-item">
+            <label>Ubicación</label>
+            <p>{{ store.profile().ubicacion }}</p>
+          </div>
+          <div class="info-item">
+            <label>Teléfono</label>
+            <p>{{ store.profile().telefono }}</p>
+          </div>
+          <div class="info-item full-width">
+            <label>Sobre mí</label>
+            <p class="description-text">{{ store.profile().bio || 'No has añadido una descripción profesional.' }}</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- TARJETA: EXPERIENCIAS -->
     <div class="card">
       <div class="card-header">
-        <h2> Experiencia Laboral</h2>
-        <a routerLink="/postulante/experiencias" class="btn small outline">Gestionar experiencias</a>
+        <h2>Mi Currículum (CV)</h2>
       </div>
       <div class="card-body">
-        <div *ngIf="store.profile().experiencias.length === 0" class="empty-state">No has añadido experiencia.</div>
-        <ul class="item-list">
+        <div *ngIf="!store.profile().cvUrl" class="empty-state">
+          No tienes ningún currículum adjunto en tu perfil. Haz clic en "Editar datos básicos" para subirlo.
+        </div>
+
+        <div *ngIf="store.profile().cvUrl" class="cv-uploaded-box list-item-flex">
+          <div class="item-info">
+            <strong style="color: #1976d2; font-size: 1.1em;">📄 Currículum Vitae.pdf</strong>
+            <p class="text-muted" style="margin-top: 5px; font-size: 0.9em; margin-bottom: 0;">Tu currículum está listo y disponible para las empresas.</p>
+          </div>
+          <div class="item-actions">
+            <a [href]="store.profile().cvUrl" target="_blank" class="btn-mini-view">👁️ Ver</a>
+            <a [href]="store.profile().cvUrl + '?download='" class="btn-mini-download">⬇️ Descargar</a>
+            <button type="button" (click)="eliminarCv(store.profile().cvUrl!)" class="btn-mini-delete" [disabled]="subiendoCv()">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Experiencia Laboral</h2>
+        <a routerLink="/postulante/experiencias" class="btn small outline">Gestionar</a>
+      </div>
+      <div class="card-body">
+        <div *ngIf="store.profile().experiencias.length === 0" class="empty-state">No has añadido experiencia laboral.</div>
+        <ul class="item-list" *ngIf="store.profile().experiencias.length > 0">
           <li *ngFor="let exp of store.profile().experiencias">
             <strong>{{ exp.lugar }}</strong>
-            <p style="margin: 3px 0; color: #555;">{{ exp.descripcion }}</p>
+            <p style="margin: 5px 0; color: #555;">{{ exp.descripcion }}</p>
           </li>
         </ul>
       </div>
     </div>
 
-    <!-- TARJETA: CERTIFICACIONES -->
     <div class="card">
       <div class="card-header">
-        <h2> Certificaciones y Títulos</h2>
-        <a routerLink="/postulante/certificaciones" class="btn small outline">Gestionar títulos</a>
+        <h2>Certificaciones y Títulos</h2>
+        <a routerLink="/postulante/certificaciones" class="btn small outline">Gestionar</a>
       </div>
       <div class="card-body">
         <div *ngIf="store.profile().certificaciones.length === 0" class="empty-state" style="color: #c62828;">
            Obligatorio: Debes añadir al menos un título para poder postular a ofertas.
         </div>
-        <ul class="item-list">
+        <ul class="item-list" *ngIf="store.profile().certificaciones.length > 0">
           <li *ngFor="let cert of store.profile().certificaciones">
             <strong>{{ cert.nombre }}</strong> <span *ngIf="cert.entidad">({{ cert.entidad }})</span>
           </li>
@@ -83,44 +131,59 @@
 
   </div>
 
-  <!-- MODO 2: EDITAR DATOS BÁSICOS (Solo al hacer clic) -->
-  <div *ngIf="store.mode() === 'edit'" class="card">
-    <div class="card-header" style="background: #e3f2fd;">
-      <h2>Modificar Datos Básicos</h2>
+  <div *ngIf="store.mode() === 'edit'" class="card edit-card">
+    <div class="card-header" style="background: #e8f5e9;">
+      <h2 style="color: #2e7d32;">Modificar Datos Básicos</h2>
     </div>
     <div class="card-body">
       <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
 
-        <div class="form-group">
-          <label>Nombre</label>
-          <input type="text" name="nombre" [(ngModel)]="store.profile().nombre" required class="form-control" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input type="text" name="nombre" [(ngModel)]="store.profile().nombre" required class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Apellidos *</label>
+            <input type="text" name="apellidos" [(ngModel)]="store.profile().apellidos" required class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Ubicación *</label>
+            <input type="text" name="ubicacion" [(ngModel)]="store.profile().ubicacion" required class="form-control" placeholder="Ej: Madrid, España" />
+          </div>
+
+          <div class="form-group">
+            <label>Teléfono *</label>
+            <input type="text" name="telefono" [(ngModel)]="store.profile().telefono" required class="form-control" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Apellidos</label>
-          <input type="text" name="apellidos" [(ngModel)]="store.profile().apellidos" required class="form-control" />
-        </div>
-
-        <div class="form-group">
-          <label>Ubicación</label>
-          <input type="text" name="ubicacion" [(ngModel)]="store.profile().ubicacion" required class="form-control" placeholder="Ej: Madrid" />
-        </div>
-
-        <div class="form-group">
-          <label>Teléfono</label>
-          <input type="text" name="telefono" [(ngModel)]="store.profile().telefono" required class="form-control" />
-        </div>
-
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 15px;">
           <label>Biografía / Sobre mí</label>
-          <textarea name="bio" [(ngModel)]="store.profile().bio" rows="4" class="form-control" placeholder="Escribe un breve resumen profesional..."></textarea>
+          <textarea name="bio" [(ngModel)]="store.profile().bio" rows="4" class="form-control" placeholder="Escribe un breve resumen profesional sobre ti..."></textarea>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-          <button type="submit" class="btn primary" [disabled]="profileForm.invalid || store.loading()" style="flex: 1;">
-            {{ store.loading() ? 'Guardando...' : 'Guardar cambios' }}
+        <div class="form-group" style="margin-top: 15px; padding: 15px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #f8fafc;">
+          <label style="color: #0284c7; font-weight: bold;">📄 Adjuntar o cambiar Currículum (PDF)</label>
+
+          <div *ngIf="store.profile().cvUrl" style="margin-top: 5px; margin-bottom: 10px; color: #155724; background: #d4edda; padding: 8px; border-radius: 4px; font-size: 0.9em;">
+            ✅ Ya cuentas con un archivo en la nube. Al subir uno nuevo, este será reemplazado.
+          </div>
+
+          <input type="file" (change)="onCvSelected($event)" accept="application/pdf" class="form-control" style="background: white; padding: 6px;" />
+
+          <small class="text-muted" *ngIf="subiendoCv()" style="color: #e67e22; font-weight: bold; display: block; margin-top: 5px;">
+            ⏳ Subiendo archivo PDF a Supabase... por favor, espera.
+          </small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary btn-success" [disabled]="profileForm.invalid || store.loading() || isUploading() || subiendoCv()">
+            {{ store.loading() ? 'Guardando...' : 'Guardar perfil' }}
           </button>
-          <button type="button" class="btn outline" (click)="cancelarEdicion()" style="flex: 1;">
+          <button type="button" class="btn outline" (click)="cancelarEdicion()">
             Cancelar
           </button>
         </div>
@@ -131,5 +194,8 @@
 </div>
 
 <ng-template #loadingTpl>
-  <p style="text-align: center; margin-top: 50px; color: #666;">Cargando tu currículum...</p>
+  <div class="loading-screen">
+    <div class="loader-big"></div>
+    <p>Cargando tu currículum...</p>
+  </div>
 </ng-template>
