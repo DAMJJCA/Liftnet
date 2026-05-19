@@ -4,70 +4,80 @@
   padding: 0 20px;
 }
 
-.loading-text { text-align: center; color: #666; }
-.empty-state { text-align: center; padding: 30px; border: 1px dashed #ccc; border-radius: 8px; color: #666; }
+h2 { color: #0f172a; margin-bottom: 30px; }
+
+.loading-text { text-align: center; color: #64748b; font-style: italic; }
+.empty-state { text-align: center; padding: 40px; border: 2px dashed #cbd5e1; border-radius: 12px; color: #64748b; background: #f8fafc; }
+.btn-buscar { display: inline-block; background: #0284c7; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+.btn-buscar:hover { background: #0369a1; }
 
 .postulacion-card {
-  border: 1px solid #e0e0e0;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
   background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
 }
+.postulacion-card:hover { border-color: #cbd5e1; }
 
 .card-header {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 15px;
   margin-bottom: 15px;
 }
 
 .titulo-oferta {
-  margin: 0 0 5px 0;
-  color: #1976d2;
-  font-size: 1.3em;
+  margin: 0 0 8px 0;
+  color: #0284c7;
+  font-size: 1.4em;
 }
 
 .nombre-empresa {
-  color: #555;
+  color: #475569;
   font-weight: bold;
   font-size: 0.95em;
 }
 
 .info-oferta p {
-  margin: 5px 0;
-  color: #444;
+  margin: 8px 0;
+  color: #334155;
+  font-size: 0.95em;
 }
 
 .descripcion {
-  color: #666;
+  color: #64748b;
   font-style: italic;
   font-size: 0.9em;
-  margin-top: 8px !important;
+  line-height: 1.5;
 }
 
 .estado-seccion {
-  margin-top: 15px;
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
+
+.estado-box { color: #334155; font-weight: 500; }
 
 .badge-estado {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 0.9em;
-  margin-left: 5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  margin-left: 8px;
+  letter-spacing: 0.5px;
 }
 
-.fecha {
-  color: #888;
-}
+.fecha { color: #94a3b8; }
 
 /* CAJA MÁGICA DE CONTACTO */
 .contacto-empresa {
-  margin-top: 20px;
-  padding: 15px;
+  margin-top: 25px;
+  padding: 20px;
   background-color: #f0fdf4;
   border: 2px dashed #4ade80;
   border-radius: 8px;
@@ -76,10 +86,11 @@
 .contacto-empresa h4 {
   margin: 0 0 10px 0;
   color: #166534;
+  font-size: 1.1em;
 }
 
 .contacto-empresa p {
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
   color: #15803d;
   font-size: 0.95em;
 }
@@ -91,6 +102,18 @@
 }
 
 .contacto-empresa li {
-  color: #333;
-  margin-bottom: 5px;
+  color: #0f172a;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+.email-link {
+  color: #0284c7;
+  text-decoration: none;
+  font-weight: bold;
+}
+.email-link:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .estado-seccion { flex-direction: column; align-items: flex-start; }
 }

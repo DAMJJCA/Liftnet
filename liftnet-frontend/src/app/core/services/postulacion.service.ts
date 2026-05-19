@@ -1,20 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
 import { environment } from '../../../environments/environment.development';
-import { ApiResponse } from '../models/api-response.model';
 
 export interface Postulacion {
-  postulacionId: string;
+  id: string;
   ofertaId: string;
   tituloOferta: string;
   estado: string;
   createdAt: string;
-
   nombreEmpresa?: string;
-  descripcionOferta?: string;
   ubicacionOferta?: string;
+  descripcionOferta?: string;
   telefonoEmpresa?: string;
   emailEmpresa?: string;
 }
@@ -26,24 +23,28 @@ export class PostulacionService {
 
   private readonly apiUrl = `${environment.apiUrl}/postulaciones`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  postular(ofertaId: string): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/oferta/${ofertaId}`, {});
+  // POSTULANTE: Postularse a una oferta
+  postular(ofertaId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/oferta/${ofertaId}`, {});
   }
 
-  getMisPostulaciones(page = 0, size = 10): Observable<ApiResponse<any>> {
+  // POSTULANTE: Ver a qué ofertas ha aplicado
+  getMisPostulaciones(page = 0, size = 20): Observable<any> {
     const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/mis-postulaciones`, { params });
+    return this.http.get(`${this.apiUrl}/mis-postulaciones`, { params });
   }
 
-  getPostulacionesOferta(ofertaId: string, page = 0, size = 10): Observable<any> {
+  // EMPRESA: Ver los candidatos de una oferta específica
+  getPostulacionesOferta(ofertaId: string, page = 0, size = 20): Observable<any> {
     const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<any>(`${this.apiUrl}/oferta/${ofertaId}`, { params });
+    return this.http.get(`${this.apiUrl}/oferta/${ofertaId}`, { params });
   }
 
+  // EMPRESA: Aceptar o rechazar a un candidato
   actualizarEstado(postulacionId: string, estado: 'ACEPTADA' | 'RECHAZADA'): Observable<any> {
     const params = new HttpParams().set('estado', estado);
-    return this.http.put<any>(`${this.apiUrl}/${postulacionId}/estado`, {}, { params });
+    return this.http.put(`${this.apiUrl}/${postulacionId}/estado`, {}, { params });
   }
 }

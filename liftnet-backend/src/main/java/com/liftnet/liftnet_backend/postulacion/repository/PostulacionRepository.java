@@ -19,5 +19,3 @@ public interface PostulacionRepository extends JpaRepository<Postulacion, UUID> 
 
     Optional<Postulacion> findById(UUID id);
 }
-
-

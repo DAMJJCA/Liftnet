@@ -38,36 +38,13 @@ public class Postulacion {
 
     private Instant createdAt = Instant.now();
 
-
-    public UUID getId() {
-        return id;
-    }
-
-    public OfertaTrabajo getOferta() {
-        return oferta;
-    }
-
-    public void setOferta(OfertaTrabajo oferta) {
-        this.oferta = oferta;
-    }
-
-    public PostulanteProfile getPostulante() {
-        return postulante;
-    }
-
-    public void setPostulante(PostulanteProfile postulante) {
-        this.postulante = postulante;
-    }
-
-    public EstadoPostulacion getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoPostulacion estado) {
-        this.estado = estado;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
+    // GETTERS Y SETTERS
+    public UUID getId() { return id; }
+    public OfertaTrabajo getOferta() { return oferta; }
+    public void setOferta(OfertaTrabajo oferta) { this.oferta = oferta; }
+    public PostulanteProfile getPostulante() { return postulante; }
+    public void setPostulante(PostulanteProfile postulante) { this.postulante = postulante; }
+    public EstadoPostulacion getEstado() { return estado; }
+    public void setEstado(EstadoPostulacion estado) { this.estado = estado; }
+    public Instant getCreatedAt() { return createdAt; }
 }

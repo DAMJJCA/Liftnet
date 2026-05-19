@@ -1,56 +1,47 @@
-.ofertas-container {
-  max-width: 760px;
-  margin: 40px auto;
-}
+.ofertas-container { max-width: 900px; margin: 40px auto; padding: 0 15px; }
+h2 { text-align: center; color: #1976d2; margin-bottom: 30px; }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+.alert { padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 20px;}
+.alert.success { background: #d1e7dd; color: #0f5132; }
+.alert.error { background: #f8d7da; color: #842029; }
+.loading-text { text-align: center; color: #6c757d; font-style: italic; }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+.create-card h3 { margin-top: 0; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;}
 
-input,
-textarea {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;}
+.form-group label { display: block; font-size: 0.9em; font-weight: bold; color: #475569; margin-bottom: 5px; }
+.form-control, input, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-family: inherit;}
+.form-control:focus, input:focus, textarea:focus { border-color: #0284c7; outline: none; box-shadow: 0 0 0 2px rgba(2,132,199,0.2); }
+.full-width { grid-column: 1 / -1; }
 
-button {
-  padding: 8px 12px;
-  cursor: pointer;
-}
+.btn-primary { background: #0284c7; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s;}
+.btn-primary:hover:not(:disabled) { background: #0369a1; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-button.secondary {
-  background: #e0e0e0;
-}
+.separator { border: 0; height: 1px; background: #e2e8f0; margin: 40px 0; }
 
-button.danger {
-  background: #e53935;
-  color: #fff;
-  border: none;
-}
+.oferta-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; transition: 0.2s; }
+.oferta-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-.oferta {
-  border: 1px solid #ddd;
-  padding: 14px;
-  margin-top: 16px;
-  border-radius: 6px;
-}
+.oferta-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;}
+.oferta-header h3 { margin: 0; color: #0f172a; font-size: 1.3em;}
+.badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: bold; }
+.badge.abierta { background: #dcfce3; color: #166534; }
+.badge.cerrada-badge { background: #f1f5f9; color: #475569; }
 
-.acciones {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+.oferta-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+.tag { background: #f8fafc; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 4px; font-size: 0.85em; color: #475569; }
 
-.cerrada {
-  color: #777;
-  font-style: italic;
-}
+.oferta-desc-short { color: #64748b; font-size: 0.95em; line-height: 1.5; margin: 0; }
+
+.acciones { display: flex; gap: 10px; flex-wrap: wrap; }
+.mt-3 { margin-top: 15px; }
+.btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;}
+.btn-secondary:hover { background: #e2e8f0; }
+.btn-outline { background: white; color: #0284c7; border: 1px solid #0284c7; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;}
+.btn-outline:hover { background: #f0f9ff; }
+.btn-danger { background: #fff; color: #ef4444; border: 1px solid #fecaca; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;}
+.btn-danger:hover { background: #fef2f2; }
+
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }

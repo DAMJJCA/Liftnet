@@ -19,7 +19,6 @@ export class EmpresaOfertasStore {
 
     this.ofertaService.getMisOfertas(page, size).subscribe({
       next: (res) => {
-        // Spring Data REST paginado devuelve 'content' dentro de 'data' o directamente en la raíz
         const content = res.data?.content || res.content || [];
         this.ofertas.set(content);
         this.loading.set(false);
@@ -32,12 +31,13 @@ export class EmpresaOfertasStore {
   }
 
   // CREAR OFERTA
-  crearOferta(nuevaOferta: { titulo: string; descripcion: string; ubicacion: string }): void {
+  // Usamos Partial<Oferta> para que acepte todos los campos nuevos
+  crearOferta(nuevaOferta: Partial<Oferta>): void {
     this.loading.set(true);
     this.ofertaService.crearOferta(nuevaOferta).subscribe({
       next: () => {
         this.successMessage.set('Oferta publicada con éxito');
-        this.cargarOfertas(); // Recargamos la lista
+        this.cargarOfertas();
         setTimeout(() => this.successMessage.set(null), 3000);
       },
       error: () => {
@@ -48,7 +48,8 @@ export class EmpresaOfertasStore {
   }
 
   // EDITAR OFERTA
-  editarOferta(id: string, oferta: { titulo: string; descripcion: string; ubicacion: string }): void {
+  // Usamos Partial<Oferta> para que acepte todos los campos nuevos
+  editarOferta(id: string, oferta: Partial<Oferta>): void {
     this.loading.set(true);
     this.ofertaService.editarOferta(id, oferta).subscribe({
       next: () => {

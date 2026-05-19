@@ -23,7 +23,8 @@ export class ListaOfertasComponent implements OnInit {
 
   ngOnInit(): void {
     this.ofertaService.getOfertasActivas().subscribe(res => {
-      this.ofertas = res.data;
+      // Extraemos el array del Pageable de Spring Boot
+      this.ofertas = res.data?.content || res.data || [];
     });
   }
 
@@ -33,13 +34,13 @@ export class ListaOfertasComponent implements OnInit {
 
     this.postulacionService.postular(ofertaId).subscribe({
       next: () => {
-        this.mensaje = 'Postulación realizada con éxito';
+        this.mensaje = '¡Postulación realizada con éxito!';
       },
       error: err => {
         if (err.status === 409) {
-          this.error = 'Ya te has postulado a esta oferta';
+          this.error = 'Ya te has postulado a esta oferta previamente.';
         } else {
-          this.error = 'No se pudo completar la postulación';
+          this.error = 'No se pudo completar la postulación. Revisa que tu perfil esté completo.';
         }
       }
     });

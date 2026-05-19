@@ -1,18 +1,75 @@
 <div class="ofertas-container">
 
-  <h2>Ofertas disponibles</h2>
-
-  <p *ngIf="mensaje" class="success">{{ mensaje }}</p>
-  <p *ngIf="error" class="error">{{ error }}</p>
-
-  <div *ngFor="let oferta of ofertas" class="oferta">
-    <h3>{{ oferta.titulo }}</h3>
-    <p>{{ oferta.descripcion }}</p>
-    <small>{{ oferta.ubicacion }}</small>
-
-    <button (click)="postular(oferta.id)">
-      Postularme
-    </button>
+  <div class="header-section">
+    <h2>Ofertas de empleo destacadas</h2>
+    <p>Encuentra tu próximo reto profesional</p>
   </div>
 
+  <p *ngIf="mensaje" class="alert success">{{ mensaje }}</p>
+  <p *ngIf="error" class="alert error">{{ error }}</p>
+
+  <div class="ofertas-list">
+    <div *ngFor="let oferta of ofertas" class="oferta-pro-card">
+
+      <div class="oferta-main-header">
+        <div>
+          <h3 class="oferta-title">{{ oferta.titulo }}</h3>
+          <p class="oferta-company-location">
+            <span class="location">📍 {{ oferta.ubicacion || 'Ubicación no especificada' }}</span>
+          </p>
+        </div>
+        <div class="oferta-salary" *ngIf="oferta.salario">
+          <span>{{ oferta.salario }}</span>
+        </div>
+      </div>
+
+      <div class="oferta-requisitos-grid">
+        <div class="req-item" *ngIf="oferta.estudiosMinimos">
+          <span class="req-icon">🎓</span>
+          <div>
+            <span class="req-label">Estudios mínimos</span>
+            <span class="req-value">{{ oferta.estudiosMinimos }}</span>
+          </div>
+        </div>
+        <div class="req-item" *ngIf="oferta.experienciaMinima">
+          <span class="req-icon">💼</span>
+          <div>
+            <span class="req-label">Experiencia mínima</span>
+            <span class="req-value">{{ oferta.experienciaMinima }}</span>
+          </div>
+        </div>
+        <div class="req-item" *ngIf="oferta.idiomas">
+          <span class="req-icon">🗣️</span>
+          <div>
+            <span class="req-label">Idiomas requeridos</span>
+            <span class="req-value">{{ oferta.idiomas }}</span>
+          </div>
+        </div>
+        <div class="req-item" *ngIf="oferta.nivel">
+          <span class="req-icon">📈</span>
+          <div>
+            <span class="req-label">Nivel</span>
+            <span class="req-value">{{ oferta.nivel }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="oferta-body">
+        <h4>Descripción de la oferta</h4>
+        <p class="oferta-descripcion">{{ oferta.descripcion }}</p>
+      </div>
+
+      <div class="oferta-footer">
+        <span class="vacantes-badge">👥 {{ oferta.vacantes || 1 }} vacante(s)</span>
+        <button class="btn-postular" (click)="postular(oferta.id)">
+          Inscribirme a esta oferta
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="ofertas.length === 0" class="empty-state">
+    <p>No hay ofertas disponibles en este momento.</p>
+  </div>
 </div>

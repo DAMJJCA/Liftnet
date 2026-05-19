@@ -15,17 +15,19 @@ import { EmpresaOfertasStore } from '../../../core/stores/empresa-ofertas.store'
 })
 export class MisOfertasComponent implements OnInit {
 
-  // Conectamos con el Store
   private store = inject(EmpresaOfertasStore);
 
-  // Signals expuestos a la vista
   ofertas = this.store.ofertas;
   loading = this.store.loading;
   error = this.store.error;
   successMessage = this.store.successMessage;
 
-  // Estado local para los formularios
-  nuevaOferta = { titulo: '', descripcion: '', ubicacion: '' };
+  nuevaOferta: Partial<Oferta> = {
+    titulo: '', descripcion: '', ubicacion: '',
+    estudiosMinimos: '', experienciaMinima: '', idiomas: '',
+    nivel: '', vacantes: 1, salario: ''
+  };
+
   ofertaEditando: Oferta | null = null;
 
   ngOnInit(): void {
@@ -34,8 +36,11 @@ export class MisOfertasComponent implements OnInit {
 
   crear(): void {
     this.store.crearOferta(this.nuevaOferta);
-    // Limpiamos el formulario local
-    this.nuevaOferta = { titulo: '', descripcion: '', ubicacion: '' };
+    this.nuevaOferta = {
+      titulo: '', descripcion: '', ubicacion: '',
+      estudiosMinimos: '', experienciaMinima: '', idiomas: '',
+      nivel: '', vacantes: 1, salario: ''
+    };
   }
 
   editar(oferta: Oferta): void {
@@ -52,7 +57,13 @@ export class MisOfertasComponent implements OnInit {
     this.store.editarOferta(this.ofertaEditando.id, {
       titulo: this.ofertaEditando.titulo,
       descripcion: this.ofertaEditando.descripcion,
-      ubicacion: this.ofertaEditando.ubicacion
+      ubicacion: this.ofertaEditando.ubicacion,
+      estudiosMinimos: this.ofertaEditando.estudiosMinimos,
+      experienciaMinima: this.ofertaEditando.experienciaMinima,
+      idiomas: this.ofertaEditando.idiomas,
+      nivel: this.ofertaEditando.nivel,
+      vacantes: this.ofertaEditando.vacantes,
+      salario: this.ofertaEditando.salario
     });
     this.ofertaEditando = null;
   }

@@ -8,6 +8,7 @@ import com.liftnet.liftnet_backend.postulacion.entity.Postulacion;
 import com.liftnet.liftnet_backend.postulacion.service.PostulacionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -22,14 +23,6 @@ public class PostulacionController {
         this.service = service;
     }
 
-    /**
-     * ✅ MODO DESARROLLO
-     * - Sin JWT
-     * - Sin roles
-     * - email por request param
-     */
-
-    // POSTULANTE SE POSTULA A UNA OFERTA
     @PostMapping("/oferta/{ofertaId}")
     public ApiResponse<Void> postular(
             @RequestParam String email,
@@ -39,11 +32,10 @@ public class PostulacionController {
         return ApiResponse.ok("Postulación realizada con éxito", null);
     }
 
-    // POSTULANTE VE SUS POSTULACIONES
     @GetMapping("/mis-postulaciones")
     public ApiResponse<Page<PostulacionResponse>> getMisPostulaciones(
             @RequestParam String email,
-            Pageable pageable) {
+            @PageableDefault(size = 20) Pageable pageable) {
 
         Page<PostulacionResponse> page = service
                 .getMisPostulaciones(email, pageable)
@@ -52,19 +44,16 @@ public class PostulacionController {
         return ApiResponse.ok(page);
     }
 
-    // EMPRESA VE POSTULACIONES DE UNA OFERTA
     @GetMapping("/oferta/{ofertaId}")
     public ApiResponse<Page<PostulantePostulacionResponse>> getPostulacionesOferta(
             @RequestParam String email,
             @PathVariable UUID ofertaId,
-            Pageable pageable) {
+            @PageableDefault(size = 20) Pageable pageable) {
 
         Page<PostulantePostulacionResponse> page = service.getPostulacionesOferta(email, ofertaId, pageable);
-
         return ApiResponse.ok(page);
     }
 
-    // EMPRESA ACEPTA / RECHAZA POSTULACIÓN
     @PutMapping("/{postulacionId}/estado")
     public ApiResponse<Void> actualizarEstado(
             @RequestParam String email,
@@ -76,80 +65,23 @@ public class PostulacionController {
     }
 
     // MAPPERS PRIVADOS
-
     private PostulacionResponse mapPostulante(Postulacion p) {
+        String emailContacto = "No especificado";
+        if (p.getOferta().getEmpresa().getUser() != null) {
+            emailContacto = p.getOferta().getEmpresa().getUser().getEmail();
+        }
+
         return new PostulacionResponse(
                 p.getId(),
                 p.getOferta().getId(),
                 p.getOferta().getTitulo(),
                 p.getEstado(),
-                p.getCreatedAt()
+                p.getCreatedAt(),
+                p.getOferta().getEmpresa().getNombreEmpresa(),
+                p.getOferta().getUbicacion(),
+                p.getOferta().getDescripcion(),
+                p.getOferta().getEmpresa().getTelefono(),
+                emailContacto
         );
     }
-
-    private PostulantePostulacionResponse mapEmpresa(Postulacion p) {
-        return new PostulantePostulacionResponse(
-                p.getId(),
-                p.getPostulante().getNombre(),
-                p.getPostulante().getApellidos(),
-                p.getEstado(),
-                p.getCreatedAt(),
-                p.getPostulante().getExperiencias(),
-                p.getPostulante().getCertificaciones(),
-                p.getPostulante().getCvUrl()
-                
-      );
-    }
-
-    /*
-    🔐 MODO PRODUCCIÓN (DESCOMENTAR CUANDO ACTIVE JWT)
-
-    @PreAuthorize("hasRole('POSTULANTE')")
-    @PostMapping("/oferta/{ofertaId}")
-    public ApiResponse<Void> postular(
-            Authentication auth,
-            @PathVariable UUID ofertaId) {
-
-        service.postular(auth.getName(), ofertaId);
-        return ApiResponse.ok("Postulación realizada con éxito", null);
-    }
-
-    @PreAuthorize("hasRole('POSTULANTE')")
-    @GetMapping("/mis-postulaciones")
-    public ApiResponse<Page<PostulacionResponse>> getMisPostulaciones(
-            Authentication auth,
-            Pageable pageable) {
-
-        Page<PostulacionResponse> page = service
-                .getMisPostulaciones(auth.getName(), pageable)
-                .map(this::mapPostulante);
-
-        return ApiResponse.ok(page);
-    }
-
-    @PreAuthorize("hasRole('EMPRESA')")
-    @GetMapping("/oferta/{ofertaId}")
-    public ApiResponse<Page<PostulantePostulacionResponse>> getPostulacionesOferta(
-            Authentication auth,
-            @PathVariable UUID ofertaId,
-            Pageable pageable) {
-
-        Page<PostulantePostulacionResponse> page = service
-                .getPostulacionesOferta(auth.getName(), ofertaId, pageable)
-                .map(this::mapEmpresa);
-
-        return ApiResponse.ok(page);
-    }
-
-    @PreAuthorize("hasRole('EMPRESA')")
-    @PutMapping("/{postulacionId}/estado")
-    public ApiResponse<Void> actualizarEstado(
-            Authentication auth,
-            @PathVariable UUID postulacionId,
-            @RequestParam EstadoPostulacion estado) {
-
-        service.actualizarEstado(auth.getName(), postulacionId, estado);
-        return ApiResponse.ok("Estado de postulación actualizado", null);
-    }
-    */
 }

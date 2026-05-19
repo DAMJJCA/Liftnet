@@ -15,7 +15,13 @@ public class OfertaMapper {
                 oferta.getDescripcion(),
                 oferta.getUbicacion(),
                 oferta.isActiva(),
-                oferta.getCreatedAt()
+                oferta.getCreatedAt(),
+                oferta.getEstudiosMinimos(),
+                oferta.getExperienciaMinima(),
+                oferta.getIdiomas(),
+                oferta.getNivel(),
+                oferta.getVacantes(),
+                oferta.getSalario()
         );
     }
 }

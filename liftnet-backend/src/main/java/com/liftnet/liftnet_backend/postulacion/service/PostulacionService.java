@@ -6,6 +6,7 @@ import com.liftnet.liftnet_backend.certificacion.repository.PostulanteCertificac
 import com.liftnet.liftnet_backend.common.exception.ResourceNotFoundException;
 import com.liftnet.liftnet_backend.empresa.entity.EmpresaProfile;
 import com.liftnet.liftnet_backend.empresa.repository.EmpresaRepository;
+import com.liftnet.liftnet_backend.experiencia.entity.Experiencia;
 import com.liftnet.liftnet_backend.oferta.entity.OfertaTrabajo;
 import com.liftnet.liftnet_backend.oferta.repository.OfertaRepository;
 import com.liftnet.liftnet_backend.postulacion.dto.PostulantePostulacionResponse;
@@ -16,10 +17,6 @@ import com.liftnet.liftnet_backend.postulante.entity.PostulanteProfile;
 import com.liftnet.liftnet_backend.postulante.repository.PostulanteRepository;
 import com.liftnet.liftnet_backend.user.entity.User;
 import com.liftnet.liftnet_backend.user.repository.UserRepository;
-
-// 👇 IMPORTANTE: Asegúrate de que esta ruta a tu entidad Experiencia sea correcta
-// Si la tienes en otro sitio, cambia el import.
-import com.liftnet.liftnet_backend.experiencia.entity.Experiencia; 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,19 +66,15 @@ public class PostulacionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Oferta not found"));
 
         if (!oferta.isActiva()) {
-            log.warn("Postulante {} intentó postular a oferta cerrada {}", email, ofertaId);
             throw new IllegalStateException("Cannot apply to inactive offer");
         }
-
         if (postulacionRepository.existsByOfertaAndPostulante(oferta, postulante)) {
-            log.warn("Postulante {} intentó postular dos veces a oferta {}", email, ofertaId);
             throw new IllegalStateException("Already applied to this offer");
         }
 
         Postulacion postulacion = new Postulacion();
         postulacion.setOferta(oferta);
         postulacion.setPostulante(postulante);
-
         postulacionRepository.save(postulacion);
         log.info("Postulante {} se postuló a oferta {}", email, ofertaId);
     }
@@ -92,7 +85,6 @@ public class PostulacionService {
         PostulanteProfile postulante = postulanteRepository.findByUser(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Postulante profile not found"));
 
-        log.info("Postulante {} consulta sus postulaciones", email);
         return postulacionRepository.findByPostulante(postulante, pageable);
     }
 
@@ -111,43 +103,26 @@ public class PostulacionService {
             throw new SecurityException("Not your offer");
         }
 
-        // 1. Buscamos las postulaciones
         Page<Postulacion> postulaciones = postulacionRepository.findByOferta(oferta, pageable);
 
-        // 2. Mapeamos cada una
         return postulaciones.map(p -> {
             PostulanteProfile postulante = p.getPostulante();
-
-            // 🔥 OBTENER EXPERIENCIAS (Asumiendo que tienes la relación @OneToMany en PostulanteProfile)
-            // Si te da error de que no existe "getExperiencias()", tienes que añadir 
-            // la relación @OneToMany en tu entidad PostulanteProfile.
             List<Experiencia> experiencias = postulante.getExperiencias();
 
-            // 🔥 OBTENER CERTIFICACIONES (Desde el repositorio o desde la entidad si lo tienes)
-            List<PostulanteCertificacion> certs = certificacionRepository.findByPostulante(postulante, Pageable.unpaged()).getContent();
+            List<PostulanteCertificacion> certs = certificacionRepository
+                    .findByPostulante(postulante, Pageable.unpaged()).getContent();
 
             List<CertificacionPostulanteResponse> certsDto = certs.stream().map(c ->
                     new CertificacionPostulanteResponse(
-                            c.getId(),
-                            c.getCertificacion().getId(),
-                            c.getCertificacion().getNombre(),
-                            c.getCertificacion().getEntidad(),
-                            c.getFechaObtencion(),
-                            c.getFechaExpiracion(),
-                            c.getArchivoUrl()
+                            c.getId(), c.getCertificacion().getId(), c.getCertificacion().getNombre(),
+                            c.getCertificacion().getEntidad(), c.getFechaObtencion(),
+                            c.getFechaExpiracion(), c.getArchivoUrl()
                     )
             ).collect(Collectors.toList());
 
-            // Devolver DTO
             return new PostulantePostulacionResponse(
-                    p.getId(),
-                    postulante.getNombre(),
-                    postulante.getApellidos(),
-                    p.getEstado(),
-                    p.getCreatedAt(),
-                    experiencias, // <- Pasamos la lista real de experiencias
-                    certsDto,      // <- Pasamos la lista mapeada de certificaciones
-                    postulante.getCvUrl()
+                    p.getId(), postulante.getNombre(), postulante.getApellidos(),
+                    p.getEstado(), p.getCreatedAt(), experiencias, certsDto, postulante.getCvUrl()
             );
         });
     }
@@ -162,7 +137,6 @@ public class PostulacionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Postulacion not found"));
 
         if (!postulacion.getOferta().getEmpresa().getId().equals(empresa.getId())) {
-            log.warn("Empresa {} intentó modificar postulación ajena {}", empresa.getNombreEmpresa(), postulacionId);
             throw new SecurityException("Not your offer");
         }
 

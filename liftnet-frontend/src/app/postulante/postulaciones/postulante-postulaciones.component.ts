@@ -1,15 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import {
-  PostulacionService,
-  Postulacion
-} from '../../core/services/postulacion.service';
+import { RouterModule } from '@angular/router';
+import { PostulacionService, Postulacion } from '../../core/services/postulacion.service';
 
 @Component({
   selector: 'app-postulante-postulaciones',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './postulante-postulaciones.component.html',
   styleUrls: ['./postulante-postulaciones.component.css']
 })
@@ -28,11 +25,9 @@ export class PostulacionesComponent implements OnInit {
     this.loading.set(true);
     this.postulacionService.getMisPostulaciones().subscribe({
       next: (res: any) => {
-        console.log('Postulaciones del postulante:', res);
-
+        // Extraemos el array paginado del backend
         const arrayData = res.data?.content || res.content || res.data || [];
         this.postulaciones.set(arrayData);
-
         this.loading.set(false);
       },
       error: (err) => {

@@ -48,12 +48,50 @@ public class OfertaService {
         oferta.setTitulo(request.getTitulo());
         oferta.setDescripcion(request.getDescripcion());
         oferta.setUbicacion(request.getUbicacion());
+        oferta.setEstudiosMinimos(request.getEstudiosMinimos());
+        oferta.setExperienciaMinima(request.getExperienciaMinima());
+        oferta.setIdiomas(request.getIdiomas());
+        oferta.setNivel(request.getNivel());
+        oferta.setVacantes(request.getVacantes() != null ? request.getVacantes() : 1);
+        oferta.setSalario(request.getSalario());
 
         OfertaTrabajo saved = ofertaRepository.save(oferta);
 
         log.info("Empresa {} creó oferta {}",
                 empresa.getNombreEmpresa(),
                 saved.getId());
+
+        return saved;
+    }
+    
+    // EMPRESA EDITA OFERTA
+    public OfertaTrabajo editarOferta(String email, UUID ofertaId, OfertaRequest request) {
+        User user = findUser(email);
+        EmpresaProfile empresa = empresaRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa profile not found"));
+
+        OfertaTrabajo oferta = ofertaRepository.findById(ofertaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Oferta not found"));
+
+        // Verificamos que la oferta pertenece a esta empresa
+        if (!oferta.getEmpresa().getId().equals(empresa.getId())) {
+            log.warn("Empresa {} intentó editar oferta ajena {}", empresa.getNombreEmpresa(), ofertaId);
+            throw new SecurityException("Not your offer");
+        }
+
+        // Actualizamos los campos
+        oferta.setTitulo(request.getTitulo());
+        oferta.setDescripcion(request.getDescripcion());
+        oferta.setUbicacion(request.getUbicacion());
+        oferta.setEstudiosMinimos(request.getEstudiosMinimos());
+        oferta.setExperienciaMinima(request.getExperienciaMinima());
+        oferta.setIdiomas(request.getIdiomas());
+        oferta.setNivel(request.getNivel());
+        oferta.setVacantes(request.getVacantes() != null ? request.getVacantes() : 1);
+        oferta.setSalario(request.getSalario());
+
+        OfertaTrabajo saved = ofertaRepository.save(oferta);
+        log.info("Empresa {} editó la oferta {}", empresa.getNombreEmpresa(), saved.getId());
 
         return saved;
     }

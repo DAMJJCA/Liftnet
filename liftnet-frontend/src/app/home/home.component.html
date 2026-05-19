@@ -1,81 +1,48 @@
-<div class="home-container" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
-
-  <!-- CABECERA -->
+<div class="home-container">
   <div class="home-header">
     <h1>Ofertas laborales recientes</h1>
-
-    <!-- BOTONES DE ACCESO (Solo si NO está logueado) -->
     <div class="auth-actions" *ngIf="!isLoggedIn()">
       <a routerLink="/login" class="btn btn-primary">Iniciar sesión</a>
-      <a routerLink="/register" class="btn btn-secondary">Registrarse</a>
     </div>
   </div>
 
-  <!-- ESTADO DE CARGA -->
-  <p *ngIf="loading()" style="text-align: center; color: #666;">Buscando ofertas...</p>
+  <p *ngIf="loading()" class="loading">Buscando ofertas...</p>
 
-  <!-- MENSAJES DE ERROR AL CARGAR -->
-  <p *ngIf="error()" style="color: #c62828; text-align: center; font-weight: bold;">
-    {{ error() }}
-  </p>
-
-  <!-- MENSAJES AL POSTULARSE -->
-  <div *ngIf="mensajeExito" style="background: #d1e7dd; color: #0f5132; padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center;">
-    {{ mensajeExito }}
-  </div>
-  <div *ngIf="mensajeError" style="background: #f8d7da; color: #842029; padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center;">
-    {{ mensajeError }}
+  <div class="ofertas-list">
+    <div *ngFor="let o of ofertas()" class="oferta-card" (click)="abrirDetalle(o)">
+      <h3>{{ o.titulo }}</h3>
+      <p class="ubicacion"> {{ o.ubicacion }}</p>
+      <p class="salario" *ngIf="o.salario">{{ o.salario }} €</p>
+      <button class="btn-ver">Ver detalles</button>
+      <a routerLink="/postulante/postulaciones" style="color: #1976d2; text-decoration: none; font-size: 0.9em;">
+        Ver mis postulaciones
+      </a>
+    </div>
   </div>
 
-  <!-- LISTA DE OFERTAS -->
-  <div *ngFor="let o of ofertas()" style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; background: #fff;">
+  <div class="modal-overlay" *ngIf="showModal" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="cerrarModal()">×</button>
 
-    <h3 style="margin-top: 0; color: #1976d2;">{{ o.titulo }}</h3>
-    <p style="color: #444; line-height: 1.5;">{{ o.descripcion }}</p>
-    <p style="color: #777; font-size: 0.9em;"><strong>Ubicación:</strong> {{ o.ubicacion }}</p>
-    <p style="color: #777; font-size: 0.9em;"><strong>Publicada:</strong> {{ o.createdAt | date }}</p>
-
-    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-
-      <!-- SI NO ESTÁ LOGUEADO -->
-      <span *ngIf="!isLoggedIn()" style="color: #666; font-size: 0.9em; font-style: italic;">
-        Inicia sesión o regístrate para postularte.
-      </span>
-
-      <!-- SI ESTÁ LOGUEADO Y ES POSTULANTE -->
-      <div *ngIf="isLoggedIn() && isPostulante()" style="display: flex; gap: 10px; align-items: center;">
-
-        <!-- SI YA SE POSTULÓ (Botón gris desactivado) -->
-        <ng-container *ngIf="ofertasPostuladas().includes(o.id); else btnPostular">
-          <button
-            disabled
-            style="background: #e0e0e0; color: #757575; padding: 8px 16px; border: none; border-radius: 4px; cursor: not-allowed; font-weight: bold;">
-            postulado
-          </button>
-        </ng-container>
-
-        <!-- SI NO SE HA POSTULADO (Botón verde normal) -->
-        <ng-template #btnPostular>
-          <button
-            (click)="postular(o.id)"
-            [disabled]="procesandoId === o.id"
-            style="background: #2e7d32; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-            {{ procesandoId === o.id ? 'Procesando...' : '¡Postularme!' }}
-          </button>
-        </ng-template>
-
-        <a routerLink="/postulante/postulaciones" style="color: #1976d2; text-decoration: none; font-size: 0.9em;">
-          Ver mis postulaciones
-        </a>
+      <h2>{{ ofertaSeleccionada.titulo }}</h2>
+      <div class="modal-info">
+        <span> Lugar: {{ ofertaSeleccionada.ubicacion }}</span>
+        <span> Estudios: {{ ofertaSeleccionada.estudiosMinimos || 'No especificados' }}</span>
+        <span> Experiencia: {{ ofertaSeleccionada.experienciaMinima || 'No requerida' }}</span>
       </div>
 
+      <hr>
+      <h4>Descripción</h4>
+      <p class="descripcion">{{ ofertaSeleccionada.descripcion }}</p>
+
+      <div class="footer-msg" *ngIf="mensajeExito" style="color: green;">{{ mensajeExito }}</div>
+
+      <div class="modal-footer" *ngIf="isPostulante()">
+        <button class="btn-postular" (click)="postular(ofertaSeleccionada.id)"
+          [disabled]="procesandoId === ofertaSeleccionada.id || ofertasPostuladas().includes(ofertaSeleccionada.id)">
+          {{ ofertasPostuladas().includes(ofertaSeleccionada.id) ? 'Ya postulado' : 'Inscribirme ahora' }}
+        </button>
+      </div>
     </div>
-
   </div>
-
-  <!-- SIN OFERTAS -->
-  <div *ngIf="!loading() && ofertas().length === 0" style="text-align: center; color: #666;">
-    <p>No hay ofertas activas en este momento. Vuelve más tarde.</p>
-  </div>
-
 </div>

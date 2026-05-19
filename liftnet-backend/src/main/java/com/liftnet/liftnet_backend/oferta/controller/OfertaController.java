@@ -54,7 +54,20 @@ public class OfertaController {
                 )
         );
     }
+    // EMPRESA EDITA OFERTA
+    @PutMapping("/{ofertaId}")
+    public ApiResponse<OfertaResponse> editarOferta(
+            @RequestParam String email,
+            @PathVariable UUID ofertaId,
+            @Valid @RequestBody OfertaRequest request) {
 
+        return ApiResponse.ok(
+                "Oferta actualizada correctamente",
+                OfertaMapper.toResponse(
+                        service.editarOferta(email, ofertaId, request)
+                )
+        );
+    }
     // EMPRESA VE SUS OFERTAS
     @GetMapping("/mis-ofertas")
     public ApiResponse<Page<OfertaResponse>> getMisOfertas(
