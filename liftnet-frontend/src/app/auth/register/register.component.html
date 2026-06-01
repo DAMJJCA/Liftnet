@@ -1,50 +1,95 @@
-<div class="register-container">
-  <h2>Crear cuenta</h2>
+<div class="auth-page">
+  <div class="auth-card">
 
-  <form (ngSubmit)="onRegister()" #f="ngForm">
-
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" name="email"
-             [(ngModel)]="form.email"
-             required />
+    <div class="auth-brand">
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h1 class="auth-title">Crear cuenta en Liftnet</h1>
+      <p class="auth-subtitle">Conecta con el sector del socorrismo</p>
     </div>
 
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" name="password"
-             [(ngModel)]="form.password"
-             required />
+    <form class="auth-form" (ngSubmit)="onRegister()" #f="ngForm">
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input
+          class="form-input"
+          id="email"
+          type="email"
+          name="email"
+          placeholder="tucorreo@ejemplo.com"
+          [(ngModel)]="form.email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Contraseña</label>
+        <input
+          class="form-input"
+          id="password"
+          type="password"
+          name="password"
+          placeholder="Mínimo 8 caracteres"
+          [(ngModel)]="form.password"
+          required
+          minlength="8"
+          #passwordField="ngModel"
+        />
+        <span class="form-error" *ngIf="passwordField.invalid && passwordField.touched && passwordField.errors?.['minlength']">
+          La contraseña debe tener al menos 8 caracteres
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirmPassword">Confirmar contraseña</label>
+        <input
+          class="form-input"
+          id="confirmPassword"
+          type="password"
+          name="confirmPassword"
+          placeholder="Repite tu contraseña"
+          [(ngModel)]="form.confirmPassword"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="role">Tipo de cuenta</label>
+        <select
+          class="form-input"
+          id="role"
+          name="role"
+          [(ngModel)]="form.role"
+          required
+        >
+          <option [ngValue]="undefined">Selecciona una opción</option>
+          <option value="POSTULANTE">Soy socorrista (Postulante)</option>
+          <option value="EMPRESA">Soy una empresa</option>
+        </select>
+      </div>
+
+      <button class="btn-submit" type="submit" [disabled]="f.invalid || loading">
+        {{ loading ? 'Creando cuenta…' : 'Crear cuenta' }}
+      </button>
+
+    </form>
+
+    <div *ngIf="errorMessage" class="auth-error">
+      {{ errorMessage }}
     </div>
 
-    <div class="form-group">
-      <label>Confirmar password</label>
-      <input type="password" name="confirmPassword"
-             [(ngModel)]="form.confirmPassword"
-             required />
-    </div>
+    <p class="auth-footer">
+      ¿Ya tienes cuenta?
+      <a routerLink="/login">Inicia sesión</a>
+    </p>
 
-    <div class="form-group">
-      <label>Tipo de cuenta</label>
-      <select name="role" [(ngModel)]="form.role" required>
-        <option [ngValue]="undefined">Selecciona una opción</option>
-        <option value="POSTULANTE">Postulante</option>
-        <option value="EMPRESA">Empresa</option>
-      </select>
-    </div>
+    <p class="auth-terms">
+      Al registrarte, aceptas nuestros términos de uso y política de privacidad.
+    </p>
 
-    <button type="submit"
-            [disabled]="f.invalid || loading">
-      {{ loading ? 'Creando cuenta…' : 'Continuar' }}
-    </button>
-  </form>
-
-  <p *ngIf="errorMessage" class="error">
-    {{ errorMessage }}
-  </p>
-
-  <p class="login-link">
-    ¿Ya tienes cuenta?
-    <a routerLink="/login">Inicia sesión</a>
-  </p>
+  </div>
 </div>

@@ -1,37 +1,50 @@
-<nav
-  class="navbar"
-  *ngIf="isLoggedIn() && isProfileCompleted()"
->
-  <div class="navbar-left">
-    <a routerLink="/" class="logo">Liftnet</a>
-  </div>
+<nav class="navbar" *ngIf="isLoggedIn() && isProfileCompleted()">
 
-  <ul class="navbar-center">
-    <!-- POSTULANTE -->
+  <!-- Logo -->
+  <a routerLink="/" class="navbar-logo">
+    <div class="navbar-logo-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="navbar-logo-text">Lift<span>net</span></span>
+  </a>
+
+  <!-- Links por rol -->
+  <ul class="navbar-links">
     <li *ngIf="role() === 'POSTULANTE'">
-      <a routerLink="/ofertas">Ofertas</a>
+      <a routerLink="/ofertas" routerLinkActive="active">Ofertas</a>
     </li>
     <li *ngIf="role() === 'POSTULANTE'">
-      <a routerLink="/postulante/perfil">Mi perfil</a>
+      <a routerLink="/postulante/perfil" routerLinkActive="active">Mi perfil</a>
     </li>
 
-    <!-- EMPRESA -->
     <li *ngIf="role() === 'EMPRESA'">
-      <a routerLink="/empresa/ofertas/mis-ofertas">Mis ofertas</a>
+      <a routerLink="/empresa/ofertas/mis-ofertas" routerLinkActive="active">Mis ofertas</a>
     </li>
     <li *ngIf="role() === 'EMPRESA'">
-      <a routerLink="/empresa/perfil">Perfil empresa</a>
+      <a routerLink="/empresa/perfil" routerLinkActive="active">Perfil empresa</a>
     </li>
 
-    <!-- ADMIN -->
     <li *ngIf="role() === 'ADMIN'">
-      <a routerLink="/admin">Admin</a>
+      <a routerLink="/admin" routerLinkActive="active">Admin</a>
     </li>
   </ul>
 
+  <!-- Zona derecha: badge de rol + logout -->
   <div class="navbar-right">
+    <span
+      class="role-badge"
+      [class.role-badge-postulante]="role() === 'POSTULANTE'"
+      [class.role-badge-empresa]="role() === 'EMPRESA'"
+      [class.role-badge-admin]="role() === 'ADMIN'"
+    >
+      {{ role() }}
+    </span>
+
     <button class="logout-btn" (click)="logout()">
       Cerrar sesión
     </button>
   </div>
+
 </nav>

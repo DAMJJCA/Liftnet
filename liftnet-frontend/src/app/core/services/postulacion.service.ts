@@ -42,6 +42,11 @@ export class PostulacionService {
     return this.http.get(`${this.apiUrl}/oferta/${ofertaId}`, { params });
   }
 
+  // POSTULANTE: Retirar candidatura (solo PENDIENTE)
+  retirarPostulacion(postulacionId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${postulacionId}`);
+  }
+
   // EMPRESA: Aceptar o rechazar a un candidato
   actualizarEstado(postulacionId: string, estado: 'ACEPTADA' | 'RECHAZADA'): Observable<any> {
     const params = new HttpParams().set('estado', estado);

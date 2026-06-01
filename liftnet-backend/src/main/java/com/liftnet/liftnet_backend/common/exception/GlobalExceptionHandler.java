@@ -72,6 +72,17 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(DuplicatePostulacionException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicatePostulacion(
+            DuplicatePostulacionException ex) {
+
+        log.warn("Postulacion duplicada: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
     // VALIDACIONES
 
     // ERRORES DE VALIDACIÓN (@Valid)
@@ -87,9 +98,15 @@ public class GlobalExceptionHandler {
 
         log.warn("Error de validación: {}", errors);
 
+        // Devuelve el primer mensaje de campo concreto para que el frontend lo muestre directamente
+        String primerMensaje = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(FieldError::getDefaultMessage)
+                .orElse("Error de validación");
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Error de validación"));
+                .body(ApiResponse.error(primerMensaje));
     }
 
     // BASE DE DATOS

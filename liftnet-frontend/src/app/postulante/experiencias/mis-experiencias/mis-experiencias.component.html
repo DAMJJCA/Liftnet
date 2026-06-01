@@ -1,75 +1,100 @@
 <div class="exp-container">
-  <h2 class="page-title">Mi Experiencia Laboral</h2>
-  <p class="description">
-    Añade tus trabajos anteriores para que las empresas conozcan tu trayectoria profesional.
-  </p>
 
-  <div *ngIf="mensajeExito()" class="alert success">{{ mensajeExito() }}</div>
-  <div *ngIf="mensajeError()" class="alert error">{{ mensajeError() }}</div>
-
-  <form (ngSubmit)="guardar()" #f="ngForm" class="exp-form">
-
-    <div class="form-group">
-      <label class="form-label">Lugar de trabajo / Empresa</label>
-      <input type="text" name="lugar" [(ngModel)]="nuevaExp.lugar" required class="form-control" placeholder="Ej: Piscina Municipal de Madrid" />
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Descripción de tus tareas</label>
-      <textarea name="descripcion" [(ngModel)]="nuevaExp.descripcion" class="form-control" rows="3" placeholder="Ej: Vigilancia de bañistas, mantenimiento, primeros auxilios..."></textarea>
-    </div>
-
-    <div class="form-row">
-      <div class="form-col">
-        <label class="form-label">Fecha de Inicio</label>
-        <input type="date" name="fechaInicio" [(ngModel)]="nuevaExp.fechaInicio" required class="form-control" />
-      </div>
-      <div class="form-col">
-        <label class="form-label">Fecha de Fin (Opcional)</label>
-        <input type="date" name="fechaFin" [(ngModel)]="nuevaExp.fechaFin" class="form-control" />
-        <small style="color: #666; font-size: 0.8em; margin-top: 5px; display: block;">Déjalo vacío si es tu trabajo actual</small>
-      </div>
-    </div>
-
-    <div class="form-group upload-group">
-      <label class="form-label">Documento Adjunto (Opcional, formato PDF)</label>
-      <input type="file" (change)="onFileSelected($event)" accept="application/pdf" class="form-control file-input" />
-      <small class="hint">Sube una carta de recomendación o certificado de la empresa.</small>
-    </div>
-
-    <button type="submit" [disabled]="f.invalid || enviando()" class="btn-submit">
-      {{ enviando() ? 'Guardando...' : '+ Añadir Experiencia' }}
-    </button>
-  </form>
-
-  <p *ngIf="loading()" class="loading-text">Cargando experiencias...</p>
-
-  <div *ngIf="!loading() && experiencias().length === 0" class="empty-state">
-    Aún no has registrado ninguna experiencia laboral.
+  <!-- Cabecera -->
+  <div class="page-header">
+    <h2 class="page-title">Mi Experiencia Laboral</h2>
+    <p class="page-subtitle">Añade tus trabajos anteriores para que las empresas conozcan tu trayectoria profesional.</p>
   </div>
 
-  <div *ngFor="let exp of experiencias()" class="exp-card">
-    <div class="exp-content">
-      <strong class="exp-title">{{ exp.lugar }}</strong>
-      <p class="exp-desc">{{ exp.descripcion }}</p>
+  <!-- Mensajes globales -->
+  <div *ngIf="mensajeExito()" class="alert alert-success">{{ mensajeExito() }}</div>
+  <div *ngIf="mensajeError()" class="alert alert-danger">{{ mensajeError() }}</div>
 
+  <!-- Formulario -->
+  <div class="card form-card">
+    <div class="form-card-header">
+      <span class="form-card-icon">➕</span>
+      <span>Añadir nueva experiencia</span>
+    </div>
+
+    <form (ngSubmit)="guardar()" #f="ngForm" class="exp-form">
+
+      <div class="form-group">
+        <label class="form-label">Lugar de trabajo / Empresa</label>
+        <input type="text" name="lugar" [(ngModel)]="nuevaExp.lugar" required
+               class="form-control" placeholder="Ej: Piscina Municipal de Madrid" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Descripción de tus tareas</label>
+        <textarea name="descripcion" [(ngModel)]="nuevaExp.descripcion"
+                  class="form-control" rows="3"
+                  placeholder="Ej: Vigilancia de bañistas, mantenimiento, primeros auxilios..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">Fecha de inicio</label>
+          <input type="date" name="fechaInicio" [(ngModel)]="nuevaExp.fechaInicio" required class="form-control" />
+        </div>
+        <div class="form-col">
+          <label class="form-label">Fecha de fin <span class="label-optional">(opcional)</span></label>
+          <input type="date" name="fechaFin" [(ngModel)]="nuevaExp.fechaFin" class="form-control" />
+          <small class="field-hint">Déjalo vacío si es tu trabajo actual</small>
+        </div>
+      </div>
+
+      <div class="form-group upload-group">
+        <label class="form-label">Documento adjunto <span class="label-optional">(opcional, PDF)</span></label>
+        <input type="file" (change)="onFileSelected($event)" accept="application/pdf"
+               class="form-control file-input" />
+        <small class="field-hint">Sube una carta de recomendación o certificado de la empresa.</small>
+      </div>
+
+      <button type="submit" [disabled]="f.invalid || enviando()" class="btn btn-primary btn-full">
+        {{ enviando() ? 'Guardando…' : '+ Añadir Experiencia' }}
+      </button>
+
+    </form>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading()" class="spinner-center">
+    <div class="spinner spinner-lg"></div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="!loading() && experiencias().length === 0" class="empty-state">
+    <div class="empty-state-icon">💼</div>
+    <p class="empty-state-title">Sin experiencias registradas</p>
+    <p class="empty-state-text">Añade tus trabajos anteriores para completar tu perfil de socorrista.</p>
+  </div>
+
+  <!-- Lista de experiencias -->
+  <div *ngFor="let exp of experiencias()" class="card exp-card">
+
+    <div class="exp-body">
+      <strong class="exp-title">{{ exp.lugar }}</strong>
+      <p *ngIf="exp.descripcion" class="exp-desc">{{ exp.descripcion }}</p>
       <div class="exp-dates">
         <span *ngIf="exp.fechaInicio">Desde: {{ exp.fechaInicio }}</span>
-        <span *ngIf="exp.fechaFin" class="date-spacing">Hasta: {{ exp.fechaFin }}</span>
-        <span *ngIf="exp.fechaInicio && !exp.fechaFin" class="date-spacing current-job">Actualidad</span>
+        <span *ngIf="exp.fechaFin" class="date-sep">Hasta: {{ exp.fechaFin }}</span>
+        <span *ngIf="exp.fechaInicio && !exp.fechaFin" class="date-sep badge-current">Actualidad</span>
       </div>
     </div>
 
     <div class="exp-actions">
-      <a *ngIf="exp.archivoUrl" [href]="exp.archivoUrl" target="_blank" class="btn-view" title="Ver documento">
+      <a *ngIf="exp.archivoUrl" [href]="exp.archivoUrl" target="_blank"
+         class="btn btn-sm btn-doc-view" title="Ver documento">
         👁️ Ver
       </a>
-
-      <a *ngIf="exp.archivoUrl" [href]="exp.archivoUrl + '?download='" class="btn-download" title="Descargar PDF">
+      <a *ngIf="exp.archivoUrl" [href]="exp.archivoUrl + '?download='"
+         class="btn btn-sm btn-doc-download" title="Descargar PDF">
         ⬇️ Descargar
       </a>
-
-      <button (click)="eliminar(exp)" class="btn-delete">Eliminar</button>
+      <button (click)="eliminar(exp)" class="btn btn-sm btn-doc-delete">Eliminar</button>
     </div>
+
   </div>
+
 </div>

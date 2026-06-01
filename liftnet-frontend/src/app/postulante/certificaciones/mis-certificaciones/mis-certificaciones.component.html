@@ -1,74 +1,97 @@
 <div class="cert-container">
-  <h2 class="page-title">Mis Certificaciones y Títulos</h2>
-  <p class="description">
-    Añade tus certificaciones oficiales. Son obligatorias para poder postularte a las ofertas de empleo.
-  </p>
 
-  <div *ngIf="mensajeExito()" class="alert success">{{ mensajeExito() }}</div>
-  <div *ngIf="mensajeError()" class="alert error">{{ mensajeError() }}</div>
-
-  <form (ngSubmit)="asignar()" #f="ngForm" class="cert-form">
-
-    <div class="form-group">
-      <label class="form-label">Selecciona el Título *</label>
-      <select name="certificacionId" [(ngModel)]="nuevaCert.certificacionId" required class="form-control">
-        <option value="" disabled selected>Elige una certificación...</option>
-        <option value="c4b12658-2943-42e7-9d78-b118749a56c0">Socorrismo Acuático (Cruz Roja)</option>
-        <option value="9fa89487-b089-4fa2-bf42-8703a55eb1a4">Soporte Vital Básico y DESA</option>
-      </select>
-    </div>
-
-    <div class="form-row">
-      <div class="form-col">
-        <label class="form-label">Fecha Obtención *</label>
-        <input type="date" name="fechaObtencion" [(ngModel)]="nuevaCert.fechaObtencion" required class="form-control" />
-      </div>
-      <div class="form-col">
-        <label class="form-label">Fecha Expiración / Reciclaje</label>
-        <input type="date" name="fechaExpiracion" [(ngModel)]="nuevaCert.fechaExpiracion" class="form-control" />
-      </div>
-    </div>
-
-    <div class="form-group upload-group">
-      <label class="form-label">Documento Adjunto (Opcional, formato PDF)</label>
-      <input type="file" (change)="onFileSelected($event)" accept="application/pdf" class="form-control file-input" />
-      <small class="hint">Sube tu diploma escaneado para que las empresas puedan verificarlo.</small>
-    </div>
-
-    <button type="submit" [disabled]="f.invalid || enviando()" class="btn-submit">
-      {{ enviando() ? 'Subiendo datos y documento...' : '+ Añadir Certificación' }}
-    </button>
-  </form>
-
-  <p *ngIf="loading()" class="loading-text">Cargando tus títulos...</p>
-
-  <div *ngIf="!loading() && certificaciones().length === 0" class="empty-state">
-    No tienes certificaciones registradas.
+  <!-- Cabecera -->
+  <div class="page-header">
+    <h2 class="page-title">Mis Certificaciones y Títulos</h2>
+    <p class="page-subtitle">Añade tus certificaciones oficiales. Son obligatorias para postularte a las ofertas de empleo.</p>
   </div>
 
-  <div *ngFor="let cert of certificaciones()" class="cert-card">
+  <!-- Mensajes globales -->
+  <div *ngIf="mensajeExito()" class="alert alert-success">{{ mensajeExito() }}</div>
+  <div *ngIf="mensajeError()" class="alert alert-danger">{{ mensajeError() }}</div>
 
-    <div class="cert-info">
+  <!-- Formulario -->
+  <div class="card form-card">
+    <div class="form-card-header">
+      <span class="form-card-icon">🎓</span>
+      <span>Añadir nueva certificación</span>
+    </div>
+
+    <form (ngSubmit)="asignar()" #f="ngForm" class="cert-form">
+
+      <div class="form-group">
+        <label class="form-label">Selecciona el título <span class="label-required">*</span></label>
+        <select name="certificacionId" [(ngModel)]="nuevaCert.certificacionId" required class="form-control">
+          <option value="" disabled selected>Elige una certificación…</option>
+          <option value="c4b12658-2943-42e7-9d78-b118749a56c0">Socorrismo Acuático (Cruz Roja)</option>
+          <option value="9fa89487-b089-4fa2-bf42-8703a55eb1a4">Soporte Vital Básico y DESA</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">Fecha de obtención <span class="label-required">*</span></label>
+          <input type="date" name="fechaObtencion" [(ngModel)]="nuevaCert.fechaObtencion" required class="form-control" />
+        </div>
+        <div class="form-col">
+          <label class="form-label">Fecha de expiración / reciclaje <span class="label-optional">(opcional)</span></label>
+          <input type="date" name="fechaExpiracion" [(ngModel)]="nuevaCert.fechaExpiracion" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group upload-group">
+        <label class="form-label">Documento adjunto <span class="label-optional">(opcional, PDF)</span></label>
+        <input type="file" (change)="onFileSelected($event)" accept="application/pdf"
+               class="form-control file-input" />
+        <small class="field-hint">Sube tu diploma escaneado para que las empresas puedan verificarlo.</small>
+      </div>
+
+      <button type="submit" [disabled]="f.invalid || enviando()" class="btn btn-primary btn-full">
+        {{ enviando() ? 'Subiendo datos y documento…' : '+ Añadir Certificación' }}
+      </button>
+
+    </form>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading()" class="spinner-center">
+    <div class="spinner spinner-lg"></div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="!loading() && certificaciones().length === 0" class="empty-state">
+    <div class="empty-state-icon">🏅</div>
+    <p class="empty-state-title">Sin certificaciones registradas</p>
+    <p class="empty-state-text">Añade tus títulos oficiales para poder postularte a las ofertas disponibles.</p>
+  </div>
+
+  <!-- Lista de certificaciones -->
+  <div *ngFor="let cert of certificaciones()" class="card cert-card">
+
+    <div class="cert-body">
       <strong class="cert-title">{{ cert.nombre }}</strong>
-      <span *ngIf="cert.entidad" class="cert-entity"> ({{ cert.entidad }})</span>
+      <span *ngIf="cert.entidad" class="cert-entity">{{ cert.entidad }}</span>
       <div class="cert-dates">
         <span *ngIf="cert.fechaObtencion">Emitido: {{ cert.fechaObtencion }}</span>
-        <span *ngIf="cert.fechaExpiracion" class="date-spacing">Caduca: {{ cert.fechaExpiracion }}</span>
+        <span *ngIf="cert.fechaExpiracion" class="date-sep">Caduca: {{ cert.fechaExpiracion }}</span>
       </div>
     </div>
 
     <div class="cert-actions">
       <ng-container *ngIf="cert.archivoUrl">
-        <a [href]="cert.archivoUrl" target="_blank" class="btn-view" title="Abrir en nueva pestaña">
-          Ver PDF
+        <a [href]="cert.archivoUrl" target="_blank"
+           class="btn btn-sm btn-doc-view" title="Abrir en nueva pestaña">
+          👁️ Ver PDF
         </a>
-        <a [href]="cert.archivoUrl + '?download='" class="btn-download" title="Descargar a mi PC">
-          Descargar
+        <a [href]="cert.archivoUrl + '?download='"
+           class="btn btn-sm btn-doc-download" title="Descargar a mi PC">
+          ⬇️ Descargar
         </a>
       </ng-container>
 
-      <button (click)="eliminar(cert)" class="btn-delete">Eliminar</button>
+      <button (click)="eliminar(cert)" class="btn btn-sm btn-doc-delete">Eliminar</button>
     </div>
 
   </div>
+
 </div>

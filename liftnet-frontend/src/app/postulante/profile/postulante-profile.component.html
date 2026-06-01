@@ -1,8 +1,9 @@
 <div class="profile-container" *ngIf="!store.loading(); else loadingTpl">
 
+  <!-- Cabecera con avatar -->
   <div class="profile-header-postulante">
     <div class="avatar-container-postulante">
-      <img [src]="store.profile().fotoUrl || 'https://ui-avatars.com/api/?name=' + (store.profile().nombre || 'Usuario') + '&background=28a745&color=fff&rounded=true&size=150'"
+      <img [src]="store.profile().fotoUrl || 'https://ui-avatars.com/api/?name=' + (store.profile().nombre || 'Usuario') + '&background=1e40af&color=fff&rounded=true&size=150'"
            alt="Foto de perfil"
            class="round-avatar"
            [class.uploading]="isUploading()">
@@ -20,15 +21,16 @@
     <div class="header-info-postulante">
       <h1>{{ store.mode() === 'view' ? (store.profile().nombre + ' ' + store.profile().apellidos) : 'Editando Currículum' }}</h1>
       <p class="subtitle" *ngIf="store.mode() === 'view'">{{ store.profile().ubicacion || 'Ubicación no especificada' }}</p>
-
       <button *ngIf="store.mode() === 'view'" (click)="activarEdicion()" class="btn outline mt-2">✏️ Editar datos básicos</button>
     </div>
   </div>
 
+  <!-- Alertas -->
   <div class="alert warning" *ngIf="mandatoryMessage">{{ mandatoryMessage }}</div>
   <div class="alert success" *ngIf="store.successMessage()">{{ store.successMessage() }}</div>
-  <div class="alert error" *ngIf="store.errorMessage()">{{ store.errorMessage() }}</div>
+  <div class="alert error"   *ngIf="store.errorMessage()">{{ store.errorMessage() }}</div>
 
+  <!-- Progress -->
   <div class="progress-box">
     <div class="progress-header">
       <span>Perfil completado</span>
@@ -42,6 +44,7 @@
     </small>
   </div>
 
+  <!-- MODO VISTA -->
   <div *ngIf="store.mode() === 'view'">
 
     <div class="card">
@@ -79,13 +82,13 @@
       </div>
       <div class="card-body">
         <div *ngIf="!store.profile().cvUrl" class="empty-state">
-          No tienes ningún currículum adjunto en tu perfil. Haz clic en "Editar datos básicos" para subirlo.
+          No tienes ningún currículum adjunto. Haz clic en "Editar datos básicos" para subirlo.
         </div>
 
         <div *ngIf="store.profile().cvUrl" class="cv-uploaded-box list-item-flex">
           <div class="item-info">
-            <strong style="color: #1976d2; font-size: 1.1em;">📄 Currículum Vitae.pdf</strong>
-            <p class="text-muted" style="margin-top: 5px; font-size: 0.9em; margin-bottom: 0;">Tu currículum está listo y disponible para las empresas.</p>
+            <span class="cv-file-name">📄 Currículum Vitae.pdf</span>
+            <p class="text-muted">Tu currículum está listo y disponible para las empresas.</p>
           </div>
           <div class="item-actions">
             <a [href]="store.profile().cvUrl" target="_blank" class="btn-mini-view">👁️ Ver</a>
@@ -106,7 +109,7 @@
         <ul class="item-list" *ngIf="store.profile().experiencias.length > 0">
           <li *ngFor="let exp of store.profile().experiencias">
             <strong>{{ exp.lugar }}</strong>
-            <p style="margin: 5px 0; color: #555;">{{ exp.descripcion }}</p>
+            <p class="exp-desc">{{ exp.descripcion }}</p>
           </li>
         </ul>
       </div>
@@ -118,8 +121,8 @@
         <a routerLink="/postulante/certificaciones" class="btn small outline">Gestionar</a>
       </div>
       <div class="card-body">
-        <div *ngIf="store.profile().certificaciones.length === 0" class="empty-state" style="color: #c62828;">
-           Obligatorio: Debes añadir al menos un título para poder postular a ofertas.
+        <div *ngIf="store.profile().certificaciones.length === 0" class="empty-state-danger">
+          ⚠️ Obligatorio: debes añadir al menos un título para poder postular a ofertas.
         </div>
         <ul class="item-list" *ngIf="store.profile().certificaciones.length > 0">
           <li *ngFor="let cert of store.profile().certificaciones">
@@ -131,9 +134,10 @@
 
   </div>
 
+  <!-- MODO EDICIÓN -->
   <div *ngIf="store.mode() === 'edit'" class="card edit-card">
-    <div class="card-header" style="background: #e8f5e9;">
-      <h2 style="color: #2e7d32;">Modificar Datos Básicos</h2>
+    <div class="card-header">
+      <h2>Modificar Datos Básicos</h2>
     </div>
     <div class="card-body">
       <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
@@ -160,22 +164,22 @@
           </div>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
           <label>Biografía / Sobre mí</label>
           <textarea name="bio" [(ngModel)]="store.profile().bio" rows="4" class="form-control" placeholder="Escribe un breve resumen profesional sobre ti..."></textarea>
         </div>
 
-        <div class="form-group" style="margin-top: 15px; padding: 15px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #f8fafc;">
-          <label style="color: #0284c7; font-weight: bold;">📄 Adjuntar o cambiar Currículum (PDF)</label>
+        <div class="cv-upload-section">
+          <label class="cv-upload-label">📄 Adjuntar o cambiar Currículum (PDF)</label>
 
-          <div *ngIf="store.profile().cvUrl" style="margin-top: 5px; margin-bottom: 10px; color: #155724; background: #d4edda; padding: 8px; border-radius: 4px; font-size: 0.9em;">
+          <div *ngIf="store.profile().cvUrl" class="cv-exists-notice">
             ✅ Ya cuentas con un archivo en la nube. Al subir uno nuevo, este será reemplazado.
           </div>
 
-          <input type="file" (change)="onCvSelected($event)" accept="application/pdf" class="form-control" style="background: white; padding: 6px;" />
+          <input type="file" (change)="onCvSelected($event)" accept="application/pdf" class="form-control" />
 
-          <small class="text-muted" *ngIf="subiendoCv()" style="color: #e67e22; font-weight: bold; display: block; margin-top: 5px;">
-            ⏳ Subiendo archivo PDF a Supabase... por favor, espera.
+          <small class="cv-uploading-hint" *ngIf="subiendoCv()">
+            ⏳ Subiendo archivo PDF a Supabase… por favor, espera.
           </small>
         </div>
 
@@ -187,6 +191,7 @@
             Cancelar
           </button>
         </div>
+
       </form>
     </div>
   </div>
@@ -196,6 +201,6 @@
 <ng-template #loadingTpl>
   <div class="loading-screen">
     <div class="loader-big"></div>
-    <p>Cargando tu currículum...</p>
+    <p>Cargando tu currículum…</p>
   </div>
 </ng-template>

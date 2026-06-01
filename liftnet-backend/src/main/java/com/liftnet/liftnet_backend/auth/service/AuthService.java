@@ -42,7 +42,7 @@ public class AuthService {
 public AuthResponse register(RegisterRequest request) {
 
     if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-        throw new EmailAlreadyExistsException("Email already registered");
+        throw new EmailAlreadyExistsException("El email ya está registrado");
     }
 
     Role role = Role.valueOf(request.getRole());
@@ -69,10 +69,10 @@ public AuthResponse register(RegisterRequest request) {
     public AuthResponse login(AuthRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
+                .orElseThrow(() -> new InvalidCredentialsException("Credenciales incorrectas"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid credentials");
+            throw new InvalidCredentialsException("Credenciales incorrectas");
         }
 
         String token = jwtService.generateToken(

@@ -1,29 +1,58 @@
-<div class="login-container">
-  <h2>Iniciar sesión</h2>
+<div class="auth-page">
+  <div class="auth-card">
 
-  <form (ngSubmit)="onLogin()" #f="ngForm">
-
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" name="email" [(ngModel)]="credentials.email" required />
+    <div class="auth-brand">
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h1 class="auth-title">Bienvenido a Liftnet</h1>
+      <p class="auth-subtitle">Inicia sesión en tu cuenta</p>
     </div>
 
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" name="password" [(ngModel)]="credentials.password" required />
+    <form class="auth-form" (ngSubmit)="onLogin()" #f="ngForm">
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input
+          class="form-input"
+          id="email"
+          type="email"
+          name="email"
+          placeholder="tucorreo@ejemplo.com"
+          [(ngModel)]="credentials.email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Contraseña</label>
+        <input
+          class="form-input"
+          id="password"
+          type="password"
+          name="password"
+          placeholder="Tu contraseña"
+          [(ngModel)]="credentials.password"
+          required
+        />
+      </div>
+
+      <button class="btn-submit" type="submit" [disabled]="f.invalid || loading">
+        {{ loading ? 'Entrando…' : 'Iniciar sesión' }}
+      </button>
+
+    </form>
+
+    <div *ngIf="errorMessage" class="auth-error">
+      {{ errorMessage }}
     </div>
 
-    <button type="submit" [disabled]="f.invalid || loading">
-      {{ loading ? 'Entrando…' : 'Entrar' }}
-    </button>
-  </form>
+    <p class="auth-footer">
+      ¿No tienes cuenta?
+      <a routerLink="/register">Regístrate gratis</a>
+    </p>
 
-  <p *ngIf="errorMessage" class="error">
-    {{ errorMessage }}
-  </p>
-
-  <p class="register-link">
-    ¿No tienes cuenta?
-    <a routerLink="/register">Regístrate</a>
-  </p>
+  </div>
 </div>

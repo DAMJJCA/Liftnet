@@ -1,50 +1,157 @@
-.exp-container { max-width: 750px; margin: 40px auto; padding: 0 20px; }
-.page-title { color: #1976d2; }
-.description { color: #666; margin-bottom: 20px; }
+/* ── Contenedor ─────────────────────────────────────────────── */
+.exp-container {
+  max-width: 780px;
+  margin: var(--space-10) auto;
+  padding: 0 var(--space-5);
+}
 
-.alert { padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center; }
-.alert.success { background: #d1e7dd; color: #0f5132; }
-.alert.error { background: #f8d7da; color: #842029; }
+/* ── Cabecera de página ─────────────────────────────────────── */
+.page-header { margin-bottom: var(--space-8); }
 
-/* Formulario */
-.exp-form { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 30px; }
-.form-group { margin-bottom: 15px; }
-.form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+.page-title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Card formulario ────────────────────────────────────────── */
+.form-card { margin-bottom: var(--space-8); padding: 0; overflow: hidden; }
+
+.form-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-primary-light);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.form-card-icon { font-size: 1.1em; }
+
+.exp-form { padding: var(--space-6); }
+
+/* ── Layout de fechas ───────────────────────────────────────── */
+.form-row { display: flex; gap: var(--space-4); margin-bottom: var(--space-5); }
 .form-col { flex: 1; }
-.form-label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-.form-control { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
 
-/* Subida de archivos */
-.upload-group { background: white; padding: 15px; border-radius: 6px; border: 1px dashed #b0bec5; }
-.file-input { padding: 5px; border: none; background: transparent; }
-.hint { color: #718096; font-size: 0.85em; display: block; margin-top: 5px; }
+/* ── Campos especiales ──────────────────────────────────────── */
+.label-optional {
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-xs);
+}
 
-.btn-submit { background: #0a66c2; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; }
-.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.field-hint {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
 
-/* Tarjetas */
-.exp-card { border: 1px solid #e2e8f0; padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background-color: #fff; }
-.exp-title { font-size: 1.1em; color: #2d3748; }
-.exp-entity { color: #4a5568; font-style: italic; }
-.exp-desc { color: #718096; font-size: 0.9em; margin-top: 8px; white-space: pre-wrap; }
-.exp-dates { color: #a0aec0; font-size: 0.85em; margin-top: 5px; }
-.date-spacing { margin-left: 15px; }
-.current-job { color: #28a745; font-weight: bold; }
+.upload-group {
+  background: var(--color-bg-card);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--color-border);
+  margin-bottom: var(--space-5);
+}
 
-/* Contenedor de botones alineados */
-.exp-actions { display: flex; align-items: center; gap: 10px; }
+.file-input {
+  padding: var(--space-1);
+  border: none !important;
+  background: transparent;
+  box-shadow: none !important;
+}
 
-.btn-view { color: #2b6cb0; background: #ebf8ff; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: bold; transition: background 0.2s; }
-.btn-view:hover { background: #bee3f8; }
+/* ── Tarjetas de experiencia ────────────────────────────────── */
+.exp-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  transition: box-shadow var(--transition-base);
+}
 
-.btn-download { color: #28a745; background: #e8f5e9; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9em; transition: background 0.2s; }
-.btn-download:hover { background: #c8e6c9; }
+.exp-card:hover { box-shadow: var(--shadow-md); }
 
-.btn-delete { background: transparent; color: #e53e3e; border: 1px solid #fc8181; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-.btn-delete:hover { background: #fff5f5; border-color: #e53e3e;}
+.exp-body { flex: 1; min-width: 0; }
 
+.exp-title {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.exp-desc {
+  margin: var(--space-1) 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.exp-dates {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle);
+}
+
+.date-sep { margin-left: var(--space-4); }
+
+.badge-current {
+  color: var(--color-success);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ── Acciones de tarjeta ────────────────────────────────────── */
+.exp-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.btn-doc-view {
+  color: var(--color-info);
+  background: var(--color-info-light);
+  border-color: var(--color-info-border);
+  text-decoration: none;
+}
+.btn-doc-view:hover { background: var(--color-info-border); color: var(--color-info); }
+
+.btn-doc-download {
+  color: var(--color-success);
+  background: var(--color-success-light);
+  border-color: var(--color-success-border);
+  text-decoration: none;
+}
+.btn-doc-download:hover { background: var(--color-success-border); color: var(--color-success); }
+
+.btn-doc-delete {
+  color: var(--color-danger);
+  background: transparent;
+  border-color: var(--color-danger-border);
+}
+.btn-doc-delete:hover {
+  background: var(--color-danger-light);
+  border-color: var(--color-danger);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .form-row { flex-direction: column; }
-  .exp-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .exp-card { flex-direction: column; align-items: flex-start; }
   .exp-actions { width: 100%; flex-wrap: wrap; justify-content: flex-end; }
 }

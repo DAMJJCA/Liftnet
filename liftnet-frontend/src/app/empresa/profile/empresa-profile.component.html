@@ -1,16 +1,16 @@
 <div class="profile-container" *ngIf="!loading(); else loadingTpl">
 
+  <!-- Cabecera -->
   <div class="profile-header">
     <div class="header-main">
       <div class="avatar-container">
         <div class="avatar-wrapper">
-          <img [src]="profile().fotoUrl || 'https://ui-avatars.com/api/?name=Empresa&background=0D8ABC&color=fff&size=150'"
-            alt="Logo Empresa"
-            [class.uploading]="isUploading()">
+          <img [src]="profile().fotoUrl || 'https://ui-avatars.com/api/?name=Empresa&background=1e40af&color=fff&size=150'"
+               alt="Logo Empresa"
+               [class.uploading]="isUploading()">
           <div class="spinner-overlay" *ngIf="isUploading()">
             <div class="loader"></div>
           </div>
-
           <label *ngIf="mode() === 'edit'" class="upload-badge" title="Cambiar logo">
             📷
             <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
@@ -21,16 +21,17 @@
       <div class="header-text">
         <h1>Perfil corporativo</h1>
         <p class="company-name-subtitle" *ngIf="mode() === 'view'">{{ profile().nombreEmpresa }}</p>
-        <button *ngIf="mode() === 'view'" (click)="activarEdicion()" class="btn outline">✏️ Editar datos
-          básicos</button>
+        <button *ngIf="mode() === 'view'" (click)="activarEdicion()" class="btn outline">✏️ Editar datos básicos</button>
       </div>
     </div>
   </div>
 
+  <!-- Alertas -->
   <div class="alert warning" *ngIf="mandatoryMessage">{{ mandatoryMessage }}</div>
   <div class="alert success" *ngIf="successMessage()">{{ successMessage() }}</div>
-  <div class="alert error" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+  <div class="alert error"   *ngIf="errorMessage()">{{ errorMessage() }}</div>
 
+  <!-- Progress -->
   <div class="progress-box">
     <div class="progress-header">
       <span>Progreso del perfil</span>
@@ -44,6 +45,7 @@
     </small>
   </div>
 
+  <!-- MODO VISTA -->
   <div *ngIf="mode() === 'view'">
     <div class="card">
       <div class="card-header">
@@ -77,53 +79,70 @@
     </div>
   </div>
 
+  <!-- MODO EDICIÓN -->
   <div *ngIf="mode() === 'edit'" class="card edit-card">
     <div class="card-header">
       <h2>Modificar Datos Corporativos</h2>
     </div>
     <div class="card-body">
       <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+
         <div class="form-grid">
           <div class="form-group">
             <label>Nombre de la Empresa *</label>
-            <input type="text" name="nombreEmpresa" [(ngModel)]="profile().nombreEmpresa" required class="form-control"
-              placeholder="Ej: Socorrismo S.L." />
+            <input type="text" name="nombreEmpresa" [(ngModel)]="profile().nombreEmpresa"
+                   required #nombreEmpresa="ngModel" class="form-control"
+                   placeholder="Ej: Socorrismo S.L." />
+            <small class="field-error" *ngIf="nombreEmpresa.invalid && (nombreEmpresa.touched || profileForm.submitted)">
+              El nombre de la empresa es obligatorio.
+            </small>
           </div>
 
           <div class="form-group">
             <label>Ubicación *</label>
-            <input type="text" name="ubicacion" [(ngModel)]="profile().ubicacion" required class="form-control"
-              placeholder="Ciudad, Provincia" />
+            <input type="text" name="ubicacion" [(ngModel)]="profile().ubicacion"
+                   required #ubicacion="ngModel" class="form-control"
+                   placeholder="Ciudad, Provincia" />
+            <small class="field-error" *ngIf="ubicacion.invalid && (ubicacion.touched || profileForm.submitted)">
+              La ubicación es obligatoria.
+            </small>
           </div>
 
           <div class="form-group">
             <label>Teléfono de contacto *</label>
-            <input type="text" name="telefono" [(ngModel)]="profile().telefono" required class="form-control" />
+            <input type="text" name="telefono" [(ngModel)]="profile().telefono"
+                   required #telefono="ngModel" class="form-control" />
+            <small class="field-error" *ngIf="telefono.invalid && (telefono.touched || profileForm.submitted)">
+              El teléfono de contacto es obligatorio.
+            </small>
           </div>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
           <label>Descripción y valores de la empresa</label>
           <textarea name="descripcion" [(ngModel)]="profile().descripcion" rows="5" class="form-control"
-            placeholder="Cuéntale a los candidatos por qué deberían trabajar contigo..."></textarea>
+                    placeholder="Cuéntale a los candidatos por qué deberían trabajar contigo..."></textarea>
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn primary" [disabled]="profileForm.invalid || loading() || isUploading()">
+          <button type="submit" class="btn primary"
+                  [disabled]="profileForm.invalid || loading() || isUploading()">
             {{ loading() ? 'Guardando...' : 'Guardar cambios' }}
           </button>
           <button *ngIf="profile().nombreEmpresa" type="button" class="btn outline" (click)="cancelarEdicion()">
             Cancelar
           </button>
         </div>
+
       </form>
     </div>
   </div>
+
 </div>
 
 <ng-template #loadingTpl>
   <div class="loading-screen">
     <div class="loader-big"></div>
-    <p>Sincronizando datos corporativos...</p>
+    <p>Sincronizando datos corporativos…</p>
   </div>
 </ng-template>

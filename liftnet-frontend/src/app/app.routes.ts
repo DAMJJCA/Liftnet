@@ -2,12 +2,14 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { profileGuard } from './core/guards/profile.guard';
+import { homeRedirectGuard } from './core/guards/home-redirect.guard';
 
 export const routes: Routes = [
 
-  // PÚBLICO
+  // PÚBLICO — redirige según rol si hay sesión activa
   {
     path: '',
+    canActivate: [homeRedirectGuard],
     loadComponent: () =>
       import('./home/home.component')
         .then(m => m.HomeComponent)
@@ -24,6 +26,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./auth/register/register.component')
         .then(m => m.RegisterComponent),
+  },
+  {
+    path: 'ofertas',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['POSTULANTE'] },
+    loadComponent: () =>
+      import('./empresa/ofertas/lista-ofertas/lista-ofertas.component')
+        .then(m => m.ListaOfertasComponent),
   },
 
   // POSTULANTE
