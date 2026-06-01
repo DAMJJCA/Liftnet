@@ -1,8 +1,17 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://aws-0-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require}
-    username: ${DB_USER:postgres.dixynkwbhduwjerffqsg}
-    password: ${DB_PASSWORD:LiftnetJorgeGon}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      # --- Supabase pooler: evitar conexiones obsoletas y fallar rápido ---
+      keepalive-time: 30000         # ping activo cada 30s para mantener conexiones vivas
+      max-lifetime: 600000          # recicla conexiones a los 10 min (antes del timeout de Supabase)
+      minimum-idle: 1
+      maximum-pool-size: 5          # apropiado para Supabase free tier
+      connection-timeout: 8000      # 8s máximo para obtener conexión del pool → falla rápido
+      validation-timeout: 3000      # 3s para detectar conexiones muertas con SELECT 1
+      connection-test-query: SELECT 1  # evita prepared statements internos del JDBC isValid()
 
   jpa:
     hibernate:
@@ -18,5 +27,5 @@ spring:
 
 jwt:
 
-  secret: ${JWT_SECRET:liftnet_jwt_secret_key_256_bits_min_2026!!}
+  secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:3600000}

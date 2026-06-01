@@ -79,6 +79,12 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         this.procesandoId = null;
+        if (err.status === 409) {
+          this.ofertasPostuladas.update(ids => ids.includes(ofertaId) ? ids : [...ids, ofertaId]);
+          this.mensajeError = 'Ya te has postulado a esta oferta previamente.';
+          setTimeout(() => this.mensajeError = null, 4000);
+          return;
+        }
         this.mensajeError = 'No se pudo procesar la postulación.';
         setTimeout(() => this.mensajeError = null, 4000);
       }

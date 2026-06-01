@@ -3,6 +3,7 @@ package com.liftnet.liftnet_backend.postulacion.service;
 import com.liftnet.liftnet_backend.certificacion.dto.CertificacionPostulanteResponse;
 import com.liftnet.liftnet_backend.certificacion.entity.PostulanteCertificacion;
 import com.liftnet.liftnet_backend.certificacion.repository.PostulanteCertificacionRepository;
+import com.liftnet.liftnet_backend.common.exception.DuplicatePostulacionException;
 import com.liftnet.liftnet_backend.common.exception.ResourceNotFoundException;
 import com.liftnet.liftnet_backend.empresa.entity.EmpresaProfile;
 import com.liftnet.liftnet_backend.empresa.repository.EmpresaRepository;
@@ -69,7 +70,7 @@ public class PostulacionService {
             throw new IllegalStateException("Cannot apply to inactive offer");
         }
         if (postulacionRepository.existsByOfertaAndPostulante(oferta, postulante)) {
-            throw new IllegalStateException("Already applied to this offer");
+            throw new DuplicatePostulacionException("Already applied to this offer");
         }
 
         Postulacion postulacion = new Postulacion();
@@ -125,6 +126,27 @@ public class PostulacionService {
                     p.getEstado(), p.getCreatedAt(), experiencias, certsDto, postulante.getCvUrl()
             );
         });
+    }
+
+    // POSTULANTE RETIRA SU CANDIDATURA (solo si está PENDIENTE)
+    public void retirarPostulacion(String email, UUID postulacionId) {
+        User user = findUser(email);
+        PostulanteProfile postulante = postulanteRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Postulante profile not found"));
+
+        Postulacion postulacion = postulacionRepository.findById(postulacionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Postulacion not found"));
+
+        if (!postulacion.getPostulante().getId().equals(postulante.getId())) {
+            throw new SecurityException("Not your application");
+        }
+
+        if (postulacion.getEstado() != EstadoPostulacion.PENDIENTE) {
+            throw new IllegalStateException("Solo puedes retirar candidaturas en estado PENDIENTE");
+        }
+
+        postulacionRepository.deleteById(postulacionId);
+        log.info("Postulante {} retiró postulación {}", email, postulacionId);
     }
 
     // EMPRESA CAMBIA ESTADO

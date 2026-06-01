@@ -54,6 +54,15 @@ public class PostulacionController {
         return ApiResponse.ok(page);
     }
 
+    @DeleteMapping("/{postulacionId}")
+    public ApiResponse<Void> retirarPostulacion(
+            @RequestParam String email,
+            @PathVariable UUID postulacionId) {
+
+        service.retirarPostulacion(email, postulacionId);
+        return ApiResponse.ok("Candidatura retirada con éxito", null);
+    }
+
     @PutMapping("/{postulacionId}/estado")
     public ApiResponse<Void> actualizarEstado(
             @RequestParam String email,

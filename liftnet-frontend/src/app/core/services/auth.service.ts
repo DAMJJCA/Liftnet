@@ -103,7 +103,7 @@ export class AuthService {
     }
 
     if (auth.role === 'POSTULANTE') {
-      this.router.navigate(['/postulante/postulaciones']);
+      this.router.navigate(['/ofertas']);
     }
 
     if (auth.role === 'EMPRESA') {

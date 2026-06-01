@@ -1,7 +1,7 @@
 import { Injectable, signal, inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 import { PostulanteService, PostulanteProfile } from '../services/postulante.service';
 import { ExperienciasService } from '../services/experiencias.service';
@@ -24,6 +24,9 @@ export class PostulanteProfileStore {
     nombre: '', apellidos: '', email: '', ubicacion: '', telefono: '', bio: '', disponible: false,
     experiencias: [], certificaciones: []
   });
+
+  // Indica si el perfil ya existe en BD (independiente de si está completo o no)
+  profileExistsInDB = signal<boolean>(false);
 
   mode = signal<'view' | 'edit'>('view');
   loading = signal(false);
@@ -53,7 +56,10 @@ export class PostulanteProfileStore {
 
     forkJoin({
       // Si alguno falla, capturamos el error y devolvemos null para que el resto siga cargando
-      perfil: this.postulanteSvc.getProfile().pipe(catchError((e) => { console.error('Error Perfil', e); return of(null); })),
+      perfil: this.postulanteSvc.getProfile().pipe(
+        tap(() => this.profileExistsInDB.set(true)),
+        catchError((e) => { this.profileExistsInDB.set(false); console.error('Error Perfil', e); return of(null); })
+      ),
       exp: this.experienciasSvc.getMisExperiencias(0, 50).pipe(catchError((e) => { console.error('Error Exp', e); return of(null); })),
       cert: this.certificacionesSvc.getMisCertificaciones(0, 50).pipe(catchError((e) => { console.error('Error Cert', e); return of(null); }))
     }).subscribe({
@@ -87,7 +93,9 @@ export class PostulanteProfileStore {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    const isNew = !this.tokenStorage.isProfileCompleted();
+    // Usamos profileExistsInDB para saber si el perfil ya existe en BD,
+    // independientemente del estado de localStorage (evita llamar a createProfile cuando ya existe).
+    const isNew = !this.profileExistsInDB();
     const request$ = isNew ? this.postulanteSvc.createProfile(this.profile()) : this.postulanteSvc.updateProfile(this.profile());
 
     request$.subscribe({
@@ -95,6 +103,7 @@ export class PostulanteProfileStore {
         this.profile.update(p => ({ ...p, ...(res.data || {}) }));
         this.mode.set('view');
         this.tokenStorage.saveProfileCompleted(true);
+        this.profileExistsInDB.set(true);
         this.successMessage.set('Datos básicos guardados correctamente');
         setTimeout(() => this.successMessage.set(null), 3000);
         this.loading.set(false);

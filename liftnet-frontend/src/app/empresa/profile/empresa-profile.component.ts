@@ -123,7 +123,7 @@ export class EmpresaProfileComponent implements OnInit {
         setTimeout(() => this.successMessage.set(null), 3000);
 
         if (isNew) {
-          this.router.navigate(['/empresa/ofertas']);
+          this.router.navigate(['/empresa/ofertas/mis-ofertas']);
         } else {
           this.loading.set(false);
         }

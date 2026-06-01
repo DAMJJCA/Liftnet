@@ -1,45 +1,90 @@
 <div class="postulaciones-container">
 
-  <h2>Mis postulaciones</h2>
-
-  <p *ngIf="loading()" class="loading-text">Cargando tus postulaciones...</p>
-
-  <div *ngIf="!loading() && postulaciones().length === 0" class="empty-state">
-    Aún no te has postulado a ninguna oferta. ¡Ve a la página principal para buscar trabajo!
-    <br><br>
-    <a routerLink="/" class="btn-buscar">Buscar ofertas</a>
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Mis candidaturas</h2>
+      <p class="page-subtitle">Consulta el estado de tus postulaciones a ofertas de trabajo.</p>
+    </div>
   </div>
 
-  <div *ngFor="let p of postulaciones()" class="postulacion-card">
+  <!-- Loading -->
+  <div *ngIf="loading()" class="spinner-center">
+    <div class="spinner spinner-lg"></div>
+  </div>
 
-    <div class="card-header">
-      <h3 class="titulo-oferta">{{ p.tituloOferta }}</h3>
-      <span class="nombre-empresa" *ngIf="p.nombreEmpresa">🏢 {{ p.nombreEmpresa }}</span>
-    </div>
+  <!-- Error global -->
+  <div *ngIf="!loading() && errorMessage()" class="alert alert-danger error-block">
+    <strong>No se pudieron cargar tus postulaciones</strong>
+    <span>{{ errorMessage() }}</span>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="cargarPostulaciones()">
+      Reintentar
+    </button>
+  </div>
 
-    <div class="info-oferta">
-      <p *ngIf="p.ubicacionOferta"><strong>📍 Ubicación:</strong> {{ p.ubicacionOferta }}</p>
-      <p *ngIf="p.descripcionOferta" class="descripcion">{{ p.descripcionOferta | slice:0:150 }}...</p>
-    </div>
+  <!-- Estado vacío -->
+  <div *ngIf="!loading() && !errorMessage() && postulaciones().length === 0" class="empty-state">
+    <div class="empty-state-icon">📋</div>
+    <p class="empty-state-title">Aún no tienes candidaturas</p>
+    <p class="empty-state-text">Explora las ofertas disponibles y postúlate a las que encajen con tu perfil.</p>
+    <a routerLink="/ofertas" class="btn btn-primary mt-4">Buscar ofertas</a>
+  </div>
 
-    <div class="estado-seccion">
-      <div class="estado-box">
-        Estado:
-        <strong [ngClass]="p.estado ? p.estado.toLowerCase() : ''" class="badge-estado"
-          [style.background]="p.estado === 'PENDIENTE' ? '#fff3cd' : (p.estado === 'ACEPTADA' ? '#dcfce3' : '#fee2e2')"
-          [style.color]="p.estado === 'PENDIENTE' ? '#856404' : (p.estado === 'ACEPTADA' ? '#166534' : '#991b1b')">
-          {{ p.estado }}
-        </strong>
+  <!-- Lista de candidaturas -->
+  <div *ngFor="let p of postulaciones()" class="card postulacion-card" [ngClass]="estadoClass(p.estado)">
+
+    <!-- Cabecera de la card -->
+    <div class="card-header postulacion-card-header">
+      <div class="postulacion-title-block">
+        <h3 class="titulo-oferta">{{ p.tituloOferta }}</h3>
+        <span class="nombre-empresa" *ngIf="p.nombreEmpresa">🏢 {{ p.nombreEmpresa }}</span>
       </div>
-      <small class="fecha">Te postulaste el: {{ p.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+      <span
+        class="badge"
+        [ngClass]="{
+          'badge-warning': p.estado === 'PENDIENTE' || !p.estado,
+          'badge-success': p.estado === 'ACEPTADA',
+          'badge-danger':  p.estado === 'RECHAZADA'
+        }">
+        {{ estadoTexto(p.estado) }}
+      </span>
     </div>
 
+    <!-- Datos de la oferta -->
+    <div class="info-oferta">
+      <p *ngIf="p.ubicacionOferta" class="info-row">
+        <span class="info-icon">📍</span>
+        <strong>Ubicación:</strong>&nbsp;{{ p.ubicacionOferta }}
+      </p>
+      <p *ngIf="p.descripcionOferta" class="descripcion">
+        {{ p.descripcionOferta | slice:0:150 }}…
+      </p>
+    </div>
+
+    <!-- Estado y fecha -->
+    <div class="estado-seccion">
+      <p class="estado-descripcion">{{ estadoDescripcion(p.estado) }}</p>
+      <small class="fecha text-muted">Postulado el {{ p.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+    </div>
+
+    <!-- Retirar candidatura -->
+    <div *ngIf="p.estado === 'PENDIENTE'" class="accion-retirar">
+      <button class="btn btn-danger btn-sm" (click)="retirar(p.id)">
+        Retirar candidatura
+      </button>
+    </div>
+
+    <!-- Contacto empresa si ACEPTADA -->
     <div *ngIf="p.estado === 'ACEPTADA'" class="contacto-empresa">
-      <h4>🎉 ¡Felicidades! La empresa ha aceptado tu perfil.</h4>
-      <p>Ponte en contacto con ellos para continuar con el proceso de selección:</p>
-      <ul>
-        <li><strong>📞 Teléfono:</strong> {{ p.telefonoEmpresa || 'No especificado' }}</li>
-        <li><strong>✉️ Email:</strong> <a [href]="'mailto:' + p.emailEmpresa" class="email-link">{{ p.emailEmpresa || 'No especificado' }}</a></li>
+      <h4 class="contacto-titulo">🎉 ¡La empresa ha aceptado tu perfil!</h4>
+      <p class="contacto-desc">Ponte en contacto con ellos para continuar con el proceso de selección:</p>
+      <ul class="contacto-lista">
+        <li><span class="contacto-icon">📞</span> <strong>Teléfono:</strong>&nbsp;{{ p.telefonoEmpresa || 'No especificado' }}</li>
+        <li>
+          <span class="contacto-icon">✉️</span>
+          <strong>Email:</strong>&nbsp;
+          <a [href]="'mailto:' + p.emailEmpresa" class="email-link">{{ p.emailEmpresa || 'No especificado' }}</a>
+        </li>
       </ul>
     </div>
 

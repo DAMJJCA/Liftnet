@@ -1,111 +1,204 @@
 <div class="ofertas-container">
-  <h2>Gestión de Ofertas</h2>
 
-  <p *ngIf="successMessage()" class="alert success">{{ successMessage() }}</p>
-  <p *ngIf="error()" class="alert error">{{ error() }}</p>
-  <p *ngIf="loading()" class="loading-text">Cargando...</p>
+  <!-- Cabecera -->
+  <div class="page-header">
+    <h2>Gestión de Ofertas</h2>
+    <p>Publica, edita y gestiona las ofertas de tu empresa</p>
+  </div>
 
+  <!-- Alertas globales -->
+  <div *ngIf="successMessage()" class="alert success">{{ successMessage() }}</div>
+  <div *ngIf="error()" class="alert error">{{ error() }}</div>
+
+  <!-- Loading -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <span>Cargando ofertas…</span>
+  </div>
+
+  <!-- ── Formulario: crear oferta ───────────────────────────── -->
   <div class="card create-card">
-    <h3>Publicar nueva oferta</h3>
-    <form (ngSubmit)="crear()" class="form" #f="ngForm">
+    <div class="create-card-header">
+      <div class="create-card-icon">📝</div>
+      <h3>Publicar nueva oferta</h3>
+    </div>
 
+    <form (ngSubmit)="crear()" #f="ngForm">
       <div class="form-grid">
+
         <div class="form-group full-width">
           <label>Título del puesto *</label>
-          <input type="text" name="titulo" [(ngModel)]="nuevaOferta.titulo" required />
+          <input class="form-control" type="text" name="titulo"
+                 [(ngModel)]="nuevaOferta.titulo" required #titulo="ngModel"
+                 placeholder="Ej: Socorrista de playa – temporada 2025" />
+          <small class="field-error" *ngIf="titulo.invalid && (titulo.touched || f.submitted)">
+            El título del puesto es obligatorio.
+          </small>
         </div>
 
         <div class="form-group">
           <label>Ubicación</label>
-          <input type="text" name="ubicacion" [(ngModel)]="nuevaOferta.ubicacion" placeholder="Ej: Madrid, Aeropuerto" />
+          <input class="form-control" type="text" name="ubicacion"
+                 [(ngModel)]="nuevaOferta.ubicacion" placeholder="Ej: Madrid, Aeropuerto" />
         </div>
 
         <div class="form-group">
           <label>Nivel / Categoría</label>
-          <input type="text" name="nivel" [(ngModel)]="nuevaOferta.nivel" placeholder="Ej: Empleado/a, Mando Intermedio" />
+          <input class="form-control" type="text" name="nivel"
+                 [(ngModel)]="nuevaOferta.nivel" placeholder="Ej: Empleado/a" />
         </div>
 
         <div class="form-group">
-          <label>Estudios Mínimos</label>
-          <input type="text" name="estudiosMinimos" [(ngModel)]="nuevaOferta.estudiosMinimos" placeholder="Ej: Bachillerato" />
+          <label>Estudios mínimos</label>
+          <input class="form-control" type="text" name="estudiosMinimos"
+                 [(ngModel)]="nuevaOferta.estudiosMinimos" placeholder="Ej: Bachillerato" />
         </div>
 
         <div class="form-group">
-          <label>Experiencia Mínima</label>
-          <input type="text" name="experienciaMinima" [(ngModel)]="nuevaOferta.experienciaMinima" placeholder="Ej: Al menos 1 año" />
+          <label>Experiencia mínima</label>
+          <input class="form-control" type="text" name="experienciaMinima"
+                 [(ngModel)]="nuevaOferta.experienciaMinima" placeholder="Ej: Al menos 1 año" />
         </div>
 
         <div class="form-group">
           <label>Idiomas requeridos</label>
-          <input type="text" name="idiomas" [(ngModel)]="nuevaOferta.idiomas" placeholder="Ej: Inglés - Intermedio" />
+          <input class="form-control" type="text" name="idiomas"
+                 [(ngModel)]="nuevaOferta.idiomas" placeholder="Ej: Inglés – Intermedio" />
         </div>
 
         <div class="form-group">
           <label>Salario ofrecido</label>
-          <input type="text" name="salario" [(ngModel)]="nuevaOferta.salario" placeholder="Ej: 21.000€ Bruto/año" />
+          <input class="form-control" type="text" name="salario"
+                 [(ngModel)]="nuevaOferta.salario" placeholder="Ej: 21.000 € bruto/año" />
         </div>
 
         <div class="form-group">
           <label>Vacantes</label>
-          <input type="number" name="vacantes" [(ngModel)]="nuevaOferta.vacantes" min="1" required />
+          <input class="form-control" type="number" name="vacantes"
+                 [(ngModel)]="nuevaOferta.vacantes" min="1" required #vacantes="ngModel" />
+          <small class="field-error" *ngIf="vacantes.invalid && (vacantes.touched || f.submitted)">
+            Indica al menos una vacante.
+          </small>
         </div>
 
         <div class="form-group full-width">
           <label>Descripción detallada de la oferta *</label>
-          <textarea name="descripcion" [(ngModel)]="nuevaOferta.descripcion" rows="6" placeholder="Describe la misión, el día a día, beneficios..." required></textarea>
+          <textarea class="form-control" name="descripcion" rows="6"
+                    [(ngModel)]="nuevaOferta.descripcion" required #descripcion="ngModel"
+                    placeholder="Describe la misión, el día a día, requisitos y beneficios…"></textarea>
+          <small class="field-error" *ngIf="descripcion.invalid && (descripcion.touched || f.submitted)">
+            La descripción de la oferta es obligatoria.
+          </small>
         </div>
+
       </div>
 
-      <button type="submit" class="btn-primary" [disabled]="f.invalid || loading()">Publicar oferta</button>
+      <button type="submit" class="btn-publish" [disabled]="f.invalid || loading()">
+        Publicar oferta
+      </button>
     </form>
   </div>
 
   <hr class="separator" />
 
+  <!-- ── Lista de ofertas ───────────────────────────────────── -->
+  <p class="section-label" *ngIf="ofertas().length > 0">
+    Tus ofertas publicadas ({{ ofertas().length }})
+  </p>
+
   <div *ngFor="let o of ofertas()" class="oferta-card">
 
+    <!-- MODO EDICIÓN -->
     <div *ngIf="ofertaEditando && ofertaEditando.id === o.id; else vistaNormal" class="edit-mode">
       <div class="form-grid">
-        <div class="form-group full-width"><label>Título</label><input [(ngModel)]="ofertaEditando.titulo" name="editTitulo" /></div>
-        <div class="form-group"><label>Ubicación</label><input [(ngModel)]="ofertaEditando.ubicacion" name="editUbicacion" /></div>
-        <div class="form-group"><label>Salario</label><input [(ngModel)]="ofertaEditando.salario" name="editSalario" /></div>
-        <div class="form-group"><label>Idiomas</label><input [(ngModel)]="ofertaEditando.idiomas" name="editIdiomas" /></div>
-        <div class="form-group full-width"><label>Descripción</label><textarea [(ngModel)]="ofertaEditando.descripcion" name="editDescripcion" rows="4"></textarea></div>
+
+        <div class="form-group full-width">
+          <label>Título *</label>
+          <input class="form-control" [(ngModel)]="ofertaEditando.titulo" name="editTitulo"
+                 required #editTitulo="ngModel" />
+          <small class="field-error" *ngIf="editTitulo.invalid && editTitulo.touched">
+            El título es obligatorio.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>Ubicación</label>
+          <input class="form-control" [(ngModel)]="ofertaEditando.ubicacion" name="editUbicacion" />
+        </div>
+
+        <div class="form-group">
+          <label>Salario</label>
+          <input class="form-control" [(ngModel)]="ofertaEditando.salario" name="editSalario" />
+        </div>
+
+        <div class="form-group">
+          <label>Idiomas</label>
+          <input class="form-control" [(ngModel)]="ofertaEditando.idiomas" name="editIdiomas" />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Descripción *</label>
+          <textarea class="form-control" [(ngModel)]="ofertaEditando.descripcion"
+                    name="editDescripcion" rows="4" required #editDescripcion="ngModel"></textarea>
+          <small class="field-error" *ngIf="editDescripcion.invalid && editDescripcion.touched">
+            La descripción es obligatoria.
+          </small>
+        </div>
+
       </div>
-      <div class="acciones mt-3">
-        <button class="btn-primary" (click)="guardarEdicion()" [disabled]="loading()">Guardar cambios</button>
-        <button class="btn-secondary" (click)="cancelarEdicion()">Cancelar</button>
+
+      <div class="acciones">
+        <button class="btn-action btn-action-primary"
+                (click)="guardarEdicion()"
+                [disabled]="loading() || editTitulo.invalid || editDescripcion.invalid">
+          Guardar cambios
+        </button>
+        <button class="btn-action btn-action-neutral" (click)="cancelarEdicion()">
+          Cancelar
+        </button>
       </div>
     </div>
 
+    <!-- MODO VISTA NORMAL -->
     <ng-template #vistaNormal>
+
       <div class="oferta-header">
         <h3>{{ o.titulo }}</h3>
         <span class="badge" [class.abierta]="o.activa" [class.cerrada-badge]="!o.activa">
-          {{ o.activa ? 'ACTIVA' : 'CERRADA' }}
+          {{ o.activa ? 'Activa' : 'Cerrada' }}
         </span>
       </div>
 
       <div class="oferta-tags">
         <span class="tag" *ngIf="o.ubicacion">📍 {{ o.ubicacion }}</span>
-        <span class="tag" *ngIf="o.vacantes">👥 {{ o.vacantes }} Vacante(s)</span>
+        <span class="tag" *ngIf="o.vacantes">👥 {{ o.vacantes }} vacante(s)</span>
         <span class="tag" *ngIf="o.salario">💰 {{ o.salario }}</span>
       </div>
 
-      <p class="oferta-desc-short">{{ o.descripcion | slice:0:150 }}...</p>
+      <p class="oferta-desc-short">{{ o.descripcion | slice:0:150 }}…</p>
 
-      <div class="acciones mt-3">
-        <button class="btn-outline" (click)="editar(o)" *ngIf="o.activa">✏️ Editar</button>
-        <a [routerLink]="['/empresa/ofertas', o.id, 'postulaciones']">
-          <button class="btn-secondary">👥 Ver postulantes</button>
+      <div class="acciones">
+        <button *ngIf="o.activa" class="btn-action btn-action-outline" (click)="editar(o)">
+          ✏️ Editar
+        </button>
+        <a class="btn-action btn-action-neutral"
+           [routerLink]="['/empresa/ofertas', o.id, 'postulaciones']">
+          👥 Ver postulantes
         </a>
-        <button *ngIf="o.activa" class="btn-danger" (click)="cerrar(o.id)">Cerrar oferta</button>
+        <button *ngIf="o.activa" class="btn-action btn-action-danger" (click)="cerrar(o.id)">
+          Cerrar oferta
+        </button>
       </div>
+
     </ng-template>
 
   </div>
 
-  <div *ngIf="!loading() && ofertas().length === 0" class="empty-state">
+  <!-- Empty state -->
+  <div *ngIf="!loading() && ofertas().length === 0" class="empty-section">
+    <span class="empty-icon">📋</span>
     <p>Aún no has publicado ninguna oferta de empleo.</p>
+    <span class="empty-sub">Usa el formulario de arriba para publicar tu primera oferta.</span>
   </div>
+
 </div>

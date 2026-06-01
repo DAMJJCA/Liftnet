@@ -1,42 +1,69 @@
 <div class="postulaciones-container">
 
-  <h2>Candidatos de la oferta</h2>
-
-  <p *ngIf="mensaje()" class="alert success">{{ mensaje() }}</p>
-  <p *ngIf="loading()" class="loading-text">Cargando candidatos...</p>
-
-  <div *ngIf="!loading() && postulaciones().length === 0" class="empty-state">
-    Aún no hay candidatos para esta oferta.
+  <!-- Cabecera -->
+  <div class="page-header">
+    <h2>Candidatos de la oferta</h2>
+    <p>Revisa los perfiles inscritos y gestiona el estado de cada candidatura</p>
   </div>
 
-  <div *ngFor="let p of postulaciones()" class="postulacion-card">
+  <!-- Alerta de éxito -->
+  <div *ngIf="mensaje()" class="alert success">{{ mensaje() }}</div>
 
+  <!-- Error con reintentar -->
+  <div *ngIf="!loading() && errorMessage()" class="status-panel error-state">
+    <strong>No se pudieron cargar o actualizar los candidatos</strong>
+    <span>{{ errorMessage() }}</span>
+    <button type="button" class="btn-reintentar" (click)="cargar()">Reintentar</button>
+  </div>
+
+  <!-- Loading con spinner -->
+  <div *ngIf="loading()" class="status-panel loading-state">
+    <div class="spinner"></div>
+    <strong>Cargando candidatos…</strong>
+    <span>Estamos consultando los postulantes inscritos en esta oferta.</span>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading() && !errorMessage() && postulaciones().length === 0" class="empty-section">
+    <span class="empty-icon">👥</span>
+    <p>Aún no hay candidatos para esta oferta.</p>
+    <span class="empty-sub">Cuando alguien se inscriba, aparecerá aquí.</span>
+  </div>
+
+  <!-- ── Lista de candidatos ─────────────────────────────────── -->
+  <div *ngFor="let p of postulaciones()" class="postulacion-card" [ngClass]="estadoClass(p.estado)">
+
+    <!-- Cabecera: nombre + badge estado -->
     <div class="postulacion-header">
       <div class="header-info">
         <h3>{{ p.nombrePostulante }} {{ p.apellidosPostulante }}</h3>
         <p class="aplicacion-fecha">Aplicó el: {{ p.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
       </div>
       <div class="header-status">
-        <strong class="badge"
-          [class.pendiente]="p.estado === 'PENDIENTE'"
-          [class.aceptada]="p.estado === 'ACEPTADA'"
-          [class.rechazada]="p.estado === 'RECHAZADA'">
-          {{ p.estado }}
-        </strong>
+        <span class="badge" [ngClass]="estadoClass(p.estado)">
+          {{ estadoTexto(p.estado) }}
+        </span>
       </div>
     </div>
 
+    <!-- Barra CV general -->
     <div class="cv-general-bar" *ngIf="p.cvUrl">
       <span class="cv-icon">📄</span>
       <div class="cv-text">
-        <strong>Currículum Vitae (CV)</strong>
-        <span class="text-muted" style="display: block; font-weight: normal; font-size: 0.85em;">Documento general adjunto</span>
+        Currículum Vitae (CV)
+        <span class="cv-text-sub">Documento general adjunto por el candidato</span>
       </div>
       <div class="pdf-actions">
-        <a [href]="p.cvUrl" target="_blank" class="btn-mini-view" title="Abrir en nueva pestaña">👁️ Ver CV</a>
-        <a [href]="p.cvUrl + '?download='" class="btn-mini-download" title="Descargar PDF">⬇️ Descargar</a>
+        <a [href]="p.cvUrl" target="_blank" class="btn-mini-view" title="Abrir en nueva pestaña">
+          👁️ Ver CV
+        </a>
+        <a [href]="p.cvUrl + '?download='" class="btn-mini-download" title="Descargar PDF">
+          ⬇️ Descargar
+        </a>
       </div>
     </div>
+
+    <!-- Mini-CV del candidato -->
     <div class="cv-candidato">
 
       <div class="cv-bloque">
@@ -46,9 +73,9 @@
         </div>
         <ul class="cv-lista">
           <li *ngFor="let exp of p.experiencias">
-            <strong>{{ exp.lugar }}</strong> <span *ngIf="exp.empresa" class="text-muted">- {{ exp.empresa }}</span>
+            <strong>{{ exp.lugar }}</strong>
+            <span *ngIf="exp.empresa" class="text-muted"> — {{ exp.empresa }}</span>
             <p class="cv-desc">{{ exp.descripcion }}</p>
-
             <div class="pdf-actions" *ngIf="exp.archivoUrl">
               <a [href]="exp.archivoUrl" target="_blank" class="btn-mini-view">👁️ Ver adjunto</a>
               <a [href]="exp.archivoUrl + '?download='" class="btn-mini-download">⬇️ Descargar</a>
@@ -64,8 +91,8 @@
         </div>
         <ul class="cv-lista">
           <li *ngFor="let cert of p.certificaciones">
-            <strong>{{ cert.nombre }}</strong> <span *ngIf="cert.entidad" class="text-muted">({{ cert.entidad }})</span>
-
+            <strong>{{ cert.nombre }}</strong>
+            <span *ngIf="cert.entidad" class="text-muted"> ({{ cert.entidad }})</span>
             <div class="pdf-actions" *ngIf="cert.archivoUrl">
               <a [href]="cert.archivoUrl" target="_blank" class="btn-mini-view">👁️ Ver diploma</a>
               <a [href]="cert.archivoUrl + '?download='" class="btn-mini-download">⬇️ Descargar</a>
@@ -76,12 +103,17 @@
 
     </div>
 
+    <!-- Acciones: solo si PENDIENTE -->
     <div class="acciones" *ngIf="p.estado === 'PENDIENTE'">
-      <button class="btn-aceptar" (click)="cambiarEstado(p.postulacionId, 'ACEPTADA')">
-        ✅ Aceptar candidato
+      <button class="btn-rechazar"
+              (click)="cambiarEstado(p.postulacionId, 'RECHAZADA')"
+              [disabled]="procesandoId() !== null">
+        {{ estaProcesando(p.postulacionId) ? 'Actualizando…' : 'Rechazar' }}
       </button>
-      <button class="btn-rechazar" (click)="cambiarEstado(p.postulacionId, 'RECHAZADA')">
-        ❌ Rechazar
+      <button class="btn-aceptar"
+              (click)="cambiarEstado(p.postulacionId, 'ACEPTADA')"
+              [disabled]="procesandoId() !== null">
+        {{ estaProcesando(p.postulacionId) ? 'Aceptando…' : 'Aceptar candidato' }}
       </button>
     </div>
 

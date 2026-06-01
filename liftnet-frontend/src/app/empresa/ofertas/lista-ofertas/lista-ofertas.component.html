@@ -2,14 +2,26 @@
 
   <div class="header-section">
     <h2>Ofertas de empleo destacadas</h2>
-    <p>Encuentra tu próximo reto profesional</p>
+    <p>Encuentra tu próximo reto profesional en el sector del socorrismo</p>
   </div>
 
-  <p *ngIf="mensaje" class="alert success">{{ mensaje }}</p>
-  <p *ngIf="error" class="alert error">{{ error }}</p>
+  <!-- Estado de carga -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner spinner-lg"></div>
+    <span>Buscando ofertas disponibles…</span>
+  </div>
 
-  <div class="ofertas-list">
-    <div *ngFor="let oferta of ofertas" class="oferta-pro-card">
+  <!-- Mensajes de resultado -->
+  <p *ngIf="mensaje()" class="alert success">{{ mensaje() }}</p>
+
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p class="alert error">{{ error() }}</p>
+    <button class="btn-reintentar" (click)="cargarOfertas()">Reintentar</button>
+  </div>
+
+  <!-- Lista de ofertas (solo visible cuando no está cargando) -->
+  <div *ngIf="!loading()" class="ofertas-list">
+    <div *ngFor="let oferta of ofertas()" class="oferta-pro-card">
 
       <div class="oferta-main-header">
         <div>
@@ -61,15 +73,55 @@
 
       <div class="oferta-footer">
         <span class="vacantes-badge">👥 {{ oferta.vacantes || 1 }} vacante(s)</span>
-        <button class="btn-postular" (click)="postular(oferta.id)">
+
+        <!-- No inscrito -->
+        <button class="btn-postular"
+                *ngIf="!postuladas().has(oferta.id)"
+                (click)="postular(oferta.id)">
           Inscribirme a esta oferta
+        </button>
+
+        <!-- Inscrito y PENDIENTE → puede retirar -->
+        <button class="btn-retirar"
+                *ngIf="postuladas().has(oferta.id) && postuladas().get(oferta.id)?.estado === 'PENDIENTE'"
+                (click)="retirar(oferta.id)">
+          Retirar candidatura
+        </button>
+
+        <!-- Inscrito y ACEPTADA/RECHAZADA → solo informativo -->
+        <button class="btn-postular"
+                *ngIf="postuladas().has(oferta.id) && postuladas().get(oferta.id)?.estado !== 'PENDIENTE'"
+                disabled>
+          Ya inscrito
         </button>
       </div>
 
     </div>
   </div>
 
-  <div *ngIf="ofertas.length === 0" class="empty-state">
+  <!-- Estado vacío: solo cuando la carga terminó y no hay resultados ni error -->
+  <div *ngIf="!loading() && ofertas().length === 0 && !error()" class="empty-state">
+    <span class="empty-icon">🏊</span>
     <p>No hay ofertas disponibles en este momento.</p>
+    <p style="font-size:13px; color: var(--color-text-subtle)">Vuelve pronto, se publican nuevas ofertas regularmente.</p>
+  </div>
+
+</div>
+
+<!-- Modal: perfil incompleto -->
+<div class="modal-overlay" *ngIf="showPerfilModal()" (click)="cerrarModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="cerrarModal()">×</button>
+    <h3 class="modal-titulo">Perfil incompleto</h3>
+    <p class="modal-texto">
+      Para postularte a esta oferta necesitas completar tu perfil de socorrista.
+      Solo te llevará unos minutos.
+    </p>
+    <div class="modal-footer">
+      <a routerLink="/postulante/perfil" class="btn-ir-perfil" (click)="cerrarModal()">
+        Completar mi perfil
+      </a>
+      <button class="btn-cancelar" (click)="cerrarModal()">Ahora no</button>
+    </div>
   </div>
 </div>
