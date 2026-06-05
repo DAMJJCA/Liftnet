@@ -1,3 +1,23 @@
+<!-- ── Navbar pública: no autenticado ────────────────────────── -->
+<nav class="navbar navbar-public" *ngIf="!isLoggedIn()">
+
+  <a routerLink="/" class="navbar-logo">
+    <div class="navbar-logo-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="navbar-logo-text">Lift<span>net</span></span>
+  </a>
+
+  <div class="navbar-public-actions">
+    <a routerLink="/login" class="navbar-login-btn">Iniciar sesión</a>
+    <a routerLink="/register" class="navbar-register-btn">Crear cuenta gratis</a>
+  </div>
+
+</nav>
+
+<!-- ── Navbar autenticada ────────────────────────────────────── -->
 <nav class="navbar" *ngIf="isLoggedIn() && isProfileCompleted()">
 
   <!-- Logo -->

@@ -1,6 +1,6 @@
 <div class="home-page">
 
-  <!-- Hero: unauthenticated -->
+  <!-- ── Hero: no autenticado ──────────────────────────────────── -->
   <section class="hero" *ngIf="!isLoggedIn()">
     <div class="hero-eyebrow">La plataforma del socorrismo profesional</div>
     <h1 class="hero-title">
@@ -9,21 +9,171 @@
     </h1>
     <p class="hero-subtitle">
       Liftnet une a empresas que buscan socorristas cualificados
-      con profesionales que buscan su próximo reto.
+      con profesionales que buscan su próximo reto en cada temporada.
     </p>
     <div class="hero-actions">
-      <a routerLink="/register" class="btn-hero-primary">Crear cuenta gratis</a>
-      <a routerLink="/login" class="btn-hero-outline">Iniciar sesión</a>
+      <a routerLink="/register" class="btn-hero-socorrista">🏊 Soy socorrista</a>
+      <a routerLink="/register" class="btn-hero-empresa">🏢 Soy empresa</a>
+    </div>
+    <p class="hero-login-hint">
+      ¿Ya tienes cuenta?
+      <a routerLink="/login" class="hero-login-link">Inicia sesión aquí</a>
+    </p>
+    <div class="hero-trust">
+      <span>🔒 Registro gratuito</span>
+      <span class="hero-trust-sep">·</span>
+      <span>🛡️ Sin comisiones</span>
+      <span class="hero-trust-sep">·</span>
+      <span>⚡ Activo en minutos</span>
     </div>
   </section>
 
-  <!-- Hero compacto: autenticado -->
+  <!-- ── Stats bar ──────────────────────────────────────────────── -->
+  <section class="stats-bar" *ngIf="!isLoggedIn()">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <span class="stat-number">500<span class="stat-plus">+</span></span>
+        <span class="stat-label">Empresas registradas</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">3.000<span class="stat-plus">+</span></span>
+        <span class="stat-label">Socorristas activos</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">1.200<span class="stat-plus">+</span></span>
+        <span class="stat-label">Ofertas publicadas</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Gratuito para candidatos</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Propuesta de valor ─────────────────────────────────────── -->
+  <section class="propuesta-valor" *ngIf="!isLoggedIn()">
+    <div class="pv-inner">
+      <h2 class="pv-title">Una plataforma, dos mundos</h2>
+      <p class="pv-subtitle">Herramientas diseñadas para cada perfil del sector</p>
+      <div class="pv-grid">
+
+        <div class="pv-col pv-col--socorrista">
+          <div class="pv-accent-line"></div>
+          <div class="pv-col-header">
+            <span class="pv-icon">🏊</span>
+            <h3 class="pv-col-title">Para socorristas</h3>
+          </div>
+          <ul class="pv-lista">
+            <li>Perfil profesional con certificaciones verificadas</li>
+            <li>Acceso a ofertas en playas, piscinas y parques acuáticos</li>
+            <li>Gestión de candidaturas en tiempo real</li>
+            <li>Visibilidad ante cientos de empresas del sector</li>
+          </ul>
+          <a routerLink="/register" class="btn btn-primary btn-lg">Crear perfil gratis</a>
+        </div>
+
+        <div class="pv-col pv-col--empresa">
+          <div class="pv-accent-line"></div>
+          <div class="pv-col-header">
+            <span class="pv-icon">🏢</span>
+            <h3 class="pv-col-title">Para empresas</h3>
+          </div>
+          <ul class="pv-lista">
+            <li>Publicación de vacantes en menos de 5 minutos</li>
+            <li>Candidatos con perfil y certificaciones verificadas</li>
+            <li>Gestión centralizada de todas las postulaciones</li>
+            <li>Contacto directo con los mejores profesionales</li>
+          </ul>
+          <a routerLink="/register" class="btn btn-accent btn-lg">Publicar vacante</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Tipos de puesto (dark) ─────────────────────────────────── -->
+  <section class="tipos-puesto" *ngIf="!isLoggedIn()">
+    <div class="tipos-inner">
+      <p class="tipos-eyebrow">Explora por especialidad</p>
+      <h2 class="tipos-title">Todos los perfiles del sector</h2>
+      <div class="tipos-chips">
+        <span class="tipo-chip">🏖️ Socorrista de playa</span>
+        <span class="tipo-chip">🏊 Socorrista de piscina</span>
+        <span class="tipo-chip">🎢 Parque acuático</span>
+        <span class="tipo-chip">🚣 Actividades náuticas</span>
+        <span class="tipo-chip">👥 Jefe de equipo</span>
+        <span class="tipo-chip">🏅 Técnico de salvamento</span>
+        <span class="tipo-chip">🏨 Hotel y resort</span>
+        <span class="tipo-chip">🌊 Zona surf y paddle</span>
+        <span class="tipo-chip">🏋️ Piscina interior</span>
+        <span class="tipo-chip">⛵ Puerto deportivo</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Cómo funciona ──────────────────────────────────────────── -->
+  <section class="como-funciona" *ngIf="!isLoggedIn()">
+    <div class="como-funciona-inner">
+      <h2 class="como-funciona-title">¿Cómo funciona?</h2>
+      <p class="como-funciona-subtitle">En tres pasos sencillos, empieza tu próxima temporada</p>
+      <div class="pasos-grid">
+
+        <div class="paso-card">
+          <div class="paso-numero">1</div>
+          <div class="paso-icon">👤</div>
+          <h3 class="paso-titulo">Crea tu perfil</h3>
+          <p class="paso-desc">
+            Regístrate e indica tu experiencia, certificaciones y disponibilidad.
+            Empresas o postulantes, cada rol tiene su espacio.
+          </p>
+        </div>
+
+        <div class="paso-card">
+          <div class="paso-numero">2</div>
+          <div class="paso-icon">🔍</div>
+          <h3 class="paso-titulo">Encuentra ofertas</h3>
+          <p class="paso-desc">
+            Explora puestos en playas, piscinas y parques acuáticos.
+            Las empresas publican vacantes en tiempo real.
+          </p>
+        </div>
+
+        <div class="paso-card">
+          <div class="paso-numero">3</div>
+          <div class="paso-icon">✅</div>
+          <h3 class="paso-titulo">Postúlate y gestiona</h3>
+          <p class="paso-desc">
+            Inscríbete con un clic y sigue el estado de cada candidatura
+            desde tu panel personal.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA final ──────────────────────────────────────────────── -->
+  <section class="cta-final" *ngIf="!isLoggedIn()">
+    <div class="cta-final-inner">
+      <h2 class="cta-final-title">¿Listo para tu próxima temporada?</h2>
+      <p class="cta-final-sub">
+        Únete a la plataforma que está transformando el socorrismo profesional.
+        Registro gratuito en menos de 2 minutos.
+      </p>
+      <a routerLink="/register" class="btn-cta-final">Empieza ahora — es gratis →</a>
+    </div>
+  </section>
+
+  <!-- ── Hero compacto: autenticado ───────────────────────────── -->
   <section class="hero-compact" *ngIf="isLoggedIn()">
     <h2>Ofertas laborales recientes</h2>
     <p>Encuentra tu próximo reto profesional en el sector del socorrismo</p>
   </section>
 
-  <!-- Contenido -->
+  <!-- ── Contenido: ofertas ─────────────────────────────────────── -->
   <div class="home-content">
 
     <!-- Loading -->
@@ -39,7 +189,7 @@
 
     <!-- Lista de ofertas -->
     <div *ngIf="!loading()">
-      <h2 class="section-title" *ngIf="!isLoggedIn() && ofertas().length > 0">
+      <h2 class="section-title" *ngIf="ofertas().length > 0">
         Ofertas publicadas recientemente
       </h2>
 
@@ -47,7 +197,7 @@
         <div *ngFor="let o of ofertas()" class="oferta-card" (click)="abrirDetalle(o)">
           <h3>{{ o.titulo }}</h3>
           <p class="ubicacion">📍 {{ o.ubicacion || 'Ubicación no especificada' }}</p>
-          <p class="salario" *ngIf="o.salario">{{ o.salario }} €</p>
+          <p class="salario" *ngIf="o.salario">{{ o.salario }}</p>
 
           <div class="card-footer">
             <button class="btn-ver" (click)="abrirDetalle(o); $event.stopPropagation()">
@@ -64,17 +214,17 @@
       </div>
 
       <!-- Empty state -->
-      <div *ngIf="ofertas().length === 0 && !error()" class="empty-section">
-        <span class="empty-icon">🏊</span>
-        <p>No hay ofertas publicadas en este momento.</p>
-        <p style="font-size:13px; color: var(--color-text-subtle)">Vuelve pronto — se publican nuevas ofertas regularmente.</p>
+      <div *ngIf="ofertas().length === 0 && !error()" class="empty-state">
+        <span class="empty-state-icon">🏊</span>
+        <p class="empty-state-title">No hay ofertas publicadas aún</p>
+        <p class="empty-state-text">Vuelve pronto — se publican nuevas ofertas regularmente.</p>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- Modal de detalle -->
+<!-- ── Modal de detalle ──────────────────────────────────────── -->
 <div class="modal-overlay" *ngIf="showModal && ofertaSeleccionada" (click)="cerrarModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="cerrarModal()">×</button>

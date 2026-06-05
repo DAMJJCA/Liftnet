@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { retry, timeout } from 'rxjs';
 
@@ -15,22 +16,34 @@ interface PostulacionInfo {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './lista-ofertas.component.html',
   styleUrls: ['./lista-ofertas.component.css']
 })
 export class ListaOfertasComponent implements OnInit {
 
   // --- Estado local como signals ---
-  // Ventaja sobre class properties: notifican al sistema reactivo de Angular directamente,
-  // sin depender de zone.js para detectar cambios. Elimina el hack "new Map(this.postuladas)"
-  // que antes era necesario para forzar detección de cambio en el Map.
   ofertas    = signal<Oferta[]>([]);
   postuladas = signal<Map<string, PostulacionInfo>>(new Map());
   mensaje    = signal<string | null>(null);
   error      = signal<string | null>(null);
   loading    = signal(true);
   showPerfilModal = signal(false);
+
+  // --- Filtros ---
+  // filtroUbicacion: se envía al backend en cada búsqueda (GET /api/v1/ofertas?ubicacion=...)
+  // filtroNivel: se aplica en memoria sobre las ofertas ya cargadas (campo string libre)
+  filtroUbicacion = '';
+  filtroNivel     = '';
+
+  // Ofertas tras aplicar el filtro de nivel en cliente
+  get ofertasFiltradas(): Oferta[] {
+    const nivel = this.filtroNivel.trim().toLowerCase();
+    if (!nivel) return this.ofertas();
+    return this.ofertas().filter(o =>
+      o.nivel?.toLowerCase().includes(nivel)
+    );
+  }
 
   get perfilCompleto(): boolean {
     return this.tokenStorage.isProfileCompleted();
@@ -49,15 +62,14 @@ export class ListaOfertasComponent implements OnInit {
     this.cargarOfertas();
   }
 
-  cargarOfertas(): void {
+  cargarOfertas(ubicacion?: string): void {
     this.error.set(null);
     this.loading.set(true);
     this.ofertas.set([]);
 
-    // Sin takeUntilDestroyed en getOfertasActivas:
-    // La petición huérfana (si el usuario navega fuera) sigue en background
-    // y calienta la conexión HikariCP/Supabase para la siguiente visita.
-    this.ofertaService.getOfertasActivas().pipe(
+    // Sin takeUntilDestroyed en getOfertasActivas: la petición huérfana calienta
+    // la conexión HikariCP/Supabase para la siguiente visita a /ofertas.
+    this.ofertaService.getOfertasActivas(ubicacion).pipe(
       timeout(8000),
       retry({ count: 2, delay: 800 })
     ).subscribe({
@@ -72,6 +84,17 @@ export class ListaOfertasComponent implements OnInit {
     });
 
     this.recargarPostulaciones();
+  }
+
+  buscar(): void {
+    this.mensaje.set(null);
+    this.cargarOfertas(this.filtroUbicacion.trim() || undefined);
+  }
+
+  limpiarFiltros(): void {
+    this.filtroUbicacion = '';
+    this.filtroNivel = '';
+    this.cargarOfertas();
   }
 
   postular(ofertaId: string): void {
@@ -112,7 +135,7 @@ export class ListaOfertasComponent implements OnInit {
       next: () => {
         const nuevo = new Map(this.postuladas());
         nuevo.delete(ofertaId);
-        this.postuladas.set(nuevo); // signal notifica directamente, sin hack de referencia
+        this.postuladas.set(nuevo); // signal notifica directamente
         this.mensaje.set('Candidatura retirada correctamente.');
       },
       error: err => {
