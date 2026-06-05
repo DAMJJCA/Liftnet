@@ -213,11 +213,87 @@ Refuerzo auth validaciones (2026-06-01):
 
 Auditoría registro (2026-06-01): flujo completamente funcional de extremo a extremo. Causa del problema observado: el handler de error en RegisterComponent mostraba siempre "No se pudo completar el registro" ignorando el mensaje real del backend (email duplicado, validación fallida, etc.). Corregido: ahora extrae `err.error.message` y lo muestra directamente. Un solo cambio en `register.component.ts`.
 
+Fase 10 — `/ofertas` grid visual + chips (IMPLEMENTADA 2026-06-05):
+- Referencias visuales analizadas: Lifeguard Connect / Socorista Connecta como guía estética (NO copia).
+- Paleta confirmada: azul primario + naranja accent + fondo claro. Sensación SaaS marina.
+- Grid 2 columnas en desktop (≥780px), 1 columna en tablet/móvil.
+- Contenedor ampliado a 1120px (era 860px) para dar respiro al grid.
+- Cards con `border-radius: 16px`, hover con borde azul primario claro, `flex-direction: column` + `margin-top: auto` para footer alineado en todas las alturas.
+- Descripción truncada a 3 líneas (`-webkit-line-clamp: 3`) para consistencia visual entre cards.
+- Sección de requisitos reemplazada por chips/tags inline con colores semánticos:
+  - nivel: azul marino (`--color-ocean-light`)
+  - estudiosMinimos: azul primario (`--color-primary-light`)
+  - experienciaMinima: ámbar (`--color-warning-light`)
+  - idiomas: slate neutro
+- `empty-state` migrado a clases globales (`.empty-state-icon`, `.empty-state-title`, `.empty-state-text`). Inline style eliminado.
+- Nuevas variables en `styles.css`: `--color-bg-hero`, `--color-ocean`, `--color-ocean-light`, `--font-size-4xl`, `--font-size-5xl`.
+- Budget `anyComponentStyle` ajustado de 8 kB a 9 kB en `angular.json` (justificado: postulante-profile ya superaba el límite previo).
+- Build limpio: cero errores, cero warnings.
+- Lógica Angular sin cambios (signals, postulaciones, retirar, modal, guards).
+
+Fase 11 — Home pública modernizada (IMPLEMENTADA 2026-06-05):
+- Hero rediseñado: padding 88/96px, headline a `--font-size-5xl` (48px, era 38px), letter-spacing -1px.
+- CTAs diferenciados por rol: "🏊 Soy socorrista" (blanco sólido) y "🏢 Soy empresa" (naranja accent). Ambos a `/register`.
+- Hint de login debajo de los CTAs: "¿Ya tienes cuenta? Inicia sesión aquí" — elimina el botón genérico anterior.
+- Sección "Cómo funciona" con fondo `--color-bg-hero` (azul-cielo) solo para no autenticados:
+  - Grid 3 columnas (1 columna en ≤780px).
+  - 3 paso-cards con número flotante azul, icono, título y descripción.
+  - Hover con sombra y lift sutil.
+- Ofertas en home: grid 2 columnas (era 1 columna), alineado con /ofertas. Max-width ampliado de 860px a 1120px.
+- Cards de oferta: flex-column + footer alineado al fondo (mismo patrón que /ofertas).
+- Empty-state migrado a clases globales (`.empty-state-icon`, `.empty-state-title`, `.empty-state-text`). Inline style eliminado.
+- Budget `anyComponentStyle` ajustado de 9 kB a 10 kB (justificado: home es ahora landing completa con hero + pasos + grid + modal).
+- Build limpio: cero errores, cero warnings.
+- Lógica Angular sin cambios (modal, postulaciones, login/empresa checks).
+
+Fase 12 — Filtros básicos en /ofertas (IMPLEMENTADA 2026-06-05):
+- Barra de filtros horizontale: card blanca con shadow-xs, colapsa a columna en móvil (≤600px).
+- Filtro Ubicación: envía `?ubicacion=` al backend en cada búsqueda (GET /api/v1/ofertas). Backend ya lo soportaba.
+- Filtro Nivel: aplicado en memoria sobre la respuesta ya cargada (campo string libre del modelo).
+- Razón de separación: el backend solo acepta `?ubicacion=`; `nivel` y `salario` son strings libres sin soporte de filtrado backend.
+- Botón "Buscar": dispara nueva petición al backend con filtroUbicacion; también aplica filtroNivel en cliente.
+- Botón "Limpiar": resetea ambos filtros y recarga todas las ofertas.
+- Enter en input de ubicación también dispara búsqueda.
+- Hint informativo "Mostrando X resultado(s) en 'ubicacion' · nivel 'nivel'" cuando hay filtros activos. Botón inline "× Limpiar".
+- Empty state diferenciado: "Sin resultados para esta búsqueda" + botón "Ver todas las ofertas" cuando hay offers en BD pero el filtro no devuelve nada. Estado "No hay ofertas disponibles" cuando la BD está vacía.
+- FormsModule añadido al componente (antes solo CommonModule + RouterModule).
+- Build limpio: cero errores, cero warnings.
+- Todo el flujo funcional intacto: postularse, retirar candidatura, perfil incompleto, grid responsive.
+
+Fase 13 — Home premium / landing SaaS completa (IMPLEMENTADA 2026-06-05):
+- Hero mejorado: padding 96/104px, círculos decorativos CSS (::before/::after sin imágenes),
+  CTAs con hover shadow adicional, trust badges "🔒 Registro gratuito · 🛡️ Sin comisiones · ⚡ Activo en minutos".
+- Stats bar (nueva): 4 KPIs ilustrativos en fila — empresas, socorristas, ofertas, gratuito para candidatos.
+  Divisores verticales, números grandes en azul primario con "+" en naranja accent.
+- Propuesta de valor (nueva): sección "Una plataforma, dos mundos".
+  Grid 2 columnas: card socorrista (accent line azul) y empresa (accent line naranja).
+  Cada card: icono, título, lista con ✓ coloreados, CTA reutilizando .btn global.
+- Tipos de puesto (nueva): sección dark (--color-bg-dark #0f172a), eyebrow azul ocean,
+  10 chips con fondo semitransparente blanco — especialidades del sector sin inventar backend.
+- CTA final (nueva): gradiente igual que el hero, headline grande, párrafo persuasivo,
+  botón blanco grande "Empieza ahora — es gratis →".
+- Todas las secciones nuevas: `*ngIf="!isLoggedIn()"` — no afectan a usuarios autenticados.
+- Variable global nueva: `--color-bg-dark: #0f172a`.
+- Budget `anyComponentStyle` ajustado a 16 kB warning / 24 kB error
+  (justificado: home es la landing pública completa con 6+ secciones de marketing).
+- Build limpio: cero errores, cero warnings.
+- Lógica Angular sin cambios.
+
+Fase 14 — Navbar pública con CTAs visibles (IMPLEMENTADA 2026-06-05):
+- Añadida segunda versión de navbar para usuarios no autenticados (`*ngIf="!isLoggedIn()"`).
+- Estructura: logo Liftnet (igual que navbar autenticada) + zona derecha con 2 acciones.
+- "Iniciar sesión": botón outline (borde azul primario, fondo transparente) — visiblemente un botón, no un texto plano.
+- "Crear cuenta gratis": CTA sólido azul primario, peso 700, hover con sombra y lift.
+- Jerarquía visual clara: outline (secundario) + sólido (primario).
+- Responsive: ambos botones se reducen en ≤640px; "Iniciar sesión" se oculta en ≤400px (solo se mantiene el CTA principal).
+- Navbar autenticada sin cambios (mismo `*ngIf="isLoggedIn() && isProfileCompleted()"`).
+- Build limpio: cero errores, cero warnings.
+
 Pendiente para despues de UX visual:
 - Formularios con validaciones visibles.
 - Mensajes de error consistentes y homogeneos.
 - Textos orientados a socorristas.
-- Filtros basicos de ofertas.
+- Filtros adicionales cuando backend los soporte: salario mínimo numérico, tipo de entorno (playa/piscina), jornada, disponibilidad.
 - Reducir `any` en servicios Angular.
 - Unificar `ApiResponse` en controladores.
 

@@ -94,6 +94,16 @@
   /* Transiciones */
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
+
+  /* Marino / hero */
+  --color-bg-hero:     #e8f4fd;   /* azul-cielo suave — fondo hero landing */
+  --color-ocean:       #0ea5e9;   /* sky-500 — acento marino decorativo */
+  --color-ocean-light: #e0f2fe;   /* sky-100 */
+  --color-bg-dark:     #0f172a;   /* slate-950 — secciones de fondo oscuro */
+
+  /* Tipografía grande (hero/landing) */
+  --font-size-4xl: 36px;
+  --font-size-5xl: 48px;
 }
 
 /* ── Reset mínimo ───────────────────────────────────────────── */

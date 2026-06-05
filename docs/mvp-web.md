@@ -83,10 +83,16 @@ Implementado:
 - Si el perfil no está completo y el postulante pulsa "Inscribirme", aparece un modal con botón "Completar mi perfil" → `/postulante/perfil`.
 - Backend permite filtrar por ubicacion.
 
+Implementado (2026-06-05):
+
+- Filtros básicos en `/ofertas`: ubicación (backend, `?ubicacion=`) y nivel (frontend, en memoria).
+- Barra de filtros con botón "Buscar", "Limpiar" y hint informativo de filtros activos.
+- Empty-state diferenciado: "Sin resultados para esta búsqueda" vs "No hay ofertas disponibles".
+
 Parcial:
 
 - Se mantiene tambien la ruta antigua bajo `empresa`; conviene ordenar rutas en una fase posterior.
-- Faltan filtros especificos de socorrismo: ubicacion, temporada, piscina/playa, titulacion, jornada, salario, disponibilidad.
+- Filtros adicionales pendientes: temporada, piscina/playa, titulacion, jornada, salario numérico, disponibilidad (requieren soporte backend o campos estructurados en el modelo).
 
 ### Postularse a ofertas
 

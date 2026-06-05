@@ -5,13 +5,57 @@
     <p>Encuentra tu próximo reto profesional en el sector del socorrismo</p>
   </div>
 
-  <!-- Estado de carga -->
+  <!-- ── Barra de filtros ──────────────────────────────────────── -->
+  <div class="filtros-bar">
+
+    <div class="filtro-group">
+      <label class="filtro-label" for="filtro-ubicacion">Ubicación</label>
+      <input id="filtro-ubicacion"
+             class="form-control filtro-input"
+             type="text"
+             placeholder="Ej: Madrid, Barcelona, Valencia…"
+             [(ngModel)]="filtroUbicacion"
+             (keydown.enter)="buscar()">
+    </div>
+
+    <div class="filtro-group">
+      <label class="filtro-label" for="filtro-nivel">Nivel</label>
+      <input id="filtro-nivel"
+             class="form-control filtro-input"
+             type="text"
+             placeholder="Ej: Senior, Junior, Jefe…"
+             [(ngModel)]="filtroNivel">
+    </div>
+
+    <div class="filtros-actions">
+      <button class="btn btn-primary" (click)="buscar()" [disabled]="loading()">
+        Buscar
+      </button>
+      <button class="btn btn-secondary" (click)="limpiarFiltros()" [disabled]="loading()">
+        Limpiar
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── Filtro activo: hint informativo ──────────────────────── -->
+  <div class="filtros-activos"
+       *ngIf="!loading() && (filtroUbicacion.trim() || filtroNivel.trim())">
+    <span class="filtro-activo-hint">
+      Mostrando {{ ofertasFiltradas.length }} resultado(s)
+      <ng-container *ngIf="filtroUbicacion.trim()"> en "<strong>{{ filtroUbicacion.trim() }}</strong>"</ng-container>
+      <ng-container *ngIf="filtroNivel.trim()"> · nivel "<strong>{{ filtroNivel.trim() }}</strong>"</ng-container>
+    </span>
+    <button class="btn-limpiar-inline" (click)="limpiarFiltros()">× Limpiar</button>
+  </div>
+
+  <!-- ── Estado de carga ────────────────────────────────────────── -->
   <div *ngIf="loading()" class="loading-state">
     <div class="spinner spinner-lg"></div>
     <span>Buscando ofertas disponibles…</span>
   </div>
 
-  <!-- Mensajes de resultado -->
+  <!-- ── Mensajes de resultado ──────────────────────────────────── -->
   <p *ngIf="mensaje()" class="alert success">{{ mensaje() }}</p>
 
   <div *ngIf="error() && !loading()" class="error-state">
@@ -19,9 +63,9 @@
     <button class="btn-reintentar" (click)="cargarOfertas()">Reintentar</button>
   </div>
 
-  <!-- Lista de ofertas (solo visible cuando no está cargando) -->
-  <div *ngIf="!loading()" class="ofertas-list">
-    <div *ngFor="let oferta of ofertas()" class="oferta-pro-card">
+  <!-- ── Grid de ofertas ────────────────────────────────────────── -->
+  <div *ngIf="!loading()" class="ofertas-grid">
+    <div *ngFor="let oferta of ofertasFiltradas" class="oferta-pro-card">
 
       <div class="oferta-main-header">
         <div>
@@ -35,35 +79,11 @@
         </div>
       </div>
 
-      <div class="oferta-requisitos-grid">
-        <div class="req-item" *ngIf="oferta.estudiosMinimos">
-          <span class="req-icon">🎓</span>
-          <div>
-            <span class="req-label">Estudios mínimos</span>
-            <span class="req-value">{{ oferta.estudiosMinimos }}</span>
-          </div>
-        </div>
-        <div class="req-item" *ngIf="oferta.experienciaMinima">
-          <span class="req-icon">💼</span>
-          <div>
-            <span class="req-label">Experiencia mínima</span>
-            <span class="req-value">{{ oferta.experienciaMinima }}</span>
-          </div>
-        </div>
-        <div class="req-item" *ngIf="oferta.idiomas">
-          <span class="req-icon">🗣️</span>
-          <div>
-            <span class="req-label">Idiomas requeridos</span>
-            <span class="req-value">{{ oferta.idiomas }}</span>
-          </div>
-        </div>
-        <div class="req-item" *ngIf="oferta.nivel">
-          <span class="req-icon">📈</span>
-          <div>
-            <span class="req-label">Nivel</span>
-            <span class="req-value">{{ oferta.nivel }}</span>
-          </div>
-        </div>
+      <div class="oferta-tags">
+        <span class="oferta-tag oferta-tag--nivel"    *ngIf="oferta.nivel">📈 {{ oferta.nivel }}</span>
+        <span class="oferta-tag oferta-tag--estudios" *ngIf="oferta.estudiosMinimos">🎓 {{ oferta.estudiosMinimos }}</span>
+        <span class="oferta-tag oferta-tag--exp"      *ngIf="oferta.experienciaMinima">💼 {{ oferta.experienciaMinima }}</span>
+        <span class="oferta-tag oferta-tag--idiomas"  *ngIf="oferta.idiomas">🗣️ {{ oferta.idiomas }}</span>
       </div>
 
       <div class="oferta-body">
@@ -99,16 +119,27 @@
     </div>
   </div>
 
-  <!-- Estado vacío: solo cuando la carga terminó y no hay resultados ni error -->
-  <div *ngIf="!loading() && ofertas().length === 0 && !error()" class="empty-state">
-    <span class="empty-icon">🏊</span>
-    <p>No hay ofertas disponibles en este momento.</p>
-    <p style="font-size:13px; color: var(--color-text-subtle)">Vuelve pronto, se publican nuevas ofertas regularmente.</p>
+  <!-- ── Empty state: filtro sin resultados ──────────────────── -->
+  <div *ngIf="!loading() && !error() && ofertasFiltradas.length === 0 && ofertas().length > 0"
+       class="empty-state">
+    <span class="empty-state-icon">🔍</span>
+    <p class="empty-state-title">Sin resultados para esta búsqueda</p>
+    <p class="empty-state-text">Prueba con otra ubicación o nivel, o limpia los filtros para ver todas las ofertas.</p>
+    <button class="btn btn-outline-primary btn-sm mt-4" (click)="limpiarFiltros()">
+      Ver todas las ofertas
+    </button>
+  </div>
+
+  <!-- ── Empty state: no hay ofertas ────────────────────────── -->
+  <div *ngIf="!loading() && !error() && ofertas().length === 0" class="empty-state">
+    <span class="empty-state-icon">🏊</span>
+    <p class="empty-state-title">No hay ofertas disponibles</p>
+    <p class="empty-state-text">Vuelve pronto, se publican nuevas ofertas regularmente.</p>
   </div>
 
 </div>
 
-<!-- Modal: perfil incompleto -->
+<!-- ── Modal: perfil incompleto ─────────────────────────────── -->
 <div class="modal-overlay" *ngIf="showPerfilModal()" (click)="cerrarModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="cerrarModal()">×</button>
